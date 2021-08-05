@@ -67,7 +67,7 @@ public class Parser {
 
     private static <C extends Clearing<C, T>, T extends Trail<C, T>>
     String parseMap(final String mapFile, final Factory<C, T> factory) {
-        final var lines = mapFile.split(System.getProperty("line.separator"));
+        final var lines = mapFile.split("\\r?\\n");
         if (lines.length < 2) {
             throw new IllegalArgumentException("Map files must contain at least 2 lines!");
         }
