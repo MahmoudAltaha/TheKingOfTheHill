@@ -39,7 +39,24 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
     private List ClearingSequence ;
     private boolean adventurer = false;
+    private boolean holdFood = false;
 
+    /**
+     * check if the Ant holds food.
+     *
+     * @return true if he Ant holds food.
+     */
+    public boolean hasFood (){
+        return holdFood;
+    }
+
+    /**
+     *  Set holdFood to true when the Ant has picked up some food and to false when it drops the food.
+     * @param holdFood
+     */
+    public void setHoldFood(boolean holdFood) {
+        this.holdFood = holdFood;
+    }
 
     /**
      * Constructs an ant given a basic ant, the world and a recorder.
@@ -73,7 +90,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     /**
      * return the state of the Ant to normal.
      */
-    public void SetAntTONormalStatus(){
+    public void SetAntTONormalState(){
         adventurer = false;
     }
 
@@ -97,6 +114,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
      */
     private Trail getTrgetTrail(Clearing currentClearing){
         //TODO complete this
+
         return null;
     }
 
