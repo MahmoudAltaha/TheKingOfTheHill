@@ -33,13 +33,12 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
     private final World<Clearing, Trail> world;
 
-
     private final Recorder recorder;
 
-
     private Clearing position;
-    private List ClearingSequence ;
 
+    private List ClearingSequence ;
+    private boolean adventurer = false;
 
 
     /**
@@ -55,7 +54,28 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         this.recorder = recorder;
     }
 
+    /**
+     * check the state of the Ant
+     *
+     * @return true if the Ant is an adventurer.
+     */
+    public boolean isAdventurer(){
+        return adventurer;
+    }
 
+    /**
+     * change the current state of the Ant to Adventurer
+     */
+    public void SetAntTOAdventurer(){
+        adventurer = true;
+    }
+
+    /**
+     * return the state of the Ant to normal.
+     */
+    public void SetAntTONormalStatus(){
+        adventurer = false;
+    }
 
 
     /**
