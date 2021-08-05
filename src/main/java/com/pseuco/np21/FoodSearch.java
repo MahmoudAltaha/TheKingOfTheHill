@@ -13,6 +13,39 @@ public class FoodSearch {
     }
 
     /**
+     * this methode is used to check whether the chosen Trail still the right one .
+     *
+     * @param  currentCLearing
+     * @param  targetTrail
+     * @return true if the targetTrail still valid.
+     */
+    private boolean checkTrail(Clearing currentCLearing, Trail targetTrail){
+        //TODO complete this
+        return false;
+    }
+
+    /**
+     * this methode is used to choose the right Trail according to the project description.
+     * @param  currentClearing
+     * @return the targetTrail.
+     */
+    private Trail getTrgetTrail(Clearing currentClearing){
+        //TODO complete this
+
+        return null;
+    }
+
+    /**
+     * this methode is used to check whether the Clearing has a Connected Trail.
+     * @param c  Current Clearing.
+     * @return   return true if you found a Trail.
+     */
+    private boolean checkTrail(Clearing c){
+        //TODO complete this
+        return true;
+    }
+
+    /**
      *this methode will be used to handle the entering to a Trail according to the behavior of an Ant.
      *
      * @param c    The Clearing from which the Ant comes.

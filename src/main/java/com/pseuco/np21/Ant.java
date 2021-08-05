@@ -95,38 +95,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     }
 
 
-    /**
-     * this methode is used to check whether the chosen Trail still the right one .
-     *
-     * @param  currentCLearing
-     * @param  targetTrail
-     * @return true if the targetTrail still valid.
-     */
-    private boolean checkTrail(Clearing currentCLearing, Trail targetTrail){
-        //TODO complete this
-        return false;
-    }
-
-    /**
-     * this methode is used to choose the right Trail according to the project description.
-     * @param  currentClearing
-     * @return the targetTrail.
-     */
-    private Trail getTrgetTrail(Clearing currentClearing){
-        //TODO complete this
-
-        return null;
-    }
-
-    /**
-     * this methode is used to check whether the Clearing has a Connected Trail.
-     * @param c  Current Clearing.
-     * @return   return true if you found a Trail.
-     */
-    private boolean checkTrail(Clearing c){
-        //TODO complete this
-        return true;
-    }
 
     /**
      * this methode used to get the current Sequence.
@@ -173,6 +141,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         position = world.anthill();
         recorder.spawn(this);
         addClearingToSequence(position);  // adding the antHill to the sequence
+        FoodSearch foodSearch = new FoodSearch(this);
+        Homeward homeward = new Homeward(this);
 
         while (world.isFoodLeft()) {
 
