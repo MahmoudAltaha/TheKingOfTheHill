@@ -20,7 +20,7 @@ public class FoodSearch {
      * @return     true when the Ant has entered the Trail successfully.
      * @throws InterruptedException
      */
-    public boolean enterTrail(Clearing c, Trail t)throws InterruptedException {
+    synchronized public boolean enterTrail(Clearing c, Trail t)throws InterruptedException {
         assert t  != null ;
         while (!t.isSpaceLeft()){
             wait();
@@ -37,7 +37,7 @@ public class FoodSearch {
      * @return    true if the Ant has entered the Clearing successfully
      * @throws InterruptedException
      */
-    public boolean enterClearing(Trail t,Clearing c)throws InterruptedException {
+    synchronized public boolean enterClearing(Trail t,Clearing c)throws InterruptedException {
         while (!c.isSpaceLeft()){
             wait(ant.disguise());
         }
@@ -56,7 +56,7 @@ public class FoodSearch {
      * @return      true if the Ant has entered the Trail successfully
      * @throws InterruptedException
      */
-    public boolean backToTrail(Clearing c, Trail t)throws InterruptedException {
+    synchronized public boolean backToTrail(Clearing c, Trail t)throws InterruptedException {
         assert t  != null ;
         while (!t.isSpaceLeft()){
             wait();
@@ -74,7 +74,7 @@ public class FoodSearch {
      * @return     true if the Ant has entered the Clearing successfully.
      * @throws InterruptedException
      */
-    public boolean backTOClearing(Trail t,Clearing c)throws InterruptedException {
+    synchronized public boolean backTOClearing(Trail t,Clearing c)throws InterruptedException {
         while (!c.isSpaceLeft()){
             wait(ant.disguise());
         }
@@ -90,7 +90,7 @@ public class FoodSearch {
      * @param c     The current Clearing from which the Ant will pick up the Food.
      * @return      true if the food was collected successfully.
      */
-    public boolean pickUPFood(Clearing c){
+    synchronized public boolean pickUPFood(Clearing c){
         //TODO handle the process of picking up the food.
         return  false;
     }
