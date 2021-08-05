@@ -25,6 +25,7 @@ public class FoodSearch {
         while (!t.isSpaceLeft()){
             wait();
         }
+
         t.enter();
         return true;
     }
