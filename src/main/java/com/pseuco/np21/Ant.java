@@ -41,6 +41,20 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     private boolean adventurer = false;
     private boolean holdFood = false;
 
+
+    /**
+     * Constructs an ant given a basic ant, the world and a recorder.
+     *
+     * @param ant         the template ant
+     * @param world       the ant has to live in
+     * @param recorder    to log all actions against
+     */
+    public Ant(final com.pseuco.np21.shared.Ant ant, final World<Clearing, Trail> world, final Recorder recorder) {
+        super(ant);
+        this.world = world;
+        this.recorder = recorder;
+    }
+
     /**
      * check if the Ant holds food.
      *
@@ -58,18 +72,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         this.holdFood = holdFood;
     }
 
-    /**
-     * Constructs an ant given a basic ant, the world and a recorder.
-     *
-     * @param ant         the template ant
-     * @param world       the ant has to live in
-     * @param recorder    to log all actions against
-     */
-    public Ant(final com.pseuco.np21.shared.Ant ant, final World<Clearing, Trail> world, final Recorder recorder) {
-        super(ant);
-        this.world = world;
-        this.recorder = recorder;
-    }
 
     /**
      * check the state of the Ant
@@ -145,6 +147,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         Homeward homeward = new Homeward(this);
 
         while (world.isFoodLeft()) {
+
 
         }
 
