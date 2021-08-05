@@ -50,29 +50,32 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     }
 
 
-    //TODO Add Methods to get the Target Trail
+
 
     /**
+     * this methode is used to check whether the chosen Trail still the right one .
      *
-     * @param currentCLearing
-     * @param targetTrail
-     * @return
+     * @param  currentCLearing
+     * @param  targetTrail
+     * @return true if the targetTrail still valid.
      */
     private boolean checkTrail(Clearing currentCLearing, Trail targetTrail){
+        //TODO complete this
         return false;
     }
 
     /**
-     *
-     * @param currentClearing
-     * @return
+     * this methode is used to choose the right Trail according to the project description.
+     * @param  currentClearing
+     * @return the targetTrail.
      */
     private Trail getTrgetTrail(Clearing currentClearing){
+        //TODO complete this
         return null;
     }
 
     /**
-     * this methode used to check whether the Clearing has a Connected Trail.
+     * this methode is used to check whether the Clearing has a Connected Trail.
      * @param c  Current Clearing
      * @return   return true if you found a Trail
      */
