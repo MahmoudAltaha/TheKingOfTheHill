@@ -32,9 +32,15 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     }
 
     private final World<Clearing, Trail> world;
+
+
     private final Recorder recorder;
 
+
     private Clearing position;
+    private List ClearingSequence ;
+
+
 
     /**
      * Constructs an ant given a basic ant, the world and a recorder.
@@ -50,36 +56,76 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     }
 
 
-    //TODO Add Methods to get the Target Trail
+
 
     /**
+     * this methode is used to check whether the chosen Trail still the right one .
      *
-     * @param currentCLearing
-     * @param targetTrail
-     * @return
+     * @param  currentCLearing
+     * @param  targetTrail
+     * @return true if the targetTrail still valid.
      */
     private boolean checkTrail(Clearing currentCLearing, Trail targetTrail){
+        //TODO complete this
         return false;
     }
 
     /**
-     *
-     * @param currentClearing
-     * @return
+     * this methode is used to choose the right Trail according to the project description.
+     * @param  currentClearing
+     * @return the targetTrail.
      */
     private Trail getTrgetTrail(Clearing currentClearing){
+        //TODO complete this
         return null;
     }
 
     /**
-     * this methode used to check whether the Clearing has a Connected Trail.
-     * @param c  Current Clearing
-     * @return   return true if you found a Trail
+     * this methode is used to check whether the Clearing has a Connected Trail.
+     * @param c  Current Clearing.
+     * @return   return true if you found a Trail.
      */
     private boolean checkTrail(Clearing c){
         //TODO complete this
         return true;
     }
+
+    /**
+     * this methode used to get the current Sequence.
+     *
+     * @return the sequence (visited Clearings).
+     */
+    public List getClearingSequence() {
+        return ClearingSequence;
+    }
+
+    /**
+     * this methode used to add a new Clearing to the Sequence.
+     *
+     * @param c the Clearing to be added.
+     */
+    public void addClearingToSequence(Clearing c){
+        //TODO implement this
+    }
+
+    /**
+     * this methode is used to remove a Clearing from the sequence.
+     * @param c the Clearing to be removed.
+     */
+    public void removeClearingFromSequence(Clearing c){
+        //TODO implement this
+
+
+    }
+
+    /**
+     * this methode is used to get to recorder.
+     * @return Recorder
+     */
+    public Recorder getRecorder() {
+        return recorder;
+    }
+
 
 
     /**
@@ -88,7 +134,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     public void run() {
         position = world.anthill();
         recorder.spawn(this);
-
+        addClearingToSequence(position);  // adding the antHill to the sequence
 
         while (world.isFoodLeft()) {
 
@@ -97,4 +143,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         // TODO handle termination
 
     }
+
+
+
+
 }
