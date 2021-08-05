@@ -25,8 +25,10 @@ public class FoodSearch {
         while (!t.isSpaceLeft()){
             wait();
         }
-
         t.enter();
+        ant.getRecorder().enter(ant,c);
+
+
         return true;
     }
 
