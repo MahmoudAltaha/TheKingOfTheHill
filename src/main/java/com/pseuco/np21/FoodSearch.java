@@ -1,7 +1,6 @@
 package com.pseuco.np21;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -11,7 +10,7 @@ public class FoodSearch {
 
     /**
      * constructor for the Class
-     * @param ant
+     * @param ant the Ant
      */
     public FoodSearch(Ant ant) {
         this.ant = ant;
@@ -20,21 +19,16 @@ public class FoodSearch {
     /**
      * this methode is used to check whether the chosen Trail still the right one .
      *
-     * @param  currentCLearing
-     * @param  targetTrail
+     * @param  currentCLearing the current Clearing
+     * @param  targetTrail  the TargetTrail
      * @return true if the targetTrail still valid.
      */
      public boolean checkTrail(Clearing currentCLearing, Trail targetTrail){
-        //TODO complete this
-        return false;
+         Trail t = getTargetTrail(currentCLearing);
+         return t.equals(targetTrail);
      }
 
-    public boolean isInSequence(Clearing c){
-        if(ant.getClearingSequence().contains(c)){
-            return true;
-        }
-        return false;
-    }
+
 
     /**
      * this method used intern to compare the pheromone of two Trails and to add the min one to the list.
@@ -65,17 +59,16 @@ public class FoodSearch {
      /**
      * this methode is used to choose the right Trail according to the project description.
      *
-     * @param  currentClearing
+     * @param  currentClearing the currentClearing
      * @return the targetTrail.
      */
      public Trail getTargetTrail(Clearing currentClearing){
-        //TODO complete this
         //list of all connected Trails
          List<Trail> trailList = currentClearing.connectsTo();
         // remove all Trails which leads to Clearings that are already in the sequence.
         for (int i = 0 ; i < trailList.size(); i++ ){
             Trail t =  trailList.get(i);
-            if ( isInSequence(t.to()) ){
+            if (ant.isInSequence(t.to()) ){
                 trailList.remove(i);
             }
         }
@@ -85,7 +78,7 @@ public class FoodSearch {
              Trail t = trailList.get(i);
             if(! (t.food().isAPheromone()) ){
                 allNaP = false;
-            };
+            }
         }
         Random random = new Random();
         if (allNaP){  // if so then pick a Trail randomly .
@@ -117,7 +110,7 @@ public class FoodSearch {
                 int randomNapIndex = random.nextInt(trailsListWithJustNap.size());
                 targetTrail = trailsListWithJustNap.get(randomNapIndex);
             } else{
-                targetTrail =suggestedTrail; /* otherwise take that randomly picked Trail with NonNap-food-pheromone
+                targetTrail = suggestedTrail; /* otherwise take that randomly picked Trail with NonNap-food-pheromone
                 as a target Trail */
             }
         }
@@ -131,8 +124,12 @@ public class FoodSearch {
      * @return   return true if you found a Trail.
      */
     public boolean checkTrail(Clearing c){
-        //TODO complete this
-        return true;
+        List<Trail> connectedTrails = c.connectsTo();
+        // if the Clearing is the Hill and has one single Trail Or the Clearing is normal and has more than 1
+        if (connectedTrails.size() > 1 ||( connectedTrails.size() == 1 && c.equals(ant.getWorld().anthill())) ) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -150,7 +147,6 @@ public class FoodSearch {
         }
         t.enter();
         ant.getRecorder().enter(ant,c);
-
 
         return true;
     }
