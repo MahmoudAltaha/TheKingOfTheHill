@@ -114,14 +114,15 @@ public class FoodSearch {
     }
 
     /**
-     * this methode will be used to step back to the last Clearing from the sequence case d).
+     * this methode will be used to step back from an already visited clearing.
+     * to the last Clearing from the sequence case d).
      *
      * @param c     The Clearing from which the Ant comes.
      * @param t     The Trail which the Ant is heading to .
      * @return      true if the Ant has entered the Trail successfully
      * @throws InterruptedException
      */
-    synchronized public boolean backToTrail(Clearing c, Trail t)throws InterruptedException {
+    synchronized public boolean immediateReturnToTrail(Clearing c, Trail t)throws InterruptedException {
         assert t  != null ;
         while (!t.isSpaceLeft()){
             wait();
@@ -130,24 +131,68 @@ public class FoodSearch {
         ant.getRecorder().enter(ant,t);
         c.leave();
         ant.getRecorder().leave(ant,c);
-        if(! c.equals(ant.getWorld().anthill() ) ){ // if the left Clearing was not the hill->notifyAll.
             notifyAll();
-        }
         ant.removeClearingFromSequence(c);
+        //ToDO make this void.
+        return true;
+    }
+    /**
+     * this methode will be used to step back
+     * from a clearing for which it has no options to reach food other than turning back.
+     *
+     * @param c     The Clearing from which the Ant comes.
+     * @param t     The Trail which the Ant is heading to .
+     * @return      true if the Ant has entered the Trail successfully
+     * @throws InterruptedException
+     */
+    synchronized public boolean noFoodReturnToTrail(Clearing c, Trail t)throws InterruptedException {
+        assert t  != null ;
+        while (!t.isSpaceLeft()){
+            wait();
+        }
+        t.enter();
+        ant.getRecorder().enter(ant,t);
+        c.leave();
+        ant.getRecorder().leave(ant,c);
+        notifyAll();
+        ant.removeClearingFromSequence(c);
+        //TODO set HillPheromone to Map.
         //ToDO make this void.
         return true;
     }
 
 
     /**
-     * this methode will be used to step back to the last Clearing from the sequence case d) .
+     * this methode will be used to step back after being in a Trail which is connected
+     *  to an already visited clearing. case d)
      *
      * @param t    The Trail from which the Ant comes.
      * @param c    The Clearing which the Ant is heading to .
      * @return     true if the Ant has entered the Clearing successfully.
      * @throws InterruptedException
      */
-    synchronized public boolean backTOClearing(Trail t,Clearing c)throws InterruptedException {
+    synchronized public boolean ImmediateBackTOClearing(Trail t,Clearing c)throws InterruptedException {
+        while (!c.isSpaceLeft()){
+            wait(ant.disguise());
+        }
+        /*ToDo check whether the ant has left the wait(disguise) by having killed
+            if so then terminate Now!!
+           */
+        //TODO handle entering
+        return  true;
+    }
+
+    /**
+     * this methode will be used to step back
+     * from a Trail which was connected to a clearing for which it has no options
+     * to reach food other than turning back.
+     *
+     * @param t    The Trail from which the Ant comes.
+     * @param c    The Clearing which the Ant is heading to .
+     * @return     true if the Ant has entered the Clearing successfully.
+     * @throws InterruptedException
+     */
+    synchronized public boolean noFoodBackTOClearing(Trail t,Clearing c)throws InterruptedException {
         while (!c.isSpaceLeft()){
             wait(ant.disguise());
         }
