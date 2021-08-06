@@ -15,11 +15,11 @@ public class FoodSearch {
     /**
      * this methode is used to check whether the chosen Trail still the right one .
      *
-     * @param  currentCLearing
+     * @param  currentClearing
      * @param  targetTrail
      * @return true if the targetTrail still valid.
      */
-    private boolean checkTrail(Clearing currentCLearing, Trail targetTrail){
+    private boolean checkTrail(Clearing currentClearing, Trail targetTrail){
         //TODO complete this
         return false;
     }
@@ -29,7 +29,7 @@ public class FoodSearch {
      * @param  currentClearing
      * @return the targetTrail.
      */
-    private Trail getTrgetTrail(Clearing currentClearing){
+    public Trail getTargetTrail(Clearing currentClearing){
         //TODO complete this
 
         return null;
@@ -40,7 +40,7 @@ public class FoodSearch {
      * @param c  Current Clearing.
      * @return   return true if you found a Trail.
      */
-    private boolean checkTrail(Clearing c){
+    public boolean checkTrail(Clearing c){
         //TODO complete this
         return true;
     }
@@ -122,7 +122,7 @@ public class FoodSearch {
     }
 
     /**
-     * this methode will be userd
+     * this methode will be used
      * @param c     The current Clearing from which the Ant will pick up the Food.
      * @return      true if the food was collected successfully.
      */
