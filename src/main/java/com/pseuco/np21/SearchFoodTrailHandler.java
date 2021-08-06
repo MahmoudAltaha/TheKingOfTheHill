@@ -67,9 +67,10 @@ public class SearchFoodTrailHandler {
             }
         }
         Random random = new Random();
-        if (allNaP){  // if so then pick a Trail randomly .
+        if (allNaP){  // if so then pick a NaP Trail randomly .
             int index = random.nextInt(trailList.size());
             targetTrail = trailList.get(index);
+            targetTrail.setSelectionReason(2);  // update the SelectionReason in the Trail.
         }
         else {  // the trailList has Trails with non Nap-foodPheromone. it may also have Trails with Nap-ph tho.
             int size = trailList.size();  // get the size of the list
@@ -95,9 +96,11 @@ public class SearchFoodTrailHandler {
             if (ant.impatience() < suggestedTrail.food().value() && !trailsListWithJustNap.isEmpty()){
                 int randomNapIndex = random.nextInt(trailsListWithJustNap.size());
                 targetTrail = trailsListWithJustNap.get(randomNapIndex);
+                targetTrail.setSelectionReason(2); // update the SelectionReason in the Trail.
             } else{
                 targetTrail = suggestedTrail; /* otherwise take that randomly picked Trail with NonNap-food-pheromone
                 as a target Trail */
+                targetTrail.setSelectionReason(1); // update the SelectionReason in the Trail.
             }
         }
         return targetTrail;
