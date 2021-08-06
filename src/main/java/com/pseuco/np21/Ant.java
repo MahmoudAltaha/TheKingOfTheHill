@@ -34,6 +34,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     }
   }
 
+
   private final World<Clearing, Trail> world;
 
   private final Recorder recorder;
@@ -130,6 +131,21 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   }
 
   /**
+   * this methode is used to check if the Clearing is already in the sequence.
+   *
+   * @param c Cleaing
+   * @return  true if the Clearing is already in the sequence.
+   */
+  public boolean isInSequence(Clearing c){
+    if(getClearingSequence().contains(c)){
+      return true;
+    }
+    return false;
+  }
+
+
+
+  /**
    * this methode is used to get to recorder.
    *
    * @return Recorder
@@ -137,6 +153,16 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   public Recorder getRecorder() {
     return recorder;
   }
+
+  /**
+   * getter for the World
+   *
+   * @return world.
+   */
+  public World<Clearing, Trail> getWorld() {
+    return world;
+  }
+
 
 
   public void forwardCheck(FoodSearch foodSearch) throws InterruptedException {
