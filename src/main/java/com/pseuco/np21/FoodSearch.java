@@ -1,5 +1,9 @@
 package com.pseuco.np21;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
+
 public class FoodSearch {
 
     private final Ant ant;
@@ -24,13 +28,44 @@ public class FoodSearch {
         return false;
     }
 
+        public boolean isInSequence(Clearing c){
+        if(ant.getClearingSequence().contains(c)){
+            return true;
+        }
+        return false;
+        }
     /**
      * this methode is used to choose the right Trail according to the project description.
+     *
      * @param  currentClearing
      * @return the targetTrail.
      */
-    private Trail getTrgetTrail(Clearing currentClearing){
+    private Trail getTargetTrail(Clearing currentClearing){
         //TODO complete this
+        //list of all connected Trails
+         List<Trail> trailList = currentClearing.connectsTo();
+        // remove all Trail which leads to Clearing that are already in the sequence.
+        for (int i = 0 ; i < trailList.size(); i++ ){
+            Trail t =  trailList.get(i);
+            if ( isInSequence(t.to()) ){
+                trailList.remove(i);
+            }
+        }
+       boolean allNaP = true;  // check if all Trails has FoodPheromone = Nap
+        for (int i = 0 ; i <trailList.size(); i++) {
+             Trail t = trailList.get(i);
+            if(! (t.food().isAPheromone()) ){
+                allNaP = false;
+            };
+        }
+        Random random = new Random();
+        if (allNaP){  // if so then pick a Trail randomly .
+            int index = random.nextInt(trailList.size());
+            Trail target = trailList.get(index);
+            return target;
+        }
+       // Trail t = trailList.stream().min(Comparator.comparing(Trail::food)).get();
+
 
         return null;
     }
