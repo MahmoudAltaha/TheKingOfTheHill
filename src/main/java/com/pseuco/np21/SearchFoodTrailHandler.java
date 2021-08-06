@@ -15,7 +15,8 @@ public class SearchFoodTrailHandler {
      * @return true if the targetTrail still valid.
      */
     public boolean checkTrail(Clearing currentClearing , Trail targetTrail,Ant ant){
-        Trail t = getTargetTrail(currentClearing,ant);
+        List<Trail> trailList = currentClearing.connectsTo();
+        Trail t = getTargetTrail(trailList,ant);
         return t.equals(targetTrail);
     }
 
@@ -45,12 +46,11 @@ public class SearchFoodTrailHandler {
     /**
      * this methode is used to choose the right Trail according to the project description.
      *
-     * @param  currentClearing the currentClearing
-     * @return the targetTrail.
+     * @param trailList the Trails from which we the right one choose.
+     * @param ant       Ant.
+     * @return      The Target Trail.
      */
-    public Trail getTargetTrail(Clearing currentClearing,Ant ant){
-        //list of all connected Trails
-        List<Trail> trailList = currentClearing.connectsTo();
+    public Trail getTargetTrail(List<Trail> trailList,Ant ant){
         assert (!trailList.isEmpty());  // check if the list are not Empty
         for (int i = 0; i < trailList.size(); i++) {
             Trail t = trailList.get(i);

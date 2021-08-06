@@ -1,6 +1,8 @@
 package com.pseuco.np21;
 
 
+import java.util.List;
+
 public class FoodSearch {
 
     private final Ant ant;
@@ -34,7 +36,8 @@ public class FoodSearch {
      * @return the targetTrail.
      */
      public Trail getTargetTrail(Clearing currentClearing){
-        return searchTrailHandler.getTargetTrail(currentClearing,ant);
+         List<Trail> trailList = currentClearing.connectsTo();
+         return searchTrailHandler.getTargetTrail(trailList,ant);
     }
 
     /**
