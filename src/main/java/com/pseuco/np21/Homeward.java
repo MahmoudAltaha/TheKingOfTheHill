@@ -20,7 +20,7 @@ public class Homeward {
      * @param  targetTrail
      * @return true if the targetTrail still valid.
      */
-    private boolean checkTrail(Clearing currentCLearing, Trail targetTrail){
+    public boolean checkTrail(Clearing currentCLearing, Trail targetTrail){
         //TODO complete this
         return false;
     }
@@ -30,7 +30,7 @@ public class Homeward {
      * @param  currentClearing
      * @return the targetTrail.
      */
-    private Trail getTrgetTrail(Clearing currentClearing){
+    public Trail getTargetTrail(Clearing currentClearing){
         //TODO complete this
 
         return null;
@@ -41,7 +41,7 @@ public class Homeward {
      * @param c  Current Clearing.
      * @return   return true if you found a Trail.
      */
-    private boolean checkTrail(Clearing c){
+    public boolean checkTrail(Clearing c){
         //TODO complete this
         return true;
     }
