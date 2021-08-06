@@ -51,12 +51,11 @@ public class SearchFoodTrailHandler {
     public Trail getTargetTrail(Clearing currentClearing,Ant ant){
         //list of all connected Trails
         List<Trail> trailList = currentClearing.connectsTo();
-        // remove all Trails which leads to Clearings that are already in the sequence.
         assert (!trailList.isEmpty());  // check if the list are not Empty
         for (int i = 0; i < trailList.size(); i++) {
             Trail t = trailList.get(i);
-            // remove all Trails which are already visited or has Map Value.
-            if (ant.isInSequence(t.to()) || t.food().isInfinite()) {
+            // remove all Trails which are already has Map Value Or the last one in Sequence.
+            if (ant.isLastOneInSequence(t.to()) || t.food().isInfinite()) {
                 trailList.remove(t);
             }
         }

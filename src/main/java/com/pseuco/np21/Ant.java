@@ -138,10 +138,18 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
    * @return  true if the Clearing is already in the sequence.
    */
   public boolean isInSequence(Clearing c){
-    if(getClearingSequence().contains(c)){
-      return true;
-    }
-    return false;
+    return getClearingSequence().contains(c);
+  }
+
+  /**
+   * this methode is used to check if the Clearing is the last Clearing in the sequence.
+   *
+   * @param c Cleaing
+   * @return  true if the Clearing is already in the sequence.
+   */
+  public boolean isLastOneInSequence(Clearing c){
+    Clearing lastClearing = clearingSequence.get(clearingSequence.size()-1);
+    return lastClearing.equals(c);
   }
 
 
