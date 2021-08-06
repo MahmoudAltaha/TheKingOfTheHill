@@ -41,14 +41,30 @@ public class FoodSearch {
     }
 
     /**
-     * this methode is used to check whether the Clearing has a Connected Trail.
+     * this methode is used to check whether the Clearing has valid Connected Trail.
      *
      * @param c  Current Clearing.
      * @return   return true if you found a Trail.
      */
     public boolean checkTrail(Clearing c){
-       return searchTrailHandler.checkTrail(c,ant);
+            List<Trail> connectedTrails = c.connectsTo();
+      return   searchTrailHandler.checkTrail(c,connectedTrails,ant);
     }
+
+    /**
+     * this methode is used when we need to check whether there are valid Trails after we went throw
+     * the special case when we enter a Clearing which is already in the sequence. so after one step back
+     * we do this check. be careful!!! when this methode returns false , that doesn't mean we have to start the
+     * homeward. it does mean that we have to once again back and mark the Trail we took to MaP!!
+     * @param currentClearing   the current Clearing where the ant is staying now.
+     * @param lastWrongDeletedClearing  the last deleted Clearing after going throw the special case d)
+     * @param ant   the Ant
+     * @return true if we found a valid Trail,in this case we get the Trail and enter it normally.
+     */
+    public boolean specialCheckTrail(Clearing currentClearing,Clearing lastWrongDeletedClearing,Ant ant){
+       return searchTrailHandler.specialCheckTrail(currentClearing,lastWrongDeletedClearing,ant);
+    }
+
 
     /**
      *this methode will be used to handle the entering to a Trail according to the behavior of an Ant.
@@ -64,8 +80,17 @@ public class FoodSearch {
             wait();
         }
         t.enter();
-        ant.getRecorder().enter(ant,c);
-
+        ant.getRecorder().enter(ant,t);
+        c.leave();
+        ant.getRecorder().leave(ant,c);
+        if(! c.equals(ant.getWorld().anthill() ) ){ // if the left Clearing was not the hill->notifyAll.
+            notifyAll();
+        }
+        if (! ant.isInSequence(t.to())){ // if the next Clearing was not in the sequence then update Hill-Pheromone.
+            int value = Math.min(t.anthill().value(),ant.getClearingSequence().size());
+                //TODO update Hill Pheromone.
+        }
+            //ToDO make this void.
         return true;
     }
 
@@ -89,7 +114,7 @@ public class FoodSearch {
     }
 
     /**
-     * this methode will be used to step back to the last Clearing from the sequence .
+     * this methode will be used to step back to the last Clearing from the sequence case d).
      *
      * @param c     The Clearing from which the Ant comes.
      * @param t     The Trail which the Ant is heading to .
@@ -101,13 +126,21 @@ public class FoodSearch {
         while (!t.isSpaceLeft()){
             wait();
         }
-        //TODO handle entering
-        return false;
+        t.enter();
+        ant.getRecorder().enter(ant,t);
+        c.leave();
+        ant.getRecorder().leave(ant,c);
+        if(! c.equals(ant.getWorld().anthill() ) ){ // if the left Clearing was not the hill->notifyAll.
+            notifyAll();
+        }
+        ant.removeClearingFromSequence(c);
+        //ToDO make this void.
+        return true;
     }
 
 
     /**
-     * this methode will be used to step back to the last Clearing from the sequence .
+     * this methode will be used to step back to the last Clearing from the sequence case d) .
      *
      * @param t    The Trail from which the Ant comes.
      * @param c    The Clearing which the Ant is heading to .
