@@ -4,13 +4,14 @@ package com.pseuco.np21;
 public class FoodSearch {
 
     private final Ant ant;
-    private SearchFoodTrailHandler searchTrailHandler;
+    private final SearchFoodTrailHandler searchTrailHandler;
     /**
      * constructor for the Class
      * @param ant the Ant
      */
     public FoodSearch(Ant ant) {
         this.ant = ant;
+        this.searchTrailHandler = new SearchFoodTrailHandler();
     }
 
     /**
