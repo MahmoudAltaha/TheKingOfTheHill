@@ -71,7 +71,7 @@ public class FoodSearch {
                Trail t = trailList.get(i);
                // remove all Trails which are already visited or has Map Value.
                if (ant.isInSequence(t.to()) || t.food().isInfinite()) {
-                   trailList.remove(i);
+                   trailList.remove(t);
                }
            }
          Trail targetTrail;
