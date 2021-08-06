@@ -144,12 +144,13 @@ public class SearchFoodTrailHandler {
      */
     public boolean specialCheckTrail(Clearing currentClearing,Clearing lastWrongDeletedClearing,Ant ant){
         List<Trail> connectedTrails = currentClearing.connectsTo();
+        // remove the Trail that leads to the deleted Clearing
         for (int i = 0 ; i < connectedTrails.size(); i++){
             Trail t = connectedTrails.get(i);
             if (t.to().equals(lastWrongDeletedClearing)){
                 connectedTrails.remove(t);
             }
-        }
+        } // do the check normally after that.
         return checkTrail(currentClearing,connectedTrails,ant);
     }
 
