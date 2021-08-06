@@ -1,5 +1,6 @@
 package com.pseuco.np21;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -23,34 +24,62 @@ public class FoodSearch {
      * @param  targetTrail
      * @return true if the targetTrail still valid.
      */
-    public boolean checkTrail(Clearing currentCLearing, Trail targetTrail){
+     public boolean checkTrail(Clearing currentCLearing, Trail targetTrail){
         //TODO complete this
         return false;
-    }
+     }
 
-        public boolean isInSequence(Clearing c){
+    public boolean isInSequence(Clearing c){
         if(ant.getClearingSequence().contains(c)){
             return true;
         }
         return false;
-        }
+    }
+
     /**
+     * this method used intern to compare the pheromone of two Trails and to add the min one to the list.
+     *
+     * @param t1 first Trail
+     * @param t2 second Trail
+     * @param minTrails list of min Trails.
+     */
+        private void compareTrails(Trail t1, Trail t2, List<Trail> minTrails){
+            com.pseuco.np21.shared.Trail.Pheromone p1 = t1.food();
+            com.pseuco.np21.shared.Trail.Pheromone p2 = t2.food();
+            if ( p1.value() > p2.value()){
+                minTrails.add(t2);
+                if (minTrails.contains(t1)){
+                    minTrails.remove(t1);
+                }
+            }else if (p1.value() < p2.value()){
+                minTrails.add(t1);
+                if (minTrails.contains(t2)){
+                    minTrails.remove(t2);
+                }
+            } else {
+                minTrails.add(t1);
+                minTrails.add(t2);
+            }
+        }
+
+     /**
      * this methode is used to choose the right Trail according to the project description.
      *
      * @param  currentClearing
      * @return the targetTrail.
      */
-    public Trail getTargetTrail(Clearing currentClearing){
+     public Trail getTargetTrail(Clearing currentClearing){
         //TODO complete this
         //list of all connected Trails
          List<Trail> trailList = currentClearing.connectsTo();
-        // remove all Trail which leads to Clearing that are already in the sequence.
+        // remove all Trails which leads to Clearings that are already in the sequence.
         for (int i = 0 ; i < trailList.size(); i++ ){
             Trail t =  trailList.get(i);
             if ( isInSequence(t.to()) ){
                 trailList.remove(i);
             }
         }
+         Trail targetTrail;
        boolean allNaP = true;  // check if all Trails has FoodPheromone = Nap
         for (int i = 0 ; i <trailList.size(); i++) {
              Trail t = trailList.get(i);
@@ -61,17 +90,43 @@ public class FoodSearch {
         Random random = new Random();
         if (allNaP){  // if so then pick a Trail randomly .
             int index = random.nextInt(trailList.size());
-            Trail target = trailList.get(index);
-            return target;
+            targetTrail = trailList.get(index);
         }
-       // Trail t = trailList.stream().min(Comparator.comparing(Trail::food)).get();
-
-
-        return null;
+        else {  // the trailList has Trails with non Nap-foodPheromone. it may also have Trails with Nap-ph tho.
+            int size = trailList.size();  // get the size of the list
+            List<Trail> trailsListNonNap = new ArrayList<>(); // list with Trails which has non Nap-Food-ph.
+            List<Trail> trailsListWithJustNap = new ArrayList<>();// list with Trails which has Nap-food-ph.
+            for (int i = 0; i < size; i++) {
+                int valueToCheck = trailList.get(i).food().value(); // pheromone of the Trail.
+                if (valueToCheck == -2) {  // check if the Trail has Nap food-Ph.
+                    trailsListWithJustNap.add(trailList.get(i)); // if so add it to the JustNap list.
+                } else {
+                    trailsListNonNap.add(trailList.get(i)); //otherwise add it to the NonNap list.
+                }
+            }
+            List<Trail> minTrails = new ArrayList<>(); // list which should contains the min-NonNap Pheromones.
+            for (int i = 0; i < (size - 1); i++) {  // compare the NonNap-Pheromones and add it to the list.
+                Trail t1 = trailsListNonNap.get(i);
+                Trail t2 = trailsListNonNap.get(i + 1);
+                compareTrails(t1, t2, minTrails);
+            }
+            int randomIndex = random.nextInt(trailsListNonNap.size());//get random number
+            Trail suggestedTrail = trailsListNonNap.get(randomIndex);// the randomly picked Trail which has the min Ph.
+            // check if the impatience of the Ant are smaller than the min pheromone. if so get a random Nap-food-ph Trail.
+            if (ant.impatience() < suggestedTrail.food().value() && !trailsListWithJustNap.isEmpty()){
+                int randomNapIndex = random.nextInt(trailsListWithJustNap.size());
+                targetTrail = trailsListWithJustNap.get(randomNapIndex);
+            } else{
+                targetTrail =suggestedTrail; /* otherwise take that randomly picked Trail with NonNap-food-pheromone
+                as a target Trail */
+            }
+        }
+        return targetTrail;
     }
 
     /**
      * this methode is used to check whether the Clearing has a Connected Trail.
+     *
      * @param c  Current Clearing.
      * @return   return true if you found a Trail.
      */
