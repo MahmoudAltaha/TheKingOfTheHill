@@ -23,7 +23,7 @@ public class FoodSearch {
      * @param  targetTrail
      * @return true if the targetTrail still valid.
      */
-    private boolean checkTrail(Clearing currentCLearing, Trail targetTrail){
+    public boolean checkTrail(Clearing currentCLearing, Trail targetTrail){
         //TODO complete this
         return false;
     }
@@ -40,7 +40,7 @@ public class FoodSearch {
      * @param  currentClearing
      * @return the targetTrail.
      */
-    private Trail getTargetTrail(Clearing currentClearing){
+    public Trail getTargetTrail(Clearing currentClearing){
         //TODO complete this
         //list of all connected Trails
          List<Trail> trailList = currentClearing.connectsTo();
@@ -75,7 +75,7 @@ public class FoodSearch {
      * @param c  Current Clearing.
      * @return   return true if you found a Trail.
      */
-    private boolean checkTrail(Clearing c){
+    public boolean checkTrail(Clearing c){
         //TODO complete this
         return true;
     }
