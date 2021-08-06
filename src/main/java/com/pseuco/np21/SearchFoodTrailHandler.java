@@ -55,7 +55,7 @@ public class SearchFoodTrailHandler {
         for (int i = 0; i < trailList.size(); i++) {
             Trail t = trailList.get(i);
             // remove all Trails which are already has Map Value Or the last one in Sequence.
-            if (ant.isLastOneInSequence(t.to()) || t.food().isInfinite()) {
+            if (ant.isSecondLastVisitedInSequence(t.to()) || t.food().isInfinite()) {
                 trailList.remove(t);
             }
         }
@@ -125,7 +125,8 @@ public class SearchFoodTrailHandler {
                     TrailWithoutMaP.add(t);
                 }
             }
-            // if the number of Trails with (non-Map-Food-ph.) bigger than 1 return true
+            // if the number of Trails with (non-Map-Food-ph.)
+            // bigger than 1( cause there is always the one from which we come) return true
             return TrailWithoutMaP.size() > 1;
         }
         return false;

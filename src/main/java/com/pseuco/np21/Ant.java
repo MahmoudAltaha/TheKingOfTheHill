@@ -142,14 +142,17 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   }
 
   /**
-   * this methode is used to check if the Clearing is the last Clearing in the sequence.
+   * this methode is used to check if the Clearing is the second last visited in the sequence.
    *
    * @param c Cleaing
    * @return  true if the Clearing is already in the sequence.
    */
-  public boolean isLastOneInSequence(Clearing c){
-    Clearing lastClearing = clearingSequence.get(clearingSequence.size()-1);
-    return lastClearing.equals(c);
+  public boolean isSecondLastVisitedInSequence(Clearing c){
+    if (clearingSequence.size()>=2) {
+      Clearing lastClearing = clearingSequence.get(clearingSequence.size() - 1);
+      return lastClearing.equals(c);
+    }
+    return false;
   }
 
 
