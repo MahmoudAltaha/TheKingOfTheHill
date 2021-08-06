@@ -19,12 +19,12 @@ public class FoodSearch {
     /**
      * this methode is used to check whether the chosen Trail still the right one .
      *
-     * @param  currentCLearing the current Clearing
+     * @param  currentClearing the current Clearing
      * @param  targetTrail  the TargetTrail
      * @return true if the targetTrail still valid.
      */
-     public boolean checkTrail(Clearing currentCLearing, Trail targetTrail){
-         Trail t = getTargetTrail(currentCLearing);
+     public boolean checkTrail(Clearing currentClearing , Trail targetTrail){
+         Trail t = getTargetTrail(currentClearing);
          return t.equals(targetTrail);
      }
 
@@ -42,14 +42,10 @@ public class FoodSearch {
             com.pseuco.np21.shared.Trail.Pheromone p2 = t2.food();
             if ( p1.value() > p2.value()){
                 minTrails.add(t2);
-                if (minTrails.contains(t1)){
-                    minTrails.remove(t1);
-                }
+                minTrails.remove(t1); // remove t1 if it is present , if not nothing is happening
             }else if (p1.value() < p2.value()){
                 minTrails.add(t1);
-                if (minTrails.contains(t2)){
-                    minTrails.remove(t2);
-                }
+                minTrails.remove(t2);
             } else {
                 minTrails.add(t1);
                 minTrails.add(t2);
