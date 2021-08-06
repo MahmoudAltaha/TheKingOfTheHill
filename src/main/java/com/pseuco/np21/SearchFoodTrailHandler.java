@@ -107,10 +107,10 @@ public class SearchFoodTrailHandler {
      * this methode is used to check whether the Clearing has a Connected Trail.
      *
      * @param c  Current Clearing.
+     * @param connectedTrails the Trails that are connected to the currentClearing c.
      * @return   return true if you found a Trail.
      */
-    public boolean checkTrail(Clearing c,Ant ant){
-        List<Trail> connectedTrails = c.connectsTo();
+    public boolean checkTrail(Clearing c,List<Trail> connectedTrails,Ant ant){
         if (connectedTrails.isEmpty()){
             return false;
         }
@@ -130,6 +130,27 @@ public class SearchFoodTrailHandler {
             return TrailWithoutMaP.size() > 1;
         }
         return false;
+    }
+
+    /**
+     * this methode is used when we need to check whether there are valid Trails after we went throw
+     * the special case when we enter a Clearing which is already in the sequence. so after one step back
+     * we do this check. be careful!!! when this methode returns false , that doesn't mean we have to start the
+     * homeward. it does mean that we have to once again back and mark the Trail we took to MaP!!
+     * @param currentClearing   the current Clearing where the ant is staying now.
+     * @param lastWrongDeletedClearing  the last deleted Clearing after going throw the special case d)
+     * @param ant   the Ant
+     * @return true if we found a valid Trail,in this case we get the Trail and enter it normally.
+     */
+    public boolean specialCheckTrail(Clearing currentClearing,Clearing lastWrongDeletedClearing,Ant ant){
+        List<Trail> connectedTrails = currentClearing.connectsTo();
+        for (int i = 0 ; i < connectedTrails.size(); i++){
+            Trail t = connectedTrails.get(i);
+            if (t.to().equals(lastWrongDeletedClearing)){
+                connectedTrails.remove(t);
+            }
+        }
+        return checkTrail(currentClearing,connectedTrails,ant);
     }
 
 }
