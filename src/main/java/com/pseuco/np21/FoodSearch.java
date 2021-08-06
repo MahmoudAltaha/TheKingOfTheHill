@@ -131,12 +131,7 @@ public class FoodSearch {
         }
         // if the Clearing is the Hill and has one single Trail which its Food not MaP return true
         if (connectedTrails.size() == 1 && c.equals(ant.getWorld().anthill() )) {
-            if (! connectedTrails.get(0).food().isInfinite()){
-                return true;
-            }
-            else {
-                return false;
-            }
+            return !connectedTrails.get(0).food().isInfinite();
         }  // Hill or normal Clearing with more than one Trail( the one from which the Ant has reached this Clearing)
         if (connectedTrails.size() > 1 ){
             List<Trail> TrailWithoutMaP = new ArrayList<>(); // list of non-Map-food-pheromone Trails
@@ -145,9 +140,8 @@ public class FoodSearch {
                     TrailWithoutMaP.add(t);
                 }
             }
-            if (TrailWithoutMaP.size() > 1){ // if the number of Trails with (non-Map-Food-ph.) bigger than 1 return true
-                return true;
-            }
+            // if the number of Trails with (non-Map-Food-ph.) bigger than 1 return true
+            return TrailWithoutMaP.size() > 1;
         }
         return false;
     }
