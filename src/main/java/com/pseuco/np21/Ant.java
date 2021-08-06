@@ -6,6 +6,7 @@ import com.pseuco.np21.shared.Recorder;
 import com.pseuco.np21.shared.World;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,7 +42,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
   private Clearing position;
 
-  private List<Clearing> clearingSequence;
+  private final List<Clearing> clearingSequence = new ArrayList<>();
   private boolean adventurer = false;
   private boolean holdFood = false;
 
