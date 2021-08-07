@@ -67,6 +67,18 @@ public class FoodSearch {
 
 
     /**
+     * this methode is used to get the right reversedTrail wHen we Want to step back;
+     * @param currentTwiceVisitedClearing   the currentTwiceVisitedClearing which we want to leave.
+     * @param trailWeComeFrom           the Trail from which we come from the last time.
+     * @return  the reversedTrail which we need to take
+     */
+    public Trail getTrailToStepBack(Clearing currentTwiceVisitedClearing,Trail trailWeComeFrom){
+        assert (trailWeComeFrom.to().equals(currentTwiceVisitedClearing));
+        return trailWeComeFrom.reverse();
+    }
+
+
+    /**
      *this methode will be used to handle the entering to a Trail according to the behavior of an Ant.
      *
      * @param c    The Clearing from which the Ant comes.

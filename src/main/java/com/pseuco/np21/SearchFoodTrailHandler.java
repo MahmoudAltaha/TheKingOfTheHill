@@ -157,4 +157,5 @@ public class SearchFoodTrailHandler {
         return checkTrail(currentClearing,connectedTrails,ant);
     }
 
+
 }
