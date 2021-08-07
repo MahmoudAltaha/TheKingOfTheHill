@@ -2,7 +2,7 @@ package com.pseuco.np21;
 
 
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
+
 
 public class FoodSearch {
 
@@ -118,12 +118,16 @@ public class FoodSearch {
         if( c.id() != ant.getWorld().anthill().id()  ){ // if the left Clearing was not the hill->notifyAll.
             notifyAll();
         }
+        if ( ! t.food().isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
+            ant.setAntTOAdventurer();
+        }
         // if the next Clearing was not in the sequence then update Hill-Pheromone. (no special cases)
         if (! ant.isInSequence(t.to())){
             // get the new Hill_Pheromone value
             int value = Math.min(t.anthill().value(),ant.getClearingSequence().size());
            com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
             t.updateAnthill(newPheromone); // update the HIll-Pheromone.
+            ant.getRecorder().updateAnthill(ant,t,newPheromone); // recorder stuff.
         }
             //ToDO make this void.
         return true;
@@ -143,6 +147,7 @@ public class FoodSearch {
         }
         // check how the Ant has left wait()
             if (!c.isSpaceLeft()){  // if there is
+                ant.getRecorder().attractAttention(ant); // recorder stuff.
                 ant.setHoldFood(false); // delete any food if the ant was holding food.
                 return false;  // the ant is about to die.
             }
@@ -167,15 +172,15 @@ public class FoodSearch {
      */
     synchronized public boolean immediateReturnToTrail(Clearing c, Trail t)throws InterruptedException {
         assert t  != null ;
-        while (!t.isSpaceLeft()){
+        while (!t.isSpaceLeft()){ // wait for a free space.
             wait();
         }
-        t.enter();
-        ant.getRecorder().enter(ant,t);
-        c.leave();
-        ant.getRecorder().leave(ant,c);
-            notifyAll();
-        ant.removeClearingFromSequence(c);
+        t.enter();   // enter the trail.
+        ant.getRecorder().enter(ant,t); // recorder stuff
+        c.leave();  // leave the wrong Clearing
+        ant.getRecorder().leave(ant,c);  // recorder stuff
+            notifyAll();  // notify all Ants that the Clearing has now a free space.
+        ant.removeClearingFromSequence(c);  // remove this wrong Clearing from the sequence.
         //ToDO make this void.
         return true;
     }
@@ -193,13 +198,18 @@ public class FoodSearch {
         while (!t.isSpaceLeft()){
             wait();
         }
-        t.enter();
-        ant.getRecorder().enter(ant,t);
-        c.leave();
-        ant.getRecorder().leave(ant,c);
-        notifyAll();
+        t.enter();   // enter the trail.
+        ant.getRecorder().enter(ant,t); // recorder stuff
+        c.leave();  // leave the wrong Clearing
+        ant.getRecorder().leave(ant,c);  // recorder stuff
+        notifyAll();  // notify all Ants that the Clearing has now a free space.
+        // remove this Clearing from the sequence.there are no Food to find in this way.
         ant.removeClearingFromSequence(c);
-        //TODO set HillPheromone to Map.
+        //create a Map food-Pheromone .
+        com.pseuco.np21.shared.Trail.Pheromone mapPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(-1);
+        //update the Food-Pheromone of the Trail to Map.
+        t.updateFood(mapPheromone,ant.isAdventurer());
+        ant.getRecorder().updateFood(ant,t,mapPheromone); // recorder stuff.
         //ToDO make this void.
         return true;
     }
@@ -207,7 +217,8 @@ public class FoodSearch {
 
     /**
      * this methode will be used to step back after being in a Trail which is connected
-     *  to an already visited clearing. case d)
+     *  to an already visited clearing. case d). it does the same entering but we need to separate them to know
+     *  which reason we will give to the Recorder.
      *
      * @param t    The Trail from which the Ant comes.
      * @param c    The Clearing which the Ant is heading to .
@@ -215,20 +226,14 @@ public class FoodSearch {
      * @throws InterruptedException
      */
     synchronized public boolean ImmediateBackTOClearing(Trail t,Clearing c)throws InterruptedException {
-        while (!c.isSpaceLeft()){
-            wait(ant.disguise());
-        }
-        /*ToDo check whether the ant has left the wait(disguise) by having killed
-            if so then terminate Now!!
-           */
-        //TODO handle entering
-        return  true;
+        return enterClearing(t,c);
     }
 
     /**
      * this methode will be used to step back
      * from a Trail which was connected to a clearing for which it has no options
-     * to reach food other than turning back.
+     * to reach food other than turning back. it does the same entering but we need to separate them to know
+     * which reason we will give to the Recorder.
      *
      * @param t    The Trail from which the Ant comes.
      * @param c    The Clearing which the Ant is heading to .
@@ -236,24 +241,21 @@ public class FoodSearch {
      * @throws InterruptedException
      */
     synchronized public boolean noFoodBackTOClearing(Trail t,Clearing c)throws InterruptedException {
-        while (!c.isSpaceLeft()){
-            wait(ant.disguise());
-        }
-        /*ToDo check whether the ant has left the wait(disguise) by having killed
-            if so then terminate Now!!
-           */
-        //TODO handle entering
-        return  true;
+        return enterClearing(t,c);
     }
 
     /**
      * this methode will be used to pick up one piece of food.
      * @param c     The current Clearing from which the Ant will pick up the Food.
-     * @return      true if the food was collected successfully.
+     * @return      true if the food was collected successfully. if so you can start the homeward.
      */
     synchronized public boolean pickUPFood(Clearing c){
-        //TODO handle the process of picking up the food.
-        return  false;
+        if (! c.hasFood()){  // check i there are no food exit with false.
+            return  false;
+        }
+        ant.setHoldFood(true);  // the Ant now has food
+        c.pickupFood(); // remove the picked up food from this Clearing.
+        return  true;
     }
 
 

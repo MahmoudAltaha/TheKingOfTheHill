@@ -92,14 +92,14 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   /**
    * change the current state of the Ant to Adventurer
    */
-  public void SetAntTOAdventurer() {
+  public void setAntTOAdventurer() {
     adventurer = true;
   }
 
   /**
    * return the state of the Ant to normal.
    */
-  public void SetAntTONormalState() {
+  public void setAntTONormalState() {
     adventurer = false;
   }
 
