@@ -47,7 +47,7 @@ public class FoodSearch {
      * @param lastWrongDeletedClearing  the last wrong visited Clearing which was deleted from the sequence.
      * @return  the Valid Trail to take.
      */
-    public Trail specialGetTargetTrail(Clearing currentClearing, Clearing lastWrongDeletedClearing){
+    public Trail GetTargetTrailAfterBackTracks(Clearing currentClearing, Clearing lastWrongDeletedClearing){
          List<Trail> trailList = currentClearing.connectsTo(); // list of all connected Trails
          for (int i = 0 ; i< trailList.size(); i++){ // delete the Trail which can take us to the deleted Clearing
              Trail t =  trailList.get(i);
@@ -80,8 +80,8 @@ public class FoodSearch {
      * @param ant   the Ant
      * @return true if we found a valid Trail,in this case we get the Trail and enter it normally.
      */
-    public boolean specialCheckTrail(Clearing currentClearing,Clearing lastWrongDeletedClearing,Ant ant){
-       return searchTrailHandler.specialCheckTrail(currentClearing,lastWrongDeletedClearing,ant);
+    public boolean CheckTrailAfterBackTracks(Clearing currentClearing,Clearing lastWrongDeletedClearing,Ant ant){
+       return searchTrailHandler.CheckTrailAfterBackTracks(currentClearing,lastWrongDeletedClearing,ant);
     }
 
 

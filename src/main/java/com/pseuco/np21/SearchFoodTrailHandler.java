@@ -145,7 +145,7 @@ public class SearchFoodTrailHandler {
      * @param ant   the Ant
      * @return true if we found a valid Trail,in this case we get the Trail and enter it normally.
      */
-    public boolean specialCheckTrail(Clearing currentClearing,Clearing lastWrongDeletedClearing,Ant ant){
+    public boolean CheckTrailAfterBackTracks(Clearing currentClearing,Clearing lastWrongDeletedClearing,Ant ant){
         List<Trail> connectedTrails = currentClearing.connectsTo();
         // remove the Trail that leads to the deleted Clearing
         for (int i = 0 ; i < connectedTrails.size(); i++){
