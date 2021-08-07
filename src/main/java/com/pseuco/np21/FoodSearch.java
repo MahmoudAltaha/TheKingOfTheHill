@@ -235,7 +235,7 @@ public class FoodSearch {
     }
 
     /**
-     * this methode will be userd
+     * this methode will be used to pick up one piece of food.
      * @param c     The current Clearing from which the Ant will pick up the Food.
      * @return      true if the food was collected successfully.
      */
