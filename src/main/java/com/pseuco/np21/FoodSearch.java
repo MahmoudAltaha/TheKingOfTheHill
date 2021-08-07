@@ -2,6 +2,7 @@ package com.pseuco.np21;
 
 
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class FoodSearch {
 
@@ -133,17 +134,25 @@ public class FoodSearch {
      *
      * @param t   The Trail from which the Ant comes.
      * @param c   The Clearing which the Ant is heading to .
-     * @return    true if the Ant has entered the Clearing successfully
+     * @return    true if the Ant has entered the Clearing successfully, false when the ant died you
      * @throws InterruptedException
      */
     synchronized public boolean enterClearing(Trail t,Clearing c)throws InterruptedException {
-        while (!c.isSpaceLeft()){
+        while (!c.isSpaceLeft()){  // wait for space,,if the Ant has waited more than its disguise she can pass.
             wait(ant.disguise());
         }
-        /*ToDo check whether the ant has left the wait(disguise) by having killed
-            if so then terminate Now!!
-           */
-        //TODO handle entering
+        // check how the Ant has left wait()
+            if (!c.isSpaceLeft()){  // if there is
+                ant.setHoldFood(false); // delete any food if the ant was holding food.
+                return false;  // the ant is about to die.
+            }
+            c.enter(); // enter the Clearing
+            ant.getRecorder().enter(ant,c); // recorder stuff.
+            ant.addClearingToSequence(c); // add the Clearing to the Sequence.
+            t.leave(); // leave the Trail.
+            ant.getRecorder().leave(ant,t); // recorder stuff
+            notifyAll(); /* notify all the Ants to make sure that tha ant which is waiting to enter the Trail
+                    has been also notified */
         return  true;
     }
 
