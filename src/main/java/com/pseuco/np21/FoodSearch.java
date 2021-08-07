@@ -17,6 +17,7 @@ public class FoodSearch {
         this.searchTrailHandler = new SearchFoodTrailHandler();
     }
 
+
     /**
      * this methode is used to check whether the chosen Trail still the right one .
      *
