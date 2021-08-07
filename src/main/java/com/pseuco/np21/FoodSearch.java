@@ -41,6 +41,24 @@ public class FoodSearch {
     }
 
     /**
+     * this methode is used to get the valid Trail after stepping back because of the two special {d,e} cases.
+     * @param currentClearing  the current Clearing where the ant now stays.
+     * @param lastWrongDeletedClearing  the last wrong visited Clearing which was deleted from the sequence.
+     * @return  the Valid Trail to take.
+     */
+    public Trail specialGetTargetTrail(Clearing currentClearing, Clearing lastWrongDeletedClearing){
+         List<Trail> trailList = currentClearing.connectsTo(); // list of all connected Trails
+         for (int i = 0 ; i< trailList.size(); i++){ // delete the Trail which can take us to the deleted Clearing
+             Trail t =  trailList.get(i);
+             Clearing c = t.to();
+            if (c.id() == lastWrongDeletedClearing.id()){
+                trailList.remove(t);
+            }
+         }   // now do the search in this particular list.
+         return searchTrailHandler.getTargetTrail(trailList,ant);
+    }
+
+    /**
      * this methode is used to check whether the Clearing has valid Connected Trail.
      *
      * @param c  Current Clearing.
