@@ -24,7 +24,7 @@ public class FoodSearch {
      * @param  targetTrail  the TargetTrail
      * @return true if the targetTrail still valid.
      */
-     public boolean checkIfTheTrailStillValidNormalCase(Clearing currentClearing , Trail targetTrail){
+    synchronized  public boolean checkIfTheTrailStillValidNormalCase(Clearing currentClearing , Trail targetTrail){
          return searchTrailHandler.checkTrail(currentClearing,targetTrail,ant);
      }
 
@@ -35,7 +35,7 @@ public class FoodSearch {
      * @param t  the trail that need to be checked
      * @return true if the trail still valid.
      */
-     public boolean CheckIfTheTrailStillValidAfterBackTracks(Clearing currentClearing,Clearing lastWrongDeletedClearing,Trail t){
+    synchronized  public boolean CheckIfTheTrailStillValidAfterBackTracks(Clearing currentClearing,Clearing lastWrongDeletedClearing,Trail t){
         return getTargetTrailAfterBackTracks(currentClearing,lastWrongDeletedClearing).id() == t.id();
     }
 
@@ -48,7 +48,7 @@ public class FoodSearch {
      * @param  currentClearing the currentClearing
      * @return the targetTrail.
      */
-     public Trail getTargetTrail(Clearing currentClearing){
+     synchronized public Trail getTargetTrail(Clearing currentClearing){
          List<Trail> trailList = currentClearing.connectsTo();
          return searchTrailHandler.getTargetTrail(trailList,ant);
     }
@@ -60,7 +60,7 @@ public class FoodSearch {
      * @param lastWrongDeletedClearing  the last wrong visited Clearing which was deleted from the sequence.
      * @return  the Valid Trail to take.
      */
-    public Trail getTargetTrailAfterBackTracks(Clearing currentClearing, Clearing lastWrongDeletedClearing){
+    synchronized public Trail getTargetTrailAfterBackTracks(Clearing currentClearing, Clearing lastWrongDeletedClearing){
          List<Trail> trailList = currentClearing.connectsTo(); // list of all connected Trails
          for (int i = 0 ; i< trailList.size(); i++){ // delete the Trail which can take us to the deleted Clearing
              Trail t =  trailList.get(i);
@@ -78,7 +78,7 @@ public class FoodSearch {
      * @param c  Current Clearing.
      * @return   return true if you found a Trail.
      */
-    public boolean checkTrail(Clearing c){
+    synchronized public boolean checkTrail(Clearing c){
             List<Trail> connectedTrails = c.connectsTo();
       return   searchTrailHandler.checkTrail(c,connectedTrails,ant);
     }
@@ -93,7 +93,7 @@ public class FoodSearch {
      * @param ant   the Ant
      * @return true if we found a valid Trail,in this case we get the Trail and enter it normally.
      */
-    public boolean CheckTrailAfterBackTracks(Clearing currentClearing,Clearing lastWrongDeletedClearing,Ant ant){
+    synchronized public boolean CheckTrailAfterBackTracks(Clearing currentClearing,Clearing lastWrongDeletedClearing,Ant ant){
        return searchTrailHandler.CheckTrailAfterBackTracks(currentClearing,lastWrongDeletedClearing,ant);
     }
 
@@ -104,7 +104,7 @@ public class FoodSearch {
      * @param trailWeComeFrom           the Trail from which we come from the last time.
      * @return  the reversedTrail which we need to take
      */
-    public Trail getTrailToStepBack(Clearing currentTwiceVisitedClearing,Trail trailWeComeFrom){
+    synchronized  public Trail getTrailToStepBack(Clearing currentTwiceVisitedClearing,Trail trailWeComeFrom){
         assert (trailWeComeFrom.to().equals(currentTwiceVisitedClearing));
         return trailWeComeFrom.reverse();
     }
