@@ -42,6 +42,7 @@ public class FoodSearch {
 
     /**
      * this methode is used to get the valid Trail after stepping back because of the two special {d,e} cases.
+     *
      * @param currentClearing  the current Clearing where the ant now stays.
      * @param lastWrongDeletedClearing  the last wrong visited Clearing which was deleted from the sequence.
      * @return  the Valid Trail to take.
