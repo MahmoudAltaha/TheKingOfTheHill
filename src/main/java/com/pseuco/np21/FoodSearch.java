@@ -95,7 +95,7 @@ public class FoodSearch {
         ant.getRecorder().enter(ant,t);
         c.leave();
         ant.getRecorder().leave(ant,c);
-        if(! c.equals(ant.getWorld().anthill() ) ){ // if the left Clearing was not the hill->notifyAll.
+        if( c.id() != ant.getWorld().anthill().id()  ){ // if the left Clearing was not the hill->notifyAll.
             notifyAll();
         }
         if (! ant.isInSequence(t.to())){ // if the next Clearing was not in the sequence then update Hill-Pheromone.

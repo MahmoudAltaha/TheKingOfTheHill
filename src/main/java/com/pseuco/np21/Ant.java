@@ -150,7 +150,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   public boolean isSecondLastVisitedInSequence(Clearing c){
     if (clearingSequence.size()>=2) {
       Clearing lastClearing = clearingSequence.get(clearingSequence.size() - 1);
-      return lastClearing.equals(c);
+      return lastClearing.id() == c.id();
     }
     return false;
   }

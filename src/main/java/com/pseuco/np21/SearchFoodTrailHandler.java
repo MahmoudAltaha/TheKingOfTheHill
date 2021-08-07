@@ -17,7 +17,7 @@ public class SearchFoodTrailHandler {
     public boolean checkTrail(Clearing currentClearing , Trail targetTrail,Ant ant){
         List<Trail> trailList = currentClearing.connectsTo();
         Trail t = getTargetTrail(trailList,ant);
-        return t.equals(targetTrail);
+        return t.id() == targetTrail.id();
     }
 
 
@@ -118,13 +118,13 @@ public class SearchFoodTrailHandler {
             return false;
         }
         // if the Clearing is the Hill and has one single Trail which its Food not MaP return true
-        if (connectedTrails.size() == 1 && c.equals(ant.getWorld().anthill() )) {
+        if (connectedTrails.size() == 1 && c.id() == ant.getWorld().anthill().id() ) {
             return !connectedTrails.get(0).food().isInfinite();
         }  // Hill or normal Clearing with more than one Trail( the one from which the Ant has reached this Clearing)
         if (connectedTrails.size() > 1 ){
             List<Trail> TrailWithoutMaP = new ArrayList<>(); // list of non-Map-food-pheromone Trails
             for (Trail t : connectedTrails) {
-                if (t.food().isInfinite()) {
+                if (! t.food().isInfinite()) {
                     TrailWithoutMaP.add(t);
                 }
             }
@@ -150,7 +150,7 @@ public class SearchFoodTrailHandler {
         // remove the Trail that leads to the deleted Clearing
         for (int i = 0 ; i < connectedTrails.size(); i++){
             Trail t = connectedTrails.get(i);
-            if (t.to().equals(lastWrongDeletedClearing)){
+            if (t.to().id() == lastWrongDeletedClearing.id()){
                 connectedTrails.remove(t);
             }
         } // do the check normally after that.
