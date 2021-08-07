@@ -24,9 +24,21 @@ public class FoodSearch {
      * @param  targetTrail  the TargetTrail
      * @return true if the targetTrail still valid.
      */
-     public boolean checkTrail(Clearing currentClearing , Trail targetTrail){
+     public boolean checkIfTheTrailStillValidNormalCase(Clearing currentClearing , Trail targetTrail){
          return searchTrailHandler.checkTrail(currentClearing,targetTrail,ant);
      }
+
+    /**
+     *  this methode is used to check whether the chosen Trail still the right one.(case backtracking).
+     * @param currentClearing  current Clearing
+     * @param lastWrongDeletedClearing  last Wrong deleted Clearing
+     * @param t  the trail that need to be checked
+     * @return true if the trail still valid.
+     */
+     public boolean CheckIfTheTrailStillValidAfterBackTracks(Clearing currentClearing,Clearing lastWrongDeletedClearing,Trail t){
+        return getTargetTrailAfterBackTracks(currentClearing,lastWrongDeletedClearing).id() == t.id();
+    }
+
 
 
 
@@ -48,7 +60,7 @@ public class FoodSearch {
      * @param lastWrongDeletedClearing  the last wrong visited Clearing which was deleted from the sequence.
      * @return  the Valid Trail to take.
      */
-    public Trail GetTargetTrailAfterBackTracks(Clearing currentClearing, Clearing lastWrongDeletedClearing){
+    public Trail getTargetTrailAfterBackTracks(Clearing currentClearing, Clearing lastWrongDeletedClearing){
          List<Trail> trailList = currentClearing.connectsTo(); // list of all connected Trails
          for (int i = 0 ; i< trailList.size(); i++){ // delete the Trail which can take us to the deleted Clearing
              Trail t =  trailList.get(i);
