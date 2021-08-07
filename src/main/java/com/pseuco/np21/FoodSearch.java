@@ -107,19 +107,22 @@ public class FoodSearch {
      */
     synchronized public boolean enterTrail(Clearing c, Trail t)throws InterruptedException {
         assert t  != null ;
-        while (!t.isSpaceLeft()){
+        while (!t.isSpaceLeft()){  // if the Trail is not available , the Ant should wait.
             wait();
         }
-        t.enter();
-        ant.getRecorder().enter(ant,t);
-        c.leave();
-        ant.getRecorder().leave(ant,c);
+        t.enter();  // enter the Trail
+        ant.getRecorder().enter(ant,t);  // recorder stuff.
+        c.leave(); // leave the Clearing
+        ant.getRecorder().leave(ant,c); // recorder stuff
         if( c.id() != ant.getWorld().anthill().id()  ){ // if the left Clearing was not the hill->notifyAll.
             notifyAll();
         }
-        if (! ant.isInSequence(t.to())){ // if the next Clearing was not in the sequence then update Hill-Pheromone.
+        // if the next Clearing was not in the sequence then update Hill-Pheromone. (no special cases)
+        if (! ant.isInSequence(t.to())){
+            // get the new Hill_Pheromone value
             int value = Math.min(t.anthill().value(),ant.getClearingSequence().size());
-                //TODO update Hill Pheromone.
+           com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
+            t.updateAnthill(newPheromone); // update the HIll-Pheromone.
         }
             //ToDO make this void.
         return true;
