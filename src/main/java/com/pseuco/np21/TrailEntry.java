@@ -122,6 +122,25 @@ public class TrailEntry {
     }
 
 
+    /**
+     * this methode will be used to enter this Trail in way that ensure concurrency.
+     *
+     * @param currentClearing  the Current Clearing which the Ant should left,
+     * @param ant       the Ant
+     * @param entryReason   the reason you have to enter this Trail.
+     * @return      true if the entry was completed successfully.
+     * @throws InterruptedException
+     */
+    synchronized public boolean enter (Clearing currentClearing,Ant ant,EntryReason entryReason) throws InterruptedException {
+        return switch (entryReason) {
+            case FOOD_SEARCH -> this.enterTrailFoodSearch(currentClearing,ant);
+            case IMMEDIATE_RETURN -> this.immediateReturnToTrail(currentClearing,ant);
+            case NO_FOOD_RETURN -> this.noFoodReturnToTrail(currentClearing,ant);
+            /* TODO complete this */ // case HEADING_BACK_HOME -> this.
+            default -> false;
+        };
+    }
+
 
 
 }

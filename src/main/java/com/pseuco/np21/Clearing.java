@@ -73,7 +73,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
 
 
     /**
-     * this methode will be used to enter this Clearing in way that ensure concurrency.
+     * this methode will be used to enter this Clearing in a way that ensure concurrency.
      * @param currentTrail  the Current Trail which the Ant should left,
      * @param ant       the Ant
      * @param entryReason   the reason you have to enter this Clearing.
@@ -81,13 +81,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
      * @throws InterruptedException
      */
     public boolean enterClearing(Trail currentTrail,Ant ant,EntryReason entryReason) throws InterruptedException {
-        return switch (entryReason) {
-            case FOOD_SEARCH -> clearingEntry.enterClearingFoodSearch(currentTrail, ant);
-            case IMMEDIATE_RETURN -> clearingEntry.immediateReturnTOClearing(currentTrail, ant);
-            case NO_FOOD_RETURN -> clearingEntry.noFoodReturnTOClearing(currentTrail, ant);
-           /* TODO complete this */ //   case HEADING_BACK_HOME -> clearingEntry.
-            default -> false;
-        };
+        return clearingEntry.enter(currentTrail,ant,entryReason);
     }
 
     /**

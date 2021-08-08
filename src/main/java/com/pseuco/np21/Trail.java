@@ -140,13 +140,7 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
      * @throws InterruptedException
      */
     public boolean enterTrail(Clearing currentClearing,Ant ant,EntryReason entryReason) throws InterruptedException {
-        return switch (entryReason) {
-            case FOOD_SEARCH -> trailEntry.enterTrailFoodSearch(currentClearing,ant);
-            case IMMEDIATE_RETURN -> trailEntry.immediateReturnToTrail(currentClearing,ant);
-            case NO_FOOD_RETURN -> trailEntry.noFoodReturnToTrail(currentClearing,ant);
-            /* TODO complete this */ // case HEADING_BACK_HOME -> trailEntry.
-            default -> false;
-        };
+        return trailEntry.enter(currentClearing,ant,entryReason);
     }
 
 
