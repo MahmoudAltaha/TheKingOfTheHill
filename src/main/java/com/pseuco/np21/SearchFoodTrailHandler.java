@@ -15,7 +15,8 @@ public class SearchFoodTrailHandler {
      * @return true if the targetTrail still valid.
      */
     public boolean checkTrail(Clearing currentClearing , Trail targetTrail,Ant ant){
-        Trail t = getTargetTrail(currentClearing,ant);
+        List<Trail> trailList = currentClearing.connectsTo();
+        Trail t = getTargetTrail(trailList,ant);
         return t.equals(targetTrail);
     }
 
@@ -45,18 +46,16 @@ public class SearchFoodTrailHandler {
     /**
      * this methode is used to choose the right Trail according to the project description.
      *
-     * @param  currentClearing the currentClearing
-     * @return the targetTrail.
+     * @param trailList the Trails from which we the right one choose.
+     * @param ant       Ant.
+     * @return      The Target Trail.
      */
-    public Trail getTargetTrail(Clearing currentClearing,Ant ant){
-        //list of all connected Trails
-        List<Trail> trailList = currentClearing.connectsTo();
-        // remove all Trails which leads to Clearings that are already in the sequence.
+    public Trail getTargetTrail(List<Trail> trailList,Ant ant){
         assert (!trailList.isEmpty());  // check if the list are not Empty
         for (int i = 0; i < trailList.size(); i++) {
             Trail t = trailList.get(i);
-            // remove all Trails which are already visited or has Map Value.
-            if (ant.isInSequence(t.to()) || t.food().isInfinite()) {
+            // remove all Trails which are already has Map Value Or the last one in Sequence.
+            if (ant.isSecondLastVisitedInSequence(t.to()) || t.food().isInfinite()) {
                 trailList.remove(t);
             }
         }
@@ -68,9 +67,10 @@ public class SearchFoodTrailHandler {
             }
         }
         Random random = new Random();
-        if (allNaP){  // if so then pick a Trail randomly .
+        if (allNaP){  // if so then pick a NaP Trail randomly .
             int index = random.nextInt(trailList.size());
             targetTrail = trailList.get(index);
+            targetTrail.setSelectionReason(2);  // update the SelectionReason in the Trail.
         }
         else {  // the trailList has Trails with non Nap-foodPheromone. it may also have Trails with Nap-ph tho.
             int size = trailList.size();  // get the size of the list
@@ -96,9 +96,11 @@ public class SearchFoodTrailHandler {
             if (ant.impatience() < suggestedTrail.food().value() && !trailsListWithJustNap.isEmpty()){
                 int randomNapIndex = random.nextInt(trailsListWithJustNap.size());
                 targetTrail = trailsListWithJustNap.get(randomNapIndex);
+                targetTrail.setSelectionReason(2); // update the SelectionReason in the Trail.
             } else{
                 targetTrail = suggestedTrail; /* otherwise take that randomly picked Trail with NonNap-food-pheromone
                 as a target Trail */
+                targetTrail.setSelectionReason(1); // update the SelectionReason in the Trail.
             }
         }
         return targetTrail;
@@ -108,10 +110,10 @@ public class SearchFoodTrailHandler {
      * this methode is used to check whether the Clearing has a Connected Trail.
      *
      * @param c  Current Clearing.
+     * @param connectedTrails the Trails that are connected to the currentClearing c.
      * @return   return true if you found a Trail.
      */
-    public boolean checkTrail(Clearing c,Ant ant){
-        List<Trail> connectedTrails = c.connectsTo();
+    public boolean checkTrail(Clearing c,List<Trail> connectedTrails,Ant ant){
         if (connectedTrails.isEmpty()){
             return false;
         }
@@ -126,10 +128,33 @@ public class SearchFoodTrailHandler {
                     TrailWithoutMaP.add(t);
                 }
             }
-            // if the number of Trails with (non-Map-Food-ph.) bigger than 1 return true
+            // if the number of Trails with (non-Map-Food-ph.)
+            // bigger than 1( cause there is always the one from which we come) return true
             return TrailWithoutMaP.size() > 1;
         }
         return false;
+    }
+
+    /**
+     * this methode is used when we need to check whether there are valid Trails after we went throw
+     * the special case when we enter a Clearing which is already in the sequence. so after one step back
+     * we do this check. be careful!!! when this methode returns false , that doesn't mean we have to start the
+     * homeward. it does mean that we have to once again back and mark the Trail we took to MaP!!
+     * @param currentClearing   the current Clearing where the ant is staying now.
+     * @param lastWrongDeletedClearing  the last deleted Clearing after going throw the special case d)
+     * @param ant   the Ant
+     * @return true if we found a valid Trail,in this case we get the Trail and enter it normally.
+     */
+    public boolean specialCheckTrail(Clearing currentClearing,Clearing lastWrongDeletedClearing,Ant ant){
+        List<Trail> connectedTrails = currentClearing.connectsTo();
+        // remove the Trail that leads to the deleted Clearing
+        for (int i = 0 ; i < connectedTrails.size(); i++){
+            Trail t = connectedTrails.get(i);
+            if (t.to().equals(lastWrongDeletedClearing)){
+                connectedTrails.remove(t);
+            }
+        } // do the check normally after that.
+        return checkTrail(currentClearing,connectedTrails,ant);
     }
 
 }

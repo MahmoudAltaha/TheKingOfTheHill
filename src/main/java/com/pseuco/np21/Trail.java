@@ -12,6 +12,17 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
     private Pheromone food;
     private int ants;
 
+    /**
+     * helps by the selection for the Recorder
+     * 1 --> FOOD_SEARCH,
+     * 2---> EXPLORATION,
+     * 3---> IMMEDIATE_RETURN,
+     * 4---> NO_FOOD_RETURN,
+     * 5---> RETURN_FOOD,
+     * 6---> RETURN_IN_SEQUENCE,
+     */
+    private  int selectionReason = 0;
+
     private Trail(final Trail reverse) {
         super(reverse);
 
@@ -32,6 +43,24 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
         this.anthill = Pheromone.NOT_A_PHEROMONE;
         this.food = Pheromone.NOT_A_PHEROMONE;
         this.ants = 0;
+    }
+
+    /**
+     * getter
+     *
+     * @return selectionReason.(int)
+     */
+    public int getSelectionReason() {
+        return selectionReason;
+    }
+
+    /**
+     * setter
+     *
+     * @param selectionReason selectionReason in (int)
+     */
+    public void setSelectionReason(int selectionReason) {
+        this.selectionReason = selectionReason;
     }
 
     /**
