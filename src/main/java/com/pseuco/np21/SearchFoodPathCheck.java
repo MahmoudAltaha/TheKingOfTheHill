@@ -12,7 +12,7 @@ public class SearchFoodPathCheck {
         this.ant =ant;
     }
 
-    /**
+    /** (ignore this methode for now)
      * this methode is used to check whether the chosen Trail still the right one .
      *
      * @param  currentClearing the current Clearing
