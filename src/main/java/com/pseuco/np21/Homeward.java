@@ -9,7 +9,7 @@ public class Homeward {
     /**
      * constructor
      *
-     * @param ant
+     * @param ant Ant
      */
 
     public Homeward(Ant ant) {
@@ -19,22 +19,24 @@ public class Homeward {
     /**
      * this methode is used to check whether the chosen Trail still the right one .
      *
-     * @param currentCLearing
-     * @param targetTrail
+     * @param currentClearing The current Clearing
+     * @param targetTrail     The target trail
      * @return true if the targetTrail still valid.
      */
-    public boolean checkTrail(Clearing currentCLearing, Trail targetTrail) {
-        //TODO complete this
+    public boolean checkTrail(Clearing currentClearing, Trail targetTrail) {
+        //TODO
+
+
         return false;
     }
 
     /**
      * this methode is used to choose the right Trail according to the project description.
      *
-     * @param currentClearing
+     * @param currentClearing       The current Clearing
      * @return the targetTrail.
      */
-    public Trail getTargetTrail(Clearing currentClearing) {
+    public synchronized Trail getTargetTrail(Clearing currentClearing) {
         Clearing lastClearing;  //last clearing that have been visited
         List<Trail> connectedTrails = currentClearing.connectsTo(); //List of connected trials with currentClearing
         Trail targetTrail;
@@ -53,9 +55,7 @@ public class Homeward {
             int minAnthill = connectedTrails.get(trailsNumber).anthill().value();
             targetTrail = connectedTrails.get(trailsNumber);
             for (int i = 0; i < trailsNumber; i++) {
-                if (connectedTrails.get(i).anthill().value() >= minAnthill) {
-                    continue;
-                } else {
+                if (connectedTrails.get(i).anthill().value()  < minAnthill) {
                     minAnthill = connectedTrails.get(i).anthill().value();
                     targetTrail = connectedTrails.get(i);
                 }
@@ -73,7 +73,7 @@ public class Homeward {
      */
     public boolean checkTrail(Clearing c) {
         //TODO complete this
-        return true;
+        return !c.connectsTo().isEmpty();
     }
 
 
@@ -87,11 +87,20 @@ public class Homeward {
      */
 
     public synchronized boolean enterTrail(Clearing c, Trail t) throws InterruptedException {
-        assert t != null;
+
         while (!t.isSpaceLeft()) {
             wait();
         }
+        c.leave();
+        ant.getRecorder().leave(ant, c);
         t.enter();
+        ant.getRecorder().enter(ant, t);
+        if (!c.equals(ant.getWorld().anthill())){
+            notifyAll();
+        }
+        //TODO Food-Pheromone update Handling
+
+
         return true;
     }
 
@@ -111,7 +120,7 @@ public class Homeward {
     /**
      * drop the food item into the anthill
      *
-     * @param c
+     * @param c  The Anthill
      * @return true by successfully dropping food
      */
     public synchronized boolean dropFood(Clearing c) {
