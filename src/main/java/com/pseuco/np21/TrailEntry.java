@@ -45,15 +45,17 @@ public class TrailEntry {
         if( c.id() != ant.getWorld().anthill().id()  ){ // if the left Clearing was not the hill->notifyAll.
             notifyAll();
         }
-        if ( ! trail.food().isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
+        com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false,null,false);
+        if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
             ant.setAntTOAdventurer();
         }
         // if the next Clearing was not in the sequence then update Hill-Pheromone. (no special cases)
         if (! ant.isInSequence(trail.to())){
             // get the new Hill_Pheromone value
-            int value = Math.min(trail.anthill().value(),ant.getClearingSequence().size());
+            com.pseuco.np21.shared.Trail.Pheromone hillPheromone = trail.getOrUpdateHill(false,null);
+            int value = Math.min(hillPheromone.value(),ant.getClearingSequence().size());
             com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
-            trail.updateAnthill(newPheromone); // update the HIll-Pheromone.
+            trail.getOrUpdateHill(true,newPheromone); // update the HIll-Pheromone.
             ant.getRecorder().updateAnthill(ant,trail,newPheromone); // recorder stuff.
         }
         return true;
@@ -105,7 +107,7 @@ public class TrailEntry {
         //create a Map food-Pheromone .
         com.pseuco.np21.shared.Trail.Pheromone mapPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(-1);
         //update the Food-Pheromone of the Trail to Map.
-        trail.updateFood(mapPheromone,ant.isAdventurer());
+        trail.getOrUpdateFood(true,mapPheromone,ant.isAdventurer());
         ant.getRecorder().updateFood(ant,trail,mapPheromone); // recorder stuff.
         //ToDO make this void.
         return true;

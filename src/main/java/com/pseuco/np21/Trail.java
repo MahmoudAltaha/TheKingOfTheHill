@@ -85,6 +85,33 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
     }
 
     /**
+     * this methode is the only methode we should use to get/update the Food Pheromone otherwise we could have DataRace.
+     * @param write   true if you are about to update the Food-Pheromone, false otherwise.
+     * @param p       the new Food pheromone that we want to register. (null if we want to get the Food-Ph only)
+     * @param explorer  state of the Ant (it doesn't matter which value if we want just to get the Food-ph)
+     * @return          the Food-pheromone.(the old or the new one)
+     */
+    synchronized public Pheromone getOrUpdateFood(boolean write,Pheromone p,boolean explorer){
+        if (write){
+            updateFood(p,explorer);
+        }
+        return food();
+    }
+
+    /**
+     * this methode is the only methode we should use to get/update the Hill Pheromone otherwise we could have DataRace.
+     * @param write   true if you are about to update the Hill-Pheromone, false otherwise.
+     * @param p       the new Hill pheromone that we want to register. (null if we want to get the Hill-Ph only)
+     * @return          the Hill-pheromone.(the old or the new one)
+     */
+    synchronized public Pheromone getOrUpdateHill(boolean write,Pheromone p){
+        if (write){
+            updateAnthill(p);
+        }
+        return this.anthill;
+    }
+
+    /**
      * Update the anthill pheromone level.
      *
      * @param p the new pheromone level

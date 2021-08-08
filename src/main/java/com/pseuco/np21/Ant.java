@@ -233,7 +233,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     addClearingToSequence(position);  // adding the antHill to the sequence
    // FoodSearch foodSearch = new FoodSearch(this);
     Homeward homeward = new Homeward(this);
-
     while (world.isFoodLeft()) {
       /*
       try {

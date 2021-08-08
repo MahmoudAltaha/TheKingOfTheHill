@@ -53,24 +53,42 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
      *
      * @return {@code true} iff there is food left
      */
-    public boolean hasFood() {
+    private boolean hasFood() {
         return food > 0;
     }
 
     /**
      * Call this when an ant picks up food at this clearing.
      */
-    public void pickupFood() {
+    private void pickupFood() {
         food--;
     }
 
     /**
      * Call this when an ant places food at this clearing.
      */
-    public void placeFood() {
+    private void placeFood() {
         food++;
     }
 
+
+    /**
+     * this methode is the Only methode you should use to call hasFood/pickUpFood/placeFood.Otherwise we could have data race
+     * @param foodInClearing select the order you want to call.
+     * @return always return how much food are left there.
+     */
+    synchronized public boolean getOrSetFood(FoodInClearing foodInClearing){
+        switch (foodInClearing){
+            case DROP_FOOD:
+                placeFood();
+                return hasFood();
+            case PICKUP_FOOD:
+                pickupFood();
+                return hasFood();
+            default:
+                return hasFood();
+        }
+    }
 
     /**
      * this methode will be used to enter this Clearing in a way that ensure concurrency.
@@ -94,7 +112,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     }
 
     /**
-     * drop the food in the Hill
+     * drop the food in the Hill and remove it from the Ant (this methode should call the drop methode in EntryClearing).
      *
      * @param c the Hill
      * @return true by successfully dropping food

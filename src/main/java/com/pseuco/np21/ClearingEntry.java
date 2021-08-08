@@ -79,11 +79,11 @@ public class ClearingEntry {
      * @return      true if the food was collected successfully. if so you can start the homeward.
      */
     synchronized public boolean pickUPFood(Ant ant){
-        if (! clearing.hasFood()){  // check i there are no food exit with false.
+        if (! clearing.getOrSetFood(FoodInClearing.HAS_FOOD)){  // check i there are no food exit with false.
             return  false;
         }
         ant.setHoldFood(true);  // the Ant now has food
-        clearing.pickupFood(); // remove the picked up food from this Clearing.
+        clearing.getOrSetFood(FoodInClearing.PICKUP_FOOD); // remove the picked up food from this Clearing.
         return  true;
     }
 
