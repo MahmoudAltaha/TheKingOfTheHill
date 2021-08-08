@@ -176,6 +176,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   }
 
 
+    /*
+
 
   public void forwardCheck(FoodSearch foodSearch) throws InterruptedException {
 
@@ -221,7 +223,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     }
 
   }
-
+  */
   /**
    * Primary ant behavior.
    */
@@ -229,17 +231,17 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     position = world.anthill();
     recorder.spawn(this);
     addClearingToSequence(position);  // adding the antHill to the sequence
-    FoodSearch foodSearch = new FoodSearch(this);
+   // FoodSearch foodSearch = new FoodSearch(this);
     Homeward homeward = new Homeward(this);
 
     while (world.isFoodLeft()) {
-
+      /*
       try {
         forwardCheck(foodSearch);
       } catch (InterruptedException e) {
         Thread.currentThread();
       }
-
+      */
 
     }
 
