@@ -89,13 +89,20 @@ public class ClearingEntry {
 
     /**
      * this methode will be used to enter the Clearing when the Ant is willing to reach the Hill
-     * @param currentTrail the current Trail which the Ant should leave.
+     * @param t the current Trail which the Ant should leave.
      * @param ant  the Ant
      * @return true if the Ant has entered the Clearing successfully.
      */
-    synchronized public boolean homewardEnterClearing(Trail currentTrail, Ant ant){
-        //TODO implement this.
-        return false;
+    synchronized public boolean homewardEnterClearing(Trail t, Ant ant) throws InterruptedException{
+        while (!clearing.isSpaceLeft()){
+            wait(ant.disguise());  //TODO, handle die issue
+        }
+        t.leave();
+        ant.getRecorder().leave(ant, t);
+        clearing.enter();
+        ant.getRecorder().enter(ant, clearing);
+        notifyAll();
+        return true;
     }
 
     /**
@@ -104,9 +111,14 @@ public class ClearingEntry {
      * @param c the Hill
      * @return true by successfully dropping food
      */
-    public synchronized boolean dropFood(Clearing c) {
-        //TODO implement this
-        return true;
+    public synchronized boolean dropFood(Clearing c, Ant ant) {
+        if (c.id() == ant.getWorld().anthill().id()){
+            ant.getWorld().foodCollected();
+            c.getOrSetFood(FoodInClearing.DROP_FOOD);
+            ant.setHoldFood(false);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -123,7 +135,7 @@ public class ClearingEntry {
             case FOOD_SEARCH -> this.enterClearingFoodSearch(currentTrail, ant);
             case IMMEDIATE_RETURN -> this.immediateReturnTOClearing(currentTrail, ant);
             case NO_FOOD_RETURN -> this.noFoodReturnTOClearing(currentTrail, ant);
-            /* TODO complete this */ //   case HEADING_BACK_HOME -> this.
+            case HEADING_BACK_HOME -> this.homewardEnterClearing(currentTrail, ant);
             default -> false;
         };
     }

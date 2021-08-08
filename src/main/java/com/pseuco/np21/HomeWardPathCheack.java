@@ -2,7 +2,7 @@ package com.pseuco.np21;
 
 import java.util.List;
 
-public class Homeward {
+public class HomeWardPathCheack {
 
     private final Ant ant;
 
@@ -12,7 +12,7 @@ public class Homeward {
      * @param ant Ant
      */
 
-    public Homeward(Ant ant) {
+    public HomeWardPathCheack(Ant ant) {
         this.ant = ant;
     }
 
@@ -24,8 +24,7 @@ public class Homeward {
      * @return true if the targetTrail still valid.
      */
     public boolean checkTrail(Clearing currentClearing, Trail targetTrail) {
-        //TODO
-
+        //TODO, DO I NEED THIS ONE?
 
         return false;
     }
@@ -64,68 +63,4 @@ public class Homeward {
         }
         return targetTrail;
     }
-
-    /**
-     * this methode is used to check whether the Clearing has a Connected Trail.
-     *
-     * @param c Current Clearing.
-     * @return return true if you found a Trail.
-     */
-    public boolean checkTrail(Clearing c) {
-        //TODO complete this
-        return !c.connectsTo().isEmpty();
-    }
-
-
-    /**
-     * handling how to enter a Trail t.
-     *
-     * @param c The current Clearing
-     * @param t The target trail
-     * @return true by successfully entering the trail.
-     * @throws InterruptedException
-     */
-
-    public synchronized boolean enterTrail(Clearing c, Trail t) throws InterruptedException {
-
-        while (!t.isSpaceLeft()) {
-            wait();
-        }
-        c.leave();
-        ant.getRecorder().leave(ant, c);
-        t.enter();
-        ant.getRecorder().enter(ant, t);
-        if (!c.equals(ant.getWorld().anthill())){
-            notifyAll();
-        }
-        //TODO Food-Pheromone update Handling
-
-
-        return true;
-    }
-
-    /**
-     * handling how to enter a Clearing c.
-     *
-     * @param t The current trail.
-     * @param c The target Clearing.
-     * @return true by successfully entering the Clearing.
-     * @throws InterruptedException
-     */
-    public synchronized boolean enterClearing(Trail t, Clearing c) throws InterruptedException {
-        //TODO implement this
-        return true;
-    }
-
-    /**
-     * drop the food item into the anthill
-     *
-     * @param c  The Anthill
-     * @return true by successfully dropping food
-     */
-    public synchronized boolean dropFood(Clearing c) {
-        //TODO implement this
-        return true;
-    }
-
 }

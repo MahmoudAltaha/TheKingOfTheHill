@@ -125,7 +125,19 @@ public class TrailEntry {
      */
 
     public synchronized boolean homewardEnterTrail(Clearing c, Ant ant) throws InterruptedException {
-        //TODO implement this
+        while (!trail.isSpaceLeft()) {
+            wait();
+        }
+        c.leave();
+        ant.getRecorder().leave(ant, c);
+        trail.enter();
+        ant.getRecorder().enter(ant, trail);
+        if (!c.equals(ant.getWorld().anthill())){
+            notifyAll();
+        }
+        //TODO Food-Pheromone update Handling
+
+
         return true;
     }
 
@@ -150,7 +162,7 @@ public class TrailEntry {
             case FOOD_SEARCH -> this.enterTrailFoodSearch(currentClearing,ant);
             case IMMEDIATE_RETURN -> this.immediateReturnToTrail(currentClearing,ant);
             case NO_FOOD_RETURN -> this.noFoodReturnToTrail(currentClearing,ant);
-            /* TODO complete this */ // case HEADING_BACK_HOME -> this.
+            case HEADING_BACK_HOME -> this.homewardEnterTrail(currentClearing, ant);
             default -> false;
         };
     }

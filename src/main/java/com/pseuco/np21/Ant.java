@@ -209,7 +209,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
 
   public void backHome(Homeward homeward) throws InterruptedException {
-    if(homeward.checkTrail(position)){
+    if(homeward.checkTrail(position)){  //checkTrail need to be deleted in homeward class
       Trail target = homeward.getTargetTrail(position);
       if(homeward.checkTrail(position, target)){
         if(homeward.enterTrail(position, target)){
@@ -232,7 +232,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     recorder.spawn(this);
     addClearingToSequence(position);  // adding the antHill to the sequence
    // FoodSearch foodSearch = new FoodSearch(this);
-    Homeward homeward = new Homeward(this);
+    HomeWardPathCheack homeward = new HomeWardPathCheack(this);
     while (world.isFoodLeft()) {
       /*
       try {
