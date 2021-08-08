@@ -1,5 +1,10 @@
 package com.pseuco.np21;
 
+/**
+ * this class can be seen as a gate for the Trail. each Clearing has one gate which is necessary
+ * to ensure the concurrency
+ */
+
 public class TrailEntry {
 
 
