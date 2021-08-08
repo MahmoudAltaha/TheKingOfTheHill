@@ -21,16 +21,17 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
      * 5---> RETURN_FOOD,
      * 6---> RETURN_IN_SEQUENCE,
      */
-    private  int selectionReason = 0;
+    private  int selectionReason ;
     private TrailEntry trailEntry;    // to handle the entering to this Trail in a concurrent way.
 
     private Trail(final Trail reverse) {
         super(reverse);
-
+        this.selectionReason = 0;
         this.anthill = Pheromone.NOT_A_PHEROMONE;
         this.food = Pheromone.NOT_A_PHEROMONE;
         this.ants = 0;
         this.trailEntry = new TrailEntry(this);
+
     }
 
     /**
@@ -130,20 +131,22 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
     }
 
 
-    public TrailEntry getTrailEntry() {
-        return trailEntry;
-    }
-
-    public boolean enterTrailFoodSearch(Clearing c,Ant ant) throws InterruptedException {
-       return this.trailEntry.enterTrailFoodSearch(c,ant);
-    }
-
-    public boolean immediateReturnToTrail(Clearing c,Ant ant)throws InterruptedException{
-        return this.trailEntry.immediateReturnToTrail(c,ant);
-    }
-
-    public boolean noFoodReturnToTrail(Clearing c,Ant ant)throws InterruptedException{
-        return this.trailEntry.noFoodReturnToTrail(c,ant);
+    /**
+     * this methode will be used to enter this Trail in way that ensure concurrency.
+     * @param currentClearing  the Current Clearing which the Ant should left,
+     * @param ant       the Ant
+     * @param entryReason   the reason you have to enter this Trail.
+     * @return      true if the entry was completed successfully.
+     * @throws InterruptedException
+     */
+    public boolean enterTrail(Clearing currentClearing,Ant ant,EntryReason entryReason) throws InterruptedException {
+        return switch (entryReason) {
+            case FOOD_SEARCH -> trailEntry.enterTrailFoodSearch(currentClearing,ant);
+            case IMMEDIATE_RETURN -> trailEntry.immediateReturnToTrail(currentClearing,ant);
+            case NO_FOOD_RETURN -> trailEntry.noFoodReturnToTrail(currentClearing,ant);
+            /* TODO complete this */ // case HEADING_BACK_HOME -> trailEntry.
+            default -> false;
+        };
     }
 
 

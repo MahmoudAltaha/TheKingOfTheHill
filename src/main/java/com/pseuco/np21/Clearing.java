@@ -10,7 +10,7 @@ package com.pseuco.np21;
 public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     private int ants;
     private int food;
-    private ClearingEntry clearingEntry;
+    private final ClearingEntry clearingEntry;
 
     /**
      * Constructs a new clearing.
@@ -72,19 +72,42 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     }
 
 
+    /**
+     * this methode will be used to enter this Clearing in way that ensure concurrency.
+     * @param currentTrail  the Current Trail which the Ant should left,
+     * @param ant       the Ant
+     * @param entryReason   the reason you have to enter this Clearing.
+     * @return      true if the entry was completed successfully.
+     * @throws InterruptedException
+     */
+    public boolean enterClearing(Trail currentTrail,Ant ant,EntryReason entryReason) throws InterruptedException {
+        return switch (entryReason) {
+            case FOOD_SEARCH -> clearingEntry.enterClearingFoodSearch(currentTrail, ant);
+            case IMMEDIATE_RETURN -> clearingEntry.immediateReturnTOClearing(currentTrail, ant);
+            case NO_FOOD_RETURN -> clearingEntry.noFoodReturnTOClearing(currentTrail, ant);
+           /* TODO complete this */ //   case HEADING_BACK_HOME -> clearingEntry.
+            default -> false;
+        };
+    }
 
-    public boolean enterClearingFoodSearch(Trail t,Ant ant)throws InterruptedException {
-        return clearingEntry.enterClearingFoodSearch(t,ant);
-    }
-    public boolean ImmediateReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
-        return clearingEntry.ImmediateReturnTOClearing(t,ant);
-    }
-    public boolean noFoodReturnTOClearing(Trail t,Ant ant)throws InterruptedException{
-        return clearingEntry.noFoodReturnTOClearing(t,ant);
-    }
-
-    public boolean pickUPFood(Ant ant){
+    /**
+     * this methode used to pickUp one piece of Food from this Clearing.
+     * @param ant  The Ant
+     * @return true if the Ant has pickedUp the food.
+     */
+    public boolean TakeOnPieceOfFood(Ant ant){
         return clearingEntry.pickUPFood(ant);
+    }
+
+    /**
+     * drop the food in the Hill
+     *
+     * @param c the Hill
+     * @return true by successfully dropping food
+     */
+    public synchronized boolean dropFood(Clearing c) {
+        //TODO implement this
+        return true;
     }
 
 

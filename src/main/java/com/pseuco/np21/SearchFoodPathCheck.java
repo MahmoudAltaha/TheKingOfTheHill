@@ -5,7 +5,7 @@ import java.util.List;
 public class SearchFoodPathCheck {
 
     private final SearchFoodTrailHandler searchFoodTrailHandler;
-    private Ant ant;
+    private final Ant ant;
 
     public SearchFoodPathCheck(Ant ant) {
         this.searchFoodTrailHandler = new SearchFoodTrailHandler();
@@ -104,5 +104,6 @@ public class SearchFoodPathCheck {
         assert (trailWeComeFrom.to().equals(currentTwiceVisitedClearing));
         return trailWeComeFrom.reverse();
     }
+
 
 }

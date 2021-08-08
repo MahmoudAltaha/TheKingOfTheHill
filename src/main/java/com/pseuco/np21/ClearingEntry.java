@@ -1,5 +1,9 @@
 package com.pseuco.np21;
 
+/**
+ * this class can be seen as a gate for the clearing. each Clearing has one gate which is necessary
+ * to ensure the concurrency
+ */
 public class ClearingEntry {
     private final Clearing clearing;
 
@@ -49,7 +53,7 @@ public class ClearingEntry {
      * @return     true if the Ant has entered the Clearing successfully.
      * @throws InterruptedException
      */
-    synchronized public boolean ImmediateReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
+    synchronized public boolean immediateReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
         return enterClearingFoodSearch(t,ant);
     }
 
@@ -83,6 +87,27 @@ public class ClearingEntry {
         return  true;
     }
 
+    /**
+     * this methode will be used to enter the Clearing when the Ant is willing to reach the Hill
+     * @param currentTrail the current Trail which the Ant should leave.
+     * @param ant  the Ant
+     * @return true if the Ant has entered the Clearing successfully.
+     */
+    synchronized public boolean homewardEnterClearing(Trail currentTrail, Ant ant){
+        //TODO implement this.
+        return false;
+    }
+
+    /**
+     * drop the food in the Hill
+     *
+     * @param c the Hill
+     * @return true by successfully dropping food
+     */
+    public synchronized boolean dropFood(Clearing c) {
+        //TODO implement this
+        return true;
+    }
 
 
 }
