@@ -95,7 +95,7 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
         if (write){
             updateFood(p,explorer);
         }
-        return this.food;
+        return food();
     }
 
     /**
