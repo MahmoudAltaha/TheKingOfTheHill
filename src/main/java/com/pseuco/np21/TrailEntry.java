@@ -33,11 +33,11 @@ public class TrailEntry {
         while (!trail.isSpaceLeft()){  // if the Trail is not available , the Ant should wait.
             wait();
         }
-        // if the Trail isn't the best Trail anymore don't enter it ,,go get the new Trail.
+        /*// if the Trail isn't the best Trail anymore don't enter it ,,go get the new Trail.
         SearchFoodPathCheck searchFoodPathCheck = new SearchFoodPathCheck(ant);
         if (! searchFoodPathCheck.checkIfTheTrailStillValidNormalCase(c,trail)){
             return false;
-        }
+        }*/
         trail.enter();  // enter the Trail
         ant.getRecorder().enter(ant,trail);  // recorder stuff.
         c.leave(); // leave the Clearing
@@ -128,11 +128,14 @@ public class TrailEntry {
     }
 
 
-    /**
-     * this methode will be used to enter this Trail in way that ensure concurrency.
-     * if you are using this method to enter the Trail for FoodSearch you may get false as return.
+    /*   (ignore this comment for now)!!!!!!
+    if you are using this method to enter the Trail for FoodSearch you may get false as return.
      * that means that the Trail which the Ant is trying to enter is no more the best Trail. so by return false
      * you should get new Trail and try to enter again.
+    * */
+    /**
+     * this methode will be used to enter this Trail in way that ensure concurrency.
+     *
      *
      * @param currentClearing  the Current Clearing which the Ant should left,
      * @param ant       the Ant
