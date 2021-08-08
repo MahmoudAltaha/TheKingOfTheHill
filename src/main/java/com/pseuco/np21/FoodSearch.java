@@ -7,14 +7,15 @@ import java.util.List;
 public class FoodSearch {
 
     private final Ant ant;
-    private final SearchFoodTrailHandler searchTrailHandler;
+    private final SearchFoodTrailHandler searchFoodTrailHandler;
+
     /**
      * constructor for the Class
      * @param ant the Ant
      */
     public FoodSearch(Ant ant) {
         this.ant = ant;
-        this.searchTrailHandler = new SearchFoodTrailHandler();
+        this.searchFoodTrailHandler = new SearchFoodTrailHandler();
     }
 
 
@@ -26,7 +27,7 @@ public class FoodSearch {
      * @return true if the targetTrail still valid.
      */
     synchronized  public boolean checkIfTheTrailStillValidNormalCase(Clearing currentClearing , Trail targetTrail){
-         return searchTrailHandler.checkTrail(currentClearing,targetTrail,ant);
+         return searchFoodTrailHandler.checkTrail(currentClearing,targetTrail,ant);
      }
 
     /**
@@ -51,7 +52,7 @@ public class FoodSearch {
      */
      synchronized public Trail getTargetTrail(Clearing currentClearing){
          List<Trail> trailList = currentClearing.connectsTo();
-         return searchTrailHandler.getTargetTrail(trailList,ant);
+         return searchFoodTrailHandler.getTargetTrail(trailList,ant);
     }
 
     /**
@@ -70,7 +71,7 @@ public class FoodSearch {
                 trailList.remove(t);
             }
          }   // now do the search in this particular list.
-         return searchTrailHandler.getTargetTrail(trailList,ant);
+         return searchFoodTrailHandler.getTargetTrail(trailList,ant);
     }
 
     /**
@@ -81,7 +82,7 @@ public class FoodSearch {
      */
     synchronized public boolean checkTrail(Clearing c){
             List<Trail> connectedTrails = c.connectsTo();
-      return   searchTrailHandler.checkTrail(c,connectedTrails,ant);
+      return   searchFoodTrailHandler.checkTrail(c,connectedTrails,ant);
     }
 
     /**
@@ -95,7 +96,7 @@ public class FoodSearch {
      * @return true if we found a valid Trail,in this case we get the Trail and enter it normally.
      */
     synchronized public boolean CheckTrailAfterBackTracks(Clearing currentClearing,Clearing lastWrongDeletedClearing,Ant ant){
-       return searchTrailHandler.CheckTrailAfterBackTracks(currentClearing,lastWrongDeletedClearing,ant);
+       return searchFoodTrailHandler.CheckTrailAfterBackTracks(currentClearing,lastWrongDeletedClearing,ant);
     }
 
 
@@ -238,7 +239,7 @@ public class FoodSearch {
      * @return     true if the Ant has entered the Clearing successfully.
      * @throws InterruptedException
      */
-    synchronized public boolean ImmediateBackTOClearing(Trail t,Clearing c)throws InterruptedException {
+    synchronized public boolean ImmediateReturnTOClearing(Trail t,Clearing c)throws InterruptedException {
         return enterClearing(t,c);
     }
 
@@ -253,7 +254,7 @@ public class FoodSearch {
      * @return     true if the Ant has entered the Clearing successfully.
      * @throws InterruptedException
      */
-    synchronized public boolean noFoodBackTOClearing(Trail t,Clearing c)throws InterruptedException {
+    synchronized public boolean noFoodReturnTOClearing(Trail t,Clearing c)throws InterruptedException {
         return enterClearing(t,c);
     }
 
@@ -270,11 +271,6 @@ public class FoodSearch {
         c.pickupFood(); // remove the picked up food from this Clearing.
         return  true;
     }
-
-
-
-
-
 
 
 

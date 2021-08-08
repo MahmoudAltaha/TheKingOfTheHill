@@ -10,6 +10,7 @@ package com.pseuco.np21;
 public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     private int ants;
     private int food;
+    private ClearingEntry clearingEntry;
 
     /**
      * Constructs a new clearing.
@@ -21,6 +22,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     public Clearing(final String name, final int food, final Capacity capacity) {
         super(name, food, capacity);
         this.food = initialFood;
+        this.clearingEntry = new ClearingEntry(this);
     }
 
     /**
@@ -68,4 +70,22 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     public void placeFood() {
         food++;
     }
+
+
+
+    public boolean enterClearingFoodSearch(Trail t,Ant ant)throws InterruptedException {
+        return clearingEntry.enterClearingFoodSearch(t,ant);
+    }
+    public boolean ImmediateReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
+        return clearingEntry.ImmediateReturnTOClearing(t,ant);
+    }
+    public boolean noFoodReturnTOClearing(Trail t,Ant ant)throws InterruptedException{
+        return clearingEntry.noFoodReturnTOClearing(t,ant);
+    }
+
+    public boolean pickUPFood(Ant ant){
+        return clearingEntry.pickUPFood(ant);
+    }
+
+
 }
