@@ -2,6 +2,9 @@ package com.pseuco.np21;
 
 import java.util.List;
 
+/**
+ * this class will be used to find the correct Trail which the ant should take when she search food.
+ */
 public class SearchFoodPathCheck {
 
     private final SearchFoodTrailHandler searchFoodTrailHandler;
