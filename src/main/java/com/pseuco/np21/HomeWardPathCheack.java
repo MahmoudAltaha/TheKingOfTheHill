@@ -51,11 +51,11 @@ public class HomeWardPathCheack {
         } else {
             // when ant is NOT an adventurer, take the trail with minAnthillPheromone
             int trailsNumber = connectedTrails.size() - 1;
-            int minAnthill = connectedTrails.get(trailsNumber).anthill().value();
+            int minAnthill = connectedTrails.get(trailsNumber).getOrUpdateHill(false,null).value();
             targetTrail = connectedTrails.get(trailsNumber);
             for (int i = 0; i < trailsNumber; i++) {
-                if (connectedTrails.get(i).anthill().value()  < minAnthill) {
-                    minAnthill = connectedTrails.get(i).anthill().value();
+                if (connectedTrails.get(i).getOrUpdateHill(false,null).value()  < minAnthill) {
+                    minAnthill = connectedTrails.get(i).getOrUpdateHill(false,null).value();
                     targetTrail = connectedTrails.get(i);
                 }
             }
