@@ -24,19 +24,6 @@ public class SearchFoodPathCheck {
     }
 
 
-    /**
-     *  this methode is used to check whether the chosen Trail still the right one.(case backtracking).
-     * @param currentClearing  current Clearing
-     * @param lastWrongDeletedClearing  last Wrong deleted Clearing
-     * @param t  the trail that need to be checked
-     * @return true if the trail still valid.
-     */
-    synchronized  public boolean CheckIfTheTrailStillValidAfterBackTracks(Clearing currentClearing,Clearing lastWrongDeletedClearing,Trail t){
-        return getTargetTrailAfterBackTracks(currentClearing,lastWrongDeletedClearing).id() == t.id();
-    }
-
-
-
 
     /**
      * this methode is used to choose the right Trail according to the project description.
