@@ -45,7 +45,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   private final List<Clearing> clearingSequence = new ArrayList<>();
   private boolean adventurer = false;
   private boolean holdFood = false;
-
+  public List<Trail> TrailsToVisetedClearing = new ArrayList<>();
 
   /**
    * Constructs an ant given a basic ant, the world and a recorder.
@@ -197,6 +197,21 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         to.enterClearing(target, this, EntryReason.FOOD_SEARCH);
         addClearingToSequence(to);
         position = to;
+        if(to.TakeOnPieceOfFood(this)){
+          while(position.id() != world.anthill().id()){
+            target = homeward.getTargetTrail(position);
+            target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME);
+            target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME);
+            position = target.to();
+          }
+          position.dropFood(position, this);
+          continue;
+
+        }else{
+          addClearingToSequence(position);
+          continue;
+
+        }
 
       }catch (InterruptedException e){
         Thread.currentThread().interrupt();

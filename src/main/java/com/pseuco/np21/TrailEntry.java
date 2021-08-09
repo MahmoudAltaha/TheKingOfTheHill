@@ -136,7 +136,9 @@ public class TrailEntry {
             notifyAll();
         }
         //TODO Food-Pheromone update Handling
+        if(c.checkHasFood()){
 
+        }
 
         return true;
     }
