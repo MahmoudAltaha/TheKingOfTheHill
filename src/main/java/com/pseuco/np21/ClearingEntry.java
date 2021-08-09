@@ -28,7 +28,6 @@ public class ClearingEntry {
             wait(ant.disguise());
             ant.getRecorder().attractAttention(ant); // added new
             throw new InterruptedException();  // TODO check
-
         }
         /*
         // check how the Ant has left wait()
