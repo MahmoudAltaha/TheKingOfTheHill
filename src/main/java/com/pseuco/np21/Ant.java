@@ -189,10 +189,11 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     addClearingToSequence(position);  // adding the antHill to the sequence
     HomeWardPathCheck homeward = new HomeWardPathCheck(this);
     SearchFoodPathCheck searchFood = new SearchFoodPathCheck(this);
+    try{
     while (world.isFoodLeft()) {
 
       Trail target = searchFood.getTargetTrail(position);
-      try{
+
         target.enterTrail(position, this, EntryReason.FOOD_SEARCH);
         Clearing to = target.to();
         to.enterClearing(target, this, EntryReason.FOOD_SEARCH);
@@ -214,14 +215,16 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
         }
 
-      }catch (InterruptedException e){
-        Thread.currentThread().interrupt();
-      }
 
 
 
 
     }
+    throw new InterruptedException();
+    }catch (InterruptedException e){
+      Thread.currentThread().interrupt();
+    }
+
 
     // TODO handle termination
 

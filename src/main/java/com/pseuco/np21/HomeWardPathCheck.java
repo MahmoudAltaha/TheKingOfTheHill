@@ -1,5 +1,8 @@
 package com.pseuco.np21;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class HomeWardPathCheck {
@@ -38,15 +41,14 @@ public class HomeWardPathCheck {
             }
         } else {
             // when ant is NOT an adventurer, take the trail with minAnthillPheromone
-            int trailsNumber = connectedTrails.size() - 1;
-            int minAnthill = connectedTrails.get(trailsNumber).getOrUpdateHill(false,null).value();
-            targetTrail = connectedTrails.get(trailsNumber);
-            for (int i = 0; i < trailsNumber; i++) {
-                if (connectedTrails.get(i).getOrUpdateHill(false,null).value()  < minAnthill) {
-                    minAnthill = connectedTrails.get(i).getOrUpdateHill(false,null).value();
-                    targetTrail = connectedTrails.get(i);
-                }
+            HashMap<Trail, Integer> findingMin = new HashMap<Trail, Integer>();
+            HashMap<Integer, Trail> reverseMap = new HashMap<Integer, Trail>();
+            for (Trail t : connectedTrails) {
+                findingMin.put(t, t.getOrUpdateHill(false, null).value());
+                reverseMap.put(t.getOrUpdateHill(false, null).value(), t);
             }
+            int min = Collections.min(findingMin.values());
+            targetTrail= reverseMap.get(min);
 
         }
         return targetTrail;

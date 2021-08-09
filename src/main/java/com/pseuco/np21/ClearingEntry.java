@@ -27,7 +27,8 @@ public class ClearingEntry {
         while (!clearing.isSpaceLeft()){  // wait for space,,if the Ant has waited more than its disguise she can pass.
             wait(ant.disguise());
             ant.getRecorder().attractAttention(ant); // added new
-            Thread.currentThread().interrupt();  // TODO check
+            throw new InterruptedException();  // TODO check
+
         }
         /*
         // check how the Ant has left wait()
