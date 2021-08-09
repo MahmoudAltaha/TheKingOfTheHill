@@ -1,5 +1,8 @@
 package com.pseuco.np21;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * this class can be seen as a gate for the Trail. each Clearing has one gate which is necessary
  * to ensure the concurrency
@@ -57,6 +60,9 @@ public class TrailEntry {
             com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
             trail.getOrUpdateHill(true,newPheromone); // update the HIll-Pheromone.
             ant.getRecorder().updateAnthill(ant,trail,newPheromone); // recorder stuff.
+        } else {
+            // if the trail i want to take leads to one Clearing which is already in the sequence , add it to this list.
+            ant.TrailsToVisetedClearing.put(trail.id(),trail);
         }
         return true;
     }

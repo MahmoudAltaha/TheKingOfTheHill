@@ -1,8 +1,6 @@
 package com.pseuco.np21;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class SearchFoodTrailHandler {
 
@@ -44,6 +42,22 @@ public class SearchFoodTrailHandler {
     }
 
     /**
+     * this methode used to remove the Trails which lead to the Clearing that i just visited and found that i
+     * have visited it in tha past.
+     * @param trailsList the Trails which are connected to the Current Clearing
+     * @param ant the Ant
+     */
+    private void removeTrailsThatConnectsToVisitedClearing(List<Trail> trailsList, Ant ant){
+        Map<Integer, Trail > trailsToVisitedClearings = ant.TrailsToVisetedClearing;
+        for (int i = 0 ; i< trailsList.size() ; i++){
+            int trailsID = trailsList.get(i).id();
+                if(trailsToVisitedClearings.containsKey(trailsID) ){
+                trailsList.remove(trailsList.get(i));
+            }
+        }
+    }
+
+    /**
      * this methode is used to choose the right Trail according to the project description.
      *
      * @param trailList the Trails from which we the right one choose.
@@ -52,6 +66,7 @@ public class SearchFoodTrailHandler {
      */
     public Trail getTargetTrail(List<Trail> trailList,Ant ant){
         assert (!trailList.isEmpty());  // check if the list are not Empty
+        removeTrailsThatConnectsToVisitedClearing(trailList,ant);
         for (int i = 0; i < trailList.size(); i++) {
             Trail t = trailList.get(i);
             // remove all Trails which are already has Map Value Or the last one in Sequence.
@@ -121,6 +136,7 @@ public class SearchFoodTrailHandler {
         if (connectedTrails.isEmpty()){
             return false;
         }
+        removeTrailsThatConnectsToVisitedClearing(connectedTrails,ant);
         // if the Clearing is the Hill and has one single Trail which its Food not MaP return true
         if (connectedTrails.size() == 1 && c.id() == ant.getWorld().anthill().id() ) {
             com.pseuco.np21.shared.Trail.Pheromone p = connectedTrails.get(0).getOrUpdateFood(false,null,false);
@@ -139,28 +155,6 @@ public class SearchFoodTrailHandler {
             return TrailWithoutMaP.size() > 1;
         }
         return false;
-    }
-
-    /**
-     * this methode is used when we need to check whether there are valid Trails after we went throw
-     * the special case when we enter a Clearing which is already in the sequence. so after one step back
-     * we do this check. be careful!!! when this methode returns false , that doesn't mean we have to start the
-     * homeward. it does mean that we have to once again back and mark the Trail we took to MaP!!
-     * @param currentClearing   the current Clearing where the ant is staying now.
-     * @param lastWrongDeletedClearing  the last deleted Clearing after going throw the special case d)
-     * @param ant   the Ant
-     * @return true if we found a valid Trail,in this case we get the Trail and enter it normally.
-     */
-    public boolean CheckTrailAfterBackTracks(Clearing currentClearing,Clearing lastWrongDeletedClearing,Ant ant){
-        List<Trail> connectedTrails = currentClearing.connectsTo();
-        // remove the Trail that leads to the deleted Clearing
-        for (int i = 0 ; i < connectedTrails.size(); i++){
-            Trail t = connectedTrails.get(i);
-            if (t.to().id() == lastWrongDeletedClearing.id()){
-                connectedTrails.remove(t);
-            }
-        } // do the check normally after that.
-        return checkTrail(currentClearing,connectedTrails,ant);
     }
 
 
