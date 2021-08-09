@@ -36,7 +36,9 @@ public class SearchFoodTrailHandler {
             minTrails.add(t1);
             minTrails.remove(t2);
         } else {
-            minTrails.add(t1);
+            if(!minTrails.contains(t1)){
+                minTrails.add(t1);
+            }
             minTrails.add(t2);
         }
     }
