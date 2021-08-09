@@ -2,7 +2,7 @@ package com.pseuco.np21;
 
 import java.util.List;
 
-public class HomeWardPathCheack {
+public class HomeWardPathCheck {
 
     private final Ant ant;
 
@@ -12,22 +12,10 @@ public class HomeWardPathCheack {
      * @param ant Ant
      */
 
-    public HomeWardPathCheack(Ant ant) {
+    public HomeWardPathCheck(Ant ant) {
         this.ant = ant;
     }
 
-    /**
-     * this methode is used to check whether the chosen Trail still the right one .
-     *
-     * @param currentClearing The current Clearing
-     * @param targetTrail     The target trail
-     * @return true if the targetTrail still valid.
-     */
-    public boolean checkTrail(Clearing currentClearing, Trail targetTrail) {
-        //TODO, DO I NEED THIS ONE?
-
-        return false;
-    }
 
     /**
      * this methode is used to choose the right Trail according to the project description.
