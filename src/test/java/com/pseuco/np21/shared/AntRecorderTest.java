@@ -1,9 +1,7 @@
 package com.pseuco.np21.shared;
 
-import com.pseuco.np21.Clearing;
 import com.pseuco.np21.Factory;
 import com.pseuco.np21.Simulator;
-import com.pseuco.np21.Trail;
 import com.pseuco.np21.shared.Trail.Pheromone;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,9 +12,8 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 class AntRecorderTest {
-    private World<Clearing, Trail> world;
-    private Clearing anthill, food;
-    private Trail trail, trailReverse;
+    private Clearing<?, ?> anthill, food;
+    private Trail<?, ?> trail, trailReverse;
     private Ant ant;
 
     private Simulator simulator;
@@ -26,16 +23,18 @@ class AntRecorderTest {
     void setUp() {
         final var factory = new Factory();
 
-        anthill = factory.createClearing("anthill");
+        final var anthill = factory.createClearing("anthill");
+        this.anthill = anthill;
         factory.setAnthill(anthill);
-        food = factory.createClearing("food", 2);
+        final var food = factory.createClearing("food", 2);
+        this.food = food;
 
         trail = factory.createTrail(anthill, food);
-        trailReverse = trail.reverse;
+        trailReverse = trail.reverse();
 
         ant = factory.createAnt("Anthony", 1, 1000);
 
-        world = factory.finishWorld("TestLine", -1);
+        final var world = factory.finishWorld("TestLine", -1);
         recorder = mock(Recorder.class);
 
         simulator = new Simulator(world, recorder);
