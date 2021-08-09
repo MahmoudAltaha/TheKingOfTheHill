@@ -1,7 +1,5 @@
 package com.pseuco.np21;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * this class can be seen as a gate for the Trail. each Clearing has one gate which is necessary
@@ -171,7 +169,6 @@ public class TrailEntry {
             case IMMEDIATE_RETURN -> this.immediateReturnToTrail(currentClearing,ant);
             case NO_FOOD_RETURN -> this.noFoodReturnToTrail(currentClearing,ant);
             case HEADING_BACK_HOME -> this.homewardEnterTrail(currentClearing, ant);
-            default -> false;
         };
     }
 
