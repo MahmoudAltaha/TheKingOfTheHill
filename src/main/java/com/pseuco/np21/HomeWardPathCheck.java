@@ -108,7 +108,7 @@ public class HomeWardPathCheck {
 
     /**
      * this method used intern to compare the pheromone of two Trails and to add the min one to the list.
-     * and remove the non min from it.
+     * and remove the non min from it.(you need to read this methode with the loop to understand what she do)
      *
      * @param t1 first Trail
      * @param t2 second Trail
@@ -119,20 +119,15 @@ public class HomeWardPathCheck {
         com.pseuco.np21.shared.Trail.Pheromone p2 = t2.anthill();
         if (p1.value() > p2.value()) {
             minTrails.add(t2);
-            minTrails.remove(t1); // remove t1 if it is present , if not nothing is happening(is written in javaDoc)
+            // remove t1 if it is present and all the Trails with the same Hill-Value , if not nothing is happening(is written in javaDoc)
             for (int i = 0; i < minTrails.size(); i++) {
                 if (minTrails.get(i).getOrUpdateHill(false, null).value() == t1.getOrUpdateHill(false, null).value()) {
                     minTrails.remove(minTrails.get(i));
                 }
             }
         } else if (p1.value() < p2.value()) {
-            minTrails.add(t1);
-            minTrails.remove(t2);
-            for (int i = 0; i < minTrails.size(); i++) {
-                if (minTrails.get(i).getOrUpdateHill(false, null).value() == t2.getOrUpdateHill(false, null).value()) {
-                    minTrails.remove(minTrails.get(i));
-                }
-
+            if (! minTrails.contains(t1)) {
+                minTrails.add(t1);
             }
         } else {
                 if (!minTrails.contains(t1)) {
