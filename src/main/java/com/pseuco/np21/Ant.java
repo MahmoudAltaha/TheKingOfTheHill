@@ -176,54 +176,9 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   }
 
 
-    /*
-
-
-  public void forwardCheck(FoodSearch foodSearch) throws InterruptedException {
-
-    if (foodSearch.checkTrail(position)) {
-      Trail target = foodSearch.getTargetTrail(position);
-      if (foodSearch.enterTrail(position, target)) {
-        if (foodSearch.enterClearing(target, target.to())) {
-          addClearingToSequence(target.to());
-          position = target.to();
-          if (foodSearch.pickUPFood(target.to())) {
-            // if the ant has successfully picked up food then she can go to anthill
-            Homeward homeward = new Homeward(this);
-            while (position != world.anthill()){
-              backHome(homeward);
-            }
-
-          }
 
 
 
-        }
-
-      }
-
-
-    }
-
-  }
-
-
-  public void backHome(Homeward homeward) throws InterruptedException {
-    if(homeward.checkTrail(position)){  //checkTrail need to be deleted in homeward class
-      Trail target = homeward.getTargetTrail(position);
-      if(homeward.checkTrail(position, target)){
-        if(homeward.enterTrail(position, target)){
-          if(homeward.enterClearing(target, target.to())){
-            position= target.to();
-          }
-
-        }
-
-      }
-    }
-
-  }
-  */
   /**
    * Primary ant behavior.
    */
@@ -231,16 +186,24 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     position = world.anthill();
     recorder.spawn(this);
     addClearingToSequence(position);  // adding the antHill to the sequence
-   // FoodSearch foodSearch = new FoodSearch(this);
     HomeWardPathCheack homeward = new HomeWardPathCheack(this);
+    SearchFoodPathCheck searchFood = new SearchFoodPathCheck(this);
     while (world.isFoodLeft()) {
-      /*
-      try {
-        forwardCheck(foodSearch);
-      } catch (InterruptedException e) {
-        Thread.currentThread();
+
+      Trail target = searchFood.getTargetTrail(position);
+      try{
+        target.enterTrail(position, this, EntryReason.FOOD_SEARCH);
+        Clearing to = target.to();
+        to.enterClearing(target, this, EntryReason.FOOD_SEARCH);
+        addClearingToSequence(to);
+        position = to;
+
+      }catch (InterruptedException e){
+        Thread.currentThread().interrupt();
       }
-      */
+
+
+
 
     }
 

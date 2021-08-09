@@ -71,6 +71,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
         food++;
     }
 
+    // TODO
 
     /**
      * this methode is the Only methode you should use to call hasFood/pickUpFood/placeFood.Otherwise we could have data race

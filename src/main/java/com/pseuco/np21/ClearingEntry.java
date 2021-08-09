@@ -26,13 +26,17 @@ public class ClearingEntry {
     synchronized public boolean enterClearingFoodSearch(Trail t,Ant ant)throws InterruptedException {
         while (!clearing.isSpaceLeft()){  // wait for space,,if the Ant has waited more than its disguise she can pass.
             wait(ant.disguise());
+            ant.getRecorder().attractAttention(ant); // added new
+            Thread.currentThread().interrupt();  // TODO check
         }
+        /*
         // check how the Ant has left wait()
         if (!clearing.isSpaceLeft()){  // if there is
             ant.getRecorder().attractAttention(ant); // recorder stuff.
             ant.setHoldFood(false); // delete any food if the ant was holding food.
             return false;  // the ant is about to die.
         }
+         */
         clearing.enter(); // enter the Clearing
         ant.getRecorder().enter(ant,clearing); // recorder stuff.
         ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
@@ -96,6 +100,10 @@ public class ClearingEntry {
     synchronized public boolean homewardEnterClearing(Trail t, Ant ant) throws InterruptedException{
         while (!clearing.isSpaceLeft()){
             wait(ant.disguise());  //TODO, handle die issue
+            ant.getRecorder().attractAttention(ant); // added new
+            Thread.currentThread().interrupt();  // TODO check
+            return false;
+
         }
         t.leave();
         ant.getRecorder().leave(ant, t);
