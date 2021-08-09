@@ -114,20 +114,31 @@ public class HomeWardPathCheck {
      * @param t2 second Trail
      * @param minTrails list of min Trails.
      */
-    private void compareTrails(Trail t1, Trail t2, List<Trail> minTrails){
+    private void compareTrails(Trail t1, Trail t2, List<Trail> minTrails) {
         com.pseuco.np21.shared.Trail.Pheromone p1 = t1.anthill();
         com.pseuco.np21.shared.Trail.Pheromone p2 = t2.anthill();
-        if ( p1.value() > p2.value()){
+        if (p1.value() > p2.value()) {
             minTrails.add(t2);
             minTrails.remove(t1); // remove t1 if it is present , if not nothing is happening(is written in javaDoc)
-        }else if (p1.value() < p2.value()){
+            for (int i = 0; i < minTrails.size(); i++) {
+                if (minTrails.get(i).getOrUpdateHill(false, null).value() == t1.getOrUpdateHill(false, null).value()) {
+                    minTrails.remove(minTrails.get(i));
+                }
+            }
+        } else if (p1.value() < p2.value()) {
             minTrails.add(t1);
             minTrails.remove(t2);
-        } else {
-            if (! minTrails.contains(t1)){
-                minTrails.add(t1);
+            for (int i = 0; i < minTrails.size(); i++) {
+                if (minTrails.get(i).getOrUpdateHill(false, null).value() == t2.getOrUpdateHill(false, null).value()) {
+                    minTrails.remove(minTrails.get(i));
+                }
+
             }
-            minTrails.add(t2);
+        } else {
+                if (!minTrails.contains(t1)) {
+                    minTrails.add(t1);
+                }
+                minTrails.add(t2);
+            }
         }
-    }
 }

@@ -32,9 +32,19 @@ public class SearchFoodTrailHandler {
         if ( p1.value() > p2.value()){
             minTrails.add(t2);
             minTrails.remove(t1); // remove t1 if it is present , if not nothing is happening
+            for (int i = 0; i < minTrails.size(); i++) {
+                if (minTrails.get(i).getOrUpdateHill(false, null).value() == t1.getOrUpdateHill(false, null).value()) {
+                    minTrails.remove(minTrails.get(i));
+                }
+            }
         }else if (p1.value() < p2.value()){
             minTrails.add(t1);
             minTrails.remove(t2);
+            for (int i = 0; i < minTrails.size(); i++) {
+                if (minTrails.get(i).getOrUpdateHill(false, null).value() == t2.getOrUpdateHill(false, null).value()) {
+                    minTrails.remove(minTrails.get(i));
+                }
+            }
         } else {
             if(!minTrails.contains(t1)){
                 minTrails.add(t1);
