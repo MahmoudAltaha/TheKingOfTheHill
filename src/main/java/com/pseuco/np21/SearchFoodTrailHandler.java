@@ -44,6 +44,7 @@ public class SearchFoodTrailHandler {
     /**
      * this methode used to remove the Trails which lead to the Clearing that i just visited and found that i
      * have visited it in tha past.
+     *
      * @param trailsList the Trails which are connected to the Current Clearing
      * @param ant the Ant
      */
@@ -58,15 +59,12 @@ public class SearchFoodTrailHandler {
     }
 
     /**
-     * this methode is used to choose the right Trail according to the project description.
-     *
-     * @param trailList the Trails from which we the right one choose.
-     * @param ant       Ant.
-     * @return      The Target Trail.
+     * this methode remove all Trails with Map-Pheromone from the given list.
+     * @param trailList trailsList
+     * @param ant ant
      */
-    public Trail getTargetTrail(List<Trail> trailList,Ant ant){
+    private void removeMapTrailsFromTheList(List<Trail> trailList,Ant ant){
         assert (!trailList.isEmpty());  // check if the list are not Empty
-        removeTrailsThatConnectsToVisitedClearing(trailList,ant);
         for (int i = 0; i < trailList.size(); i++) {
             Trail t = trailList.get(i);
             // remove all Trails which are already has Map Value Or the last one in Sequence.
@@ -75,14 +73,60 @@ public class SearchFoodTrailHandler {
                 trailList.remove(t);
             }
         }
-        Trail targetTrail;
-        boolean allNaP = true;  // check if all Trails has FoodPheromone = Nap
+    }
+
+    /**
+     *  this methode checks if all the Trails in the list has Nap-Pheromones.
+     *
+     * @param trailList trailList
+     * @param ant ant
+     * @return true if all the Trails in the list has Nap-Pheromones.
+     */
+    private boolean checkIfAllTrailsHasNaP(List<Trail> trailList, Ant ant){
+        assert (!trailList.isEmpty());  // check if the list are not Empty
         for (Trail t : trailList) {
             com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFood(false,null,false);
             if (!(p.isAPheromone())) {
-                allNaP = false;
+                return false;
             }
         }
+        return true;
+    }
+
+    /**
+     * this methode separate one list into two Lists, one of them has all Nap_trails and the other one
+     * has all Non-NapTrails.
+     * @param trailList trailList
+     * @param napTrails NapList
+     * @param nonNapTrails NON-Nap List
+     */
+    private void separateNapTrailsFromNonNapTrails(List<Trail> trailList,List<Trail> napTrails,List<Trail> nonNapTrails){
+        assert (!trailList.isEmpty());  // check if the list are not Empty
+        for (Trail trail : trailList) {
+            com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false,null,false);
+            int valueToCheck = p.value(); // pheromone of the Trail.
+            if (valueToCheck == -2) {  // check if the Trail has Nap food-Ph.
+                napTrails.add(trail); // if so add it to the JustNap list.
+            } else {
+                nonNapTrails.add(trail); //otherwise add it to the NonNap list.
+            }
+        }
+    }
+
+    /**
+     * this methode is used to choose the right Trail according to the project description.
+     *
+     * @param trailList the Trails from which we the right one choose.
+     * @param ant       Ant.
+     * @return      The Target Trail.
+     */
+    public Trail getTargetTrail(List<Trail> trailList,Ant ant){
+        assert (!trailList.isEmpty());  // check if the list are not Empty
+        removeTrailsThatConnectsToVisitedClearing(trailList,ant); // remove the Trails That Connect To Visited Clearing.
+        removeMapTrailsFromTheList(trailList,ant); //remove Map Trails From The List.
+        Trail targetTrail;
+        boolean allNaP = true;  // check if all Trails has FoodPheromone = Nap
+        allNaP = checkIfAllTrailsHasNaP(trailList,ant);
         Random random = new Random();
         if (allNaP){  // if so then pick a NaP Trail randomly .
             int index = random.nextInt(trailList.size());
@@ -93,17 +137,9 @@ public class SearchFoodTrailHandler {
             int size = trailList.size();  // get the size of the list
             List<Trail> trailsListNonNap = new ArrayList<>(); // list with Trails which has non Nap-Food-ph.
             List<Trail> trailsListWithJustNap = new ArrayList<>();// list with Trails which has Nap-food-ph.
-            for (Trail trail : trailList) {
-                com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false,null,false);
-                int valueToCheck = p.value(); // pheromone of the Trail.
-                if (valueToCheck == -2) {  // check if the Trail has Nap food-Ph.
-                    trailsListWithJustNap.add(trail); // if so add it to the JustNap list.
-                } else {
-                    trailsListNonNap.add(trail); //otherwise add it to the NonNap list.
-                }
-            }
+            separateNapTrailsFromNonNapTrails(trailList,trailsListWithJustNap,trailsListNonNap);
             List<Trail> minTrails = new ArrayList<>(); // list which should contains the min-NonNap Pheromones.
-            for (int i = 0; i < (size - 1); i++) {  // compare the NonNap-Pheromones and add it to the list.
+            for (int i = 0; i < (size - 1); i++) {  // compare the NonNap-Pheromones and add the min-ones to the list.
                 Trail t1 = trailsListNonNap.get(i);
                 Trail t2 = trailsListNonNap.get(i + 1);
                 compareTrails(t1, t2, minTrails);
