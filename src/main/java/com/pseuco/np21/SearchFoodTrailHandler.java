@@ -88,10 +88,9 @@ public class SearchFoodTrailHandler {
      *  this methode checks if all the Trails in the list has Nap-Pheromones.
      *
      * @param trailList trailList
-     * @param ant ant
      * @return true if all the Trails in the list has Nap-Pheromones.
      */
-    private boolean checkIfAllTrailsHasNaP(List<Trail> trailList, Ant ant){
+    private boolean checkIfAllTrailsHasNaP(List<Trail> trailList){
         assert (!trailList.isEmpty());  // check if the list are not Empty
         for (Trail t : trailList) {
             com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFood(false,null,false);
@@ -134,8 +133,8 @@ public class SearchFoodTrailHandler {
         removeTrailsThatConnectsToVisitedClearing(trailList,ant); // remove the Trails That Connect To Visited Clearing.
         removeMapTrailsFromTheList(trailList,ant); //remove Map Trails From The List.
         Trail targetTrail;
-        boolean allNaP = true;  // check if all Trails has FoodPheromone = Nap
-        allNaP = checkIfAllTrailsHasNaP(trailList,ant);
+        boolean allNaP;  // check if all Trails has FoodPheromone = Nap
+        allNaP = checkIfAllTrailsHasNaP(trailList);
         Random random = new Random();
         if (allNaP){  // if so then pick a NaP Trail randomly .
             int index = random.nextInt(trailList.size());

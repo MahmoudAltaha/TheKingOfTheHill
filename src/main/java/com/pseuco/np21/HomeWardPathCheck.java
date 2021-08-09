@@ -1,5 +1,6 @@
 package com.pseuco.np21;
 
+import java.lang.annotation.Target;
 import java.util.*;
 
 public class HomeWardPathCheck {
@@ -91,6 +92,7 @@ public class HomeWardPathCheck {
             //now return the Trail which leads to the Clearing which is Ordered in the sequence -->
             for (Trail target : connectedTrails) {    //--> exactly one index behind the CurrentClearing
                 if (target.to().id() == sequence.get(currentClearingNumberFromTheSequence - 1).id()) {
+                    target.setSelectionReason(6);   // set the selectionReason
                     return target;
                 }
             }
@@ -103,7 +105,9 @@ public class HomeWardPathCheck {
         }
         Random random = new Random();
         int randomIndex = random.nextInt(minTrails.size());//get random number
-        return minTrails.get(randomIndex);  // now return a random Trails which has min-antHill-Pheromone.
+         Trail targetTrail =  minTrails.get(randomIndex);
+         targetTrail.setSelectionReason(5); // set the selection reason.
+        return  targetTrail  ;// now return a random Trails which has min-antHill-Pheromone.
     }
 
     /**

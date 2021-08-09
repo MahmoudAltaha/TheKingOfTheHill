@@ -144,7 +144,6 @@ public class ClearingEntry {
             case IMMEDIATE_RETURN -> this.immediateReturnTOClearing(currentTrail, ant);
             case NO_FOOD_RETURN -> this.noFoodReturnTOClearing(currentTrail, ant);
             case HEADING_BACK_HOME -> this.homewardEnterClearing(currentTrail, ant);
-            default -> false;
         };
     }
 

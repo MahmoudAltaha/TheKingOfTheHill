@@ -60,6 +60,8 @@ public class SearchFoodPathCheck {
      */
     synchronized  public Trail getTrailToStepBack(Clearing currentTwiceVisitedClearing,Trail trailWeComeFrom){
         assert (trailWeComeFrom.to().equals(currentTwiceVisitedClearing));
+        Trail targetTrail = trailWeComeFrom.reverse();
+        targetTrail.setSelectionReason(3);
         return trailWeComeFrom.reverse();
     }
 
