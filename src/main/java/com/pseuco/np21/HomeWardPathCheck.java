@@ -115,8 +115,8 @@ public class HomeWardPathCheck {
      * @param minTrails list of min Trails.
      */
     private void compareTrails(Trail t1, Trail t2, List<Trail> minTrails) {
-        com.pseuco.np21.shared.Trail.Pheromone p1 = t1.anthill();
-        com.pseuco.np21.shared.Trail.Pheromone p2 = t2.anthill();
+        com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateHill(false,null);
+        com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateHill(false,null);
         if (p1.value() > p2.value()) {
             minTrails.add(t2);
             // remove t1 if it is present and all the Trails with the same Hill-Value , if not nothing is happening(is written in javaDoc)

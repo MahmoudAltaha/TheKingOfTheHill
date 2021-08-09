@@ -27,8 +27,8 @@ public class SearchFoodTrailHandler {
      * @param minTrails list of min Trails.
      */
     private void compareTrails(Trail t1, Trail t2, List<Trail> minTrails){
-        com.pseuco.np21.shared.Trail.Pheromone p1 = t1.food();
-        com.pseuco.np21.shared.Trail.Pheromone p2 = t2.food();
+        com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateFood(false,null,false);
+        com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateFood(false,null,false);
         if ( p1.value() > p2.value()){
             minTrails.add(t2);
             // remove t1 if it is present and all the Trails with the same food-Value, if not nothing is happening
