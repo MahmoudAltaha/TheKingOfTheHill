@@ -143,12 +143,11 @@ public class SearchFoodTrailHandler {
             targetTrail.setSelectionReason(2);  // update the SelectionReason in the Trail.
         }
         else {  // the trailList has Trails with non Nap-foodPheromone. it may also have Trails with Nap-ph tho.
-            int size = trailList.size();  // get the size of the list
             List<Trail> trailsListNonNap = new ArrayList<>(); // list with Trails which has non Nap-Food-ph.
             List<Trail> trailsListWithJustNap = new ArrayList<>();// list with Trails which has Nap-food-ph.
             separateNapTrailsFromNonNapTrails(trailList,trailsListWithJustNap,trailsListNonNap);
             List<Trail> minTrails = new ArrayList<>(); // list which should contains the min-NonNap Pheromones.
-            for (int i = 0; i < (size - 1); i++) {  // compare the NonNap-Pheromones and add the min-ones to the list.
+            for (int i = 0; i < (trailsListNonNap.size() - 1); i++) {  // compare the NonNap-Pheromones and add the min-ones to the list.
                 Trail t1 = trailsListNonNap.get(i);
                 Trail t2 = trailsListNonNap.get(i + 1);
                 compareTrails(t1, t2, minTrails);
