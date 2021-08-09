@@ -7,6 +7,7 @@ import com.pseuco.np21.shared.World;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   private final List<Clearing> clearingSequence = new ArrayList<>();
   private boolean adventurer = false;
   private boolean holdFood = false;
-  public List<Trail> TrailsToVisetedClearing = new ArrayList<>();
+  public HashMap<Integer, Trail> TrailsToVisetedClearing = new HashMap<>();
 
   /**
    * Constructs an ant given a basic ant, the world and a recorder.
