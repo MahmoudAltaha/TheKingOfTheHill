@@ -1,5 +1,8 @@
 package com.pseuco.np21;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Representation of a trail.
  * <p>
@@ -23,6 +26,7 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
      */
     private  int selectionReason ;
     private TrailEntry trailEntry;    // to handle the entering to this Trail in a concurrent way.
+    public Lock lock = new ReentrantLock();
 
     private Trail(final Trail reverse) {
         super(reverse);
@@ -94,10 +98,16 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
      * @param explorer  state of the Ant (it doesn't matter which value if we want just to get the Food-ph)
      * @return          the Food-pheromone.(the old or the new one)
      */
-    synchronized public Pheromone getOrUpdateFood(boolean write,Pheromone p,boolean explorer){
-        if (write){
-            updateFood(p,explorer);
-        }
+     public Pheromone getOrUpdateFood(boolean write,Pheromone p,boolean explorer){
+       lock.lock();
+       try {
+           if (write){
+               updateFood(p,explorer);
+           }
+       }
+       finally {
+           lock.unlock();
+       }
         return food();
     }
 
@@ -107,10 +117,16 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
      * @param p       the new Hill pheromone that we want to register. (null if we want to get the Hill-Ph only)
      * @return          the Hill-pheromone.(the old or the new one)
      */
-    synchronized public Pheromone getOrUpdateHill(boolean write,Pheromone p){
-        if (write){
-            updateAnthill(p);
-        }
+     public Pheromone getOrUpdateHill(boolean write,Pheromone p){
+      lock.lock();
+      try {
+          if (write){
+              updateAnthill(p);
+          }
+      }
+      finally {
+          lock.unlock();
+      }
         return this.anthill;
     }
 

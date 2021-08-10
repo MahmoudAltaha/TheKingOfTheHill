@@ -1,5 +1,8 @@
 package com.pseuco.np21;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Representation of a clearing.
  * <p>
@@ -11,6 +14,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     private int ants;
     private int food;
     private final ClearingEntry clearingEntry;
+    public Lock lock = new ReentrantLock();
 
     /**
      * Constructs a new clearing.
@@ -79,23 +83,28 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
         return clearingEntry;
     }
 
-    // TODO
 
     /**
      * this methode is the Only methode you should use to call hasFood/pickUpFood/placeFood.Otherwise we could have data race
      * @param foodInClearing select the order you want to call.
      * @return always return how much food are left there.
      */
-    synchronized public boolean getOrSetFood(FoodInClearing foodInClearing){
-        switch (foodInClearing){
-            case DROP_FOOD:
-                placeFood();
-                return hasFood();
-            case PICKUP_FOOD:
-                pickupFood();
-                return hasFood();
-            default:
-                return hasFood();
+     public boolean getOrSetFood(FoodInClearing foodInClearing){
+        lock.lock();
+        try {
+            switch (foodInClearing) {
+                case DROP_FOOD:
+                    placeFood();
+                    return hasFood();
+                case PICKUP_FOOD:
+                    pickupFood();
+                    return hasFood();
+                default:
+                    return hasFood();
+            }
+        }
+        finally {
+            lock.lock();
         }
     }
 
