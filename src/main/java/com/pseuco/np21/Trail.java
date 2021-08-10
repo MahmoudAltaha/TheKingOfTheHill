@@ -183,7 +183,7 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
      * @param ant       the Ant
      * @param entryReason   the reason you have to enter this Trail.
      * @return      true if the entry was completed successfully.
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      */
     public boolean enterTrail(Clearing currentClearing,Ant ant,EntryReason entryReason, boolean updateHill) throws InterruptedException {
         return trailEntry.enter(currentClearing,ant,entryReason, updateHill);

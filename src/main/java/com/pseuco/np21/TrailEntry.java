@@ -49,7 +49,7 @@ public class TrailEntry {
      * @param c    The Clearing from which the Ant comes.
      * @param ant   the ant who want to enter this trail.
      * @return     true when the Ant has entered the Trail successfully.
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      */
     public boolean enterTrailFoodSearch(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
@@ -101,7 +101,7 @@ public class TrailEntry {
      * @param c     The Clearing from which the Ant comes.
      * @param ant   the ant who want to enter this trail.
      * @return      true if the Ant has entered the Trail successfully
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      */
     public boolean immediateReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
@@ -129,7 +129,7 @@ public class TrailEntry {
      * @param c     The Clearing from which the Ant comes.
      * @param ant   the ant who want to enter this trail.
      * @return      true if the Ant has entered the Trail successfully
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      */
      public boolean noFoodReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
@@ -167,7 +167,7 @@ public class TrailEntry {
      * @param c The current Clearing
      * @param ant the ant who want to enter this Trail to go back Home.
      * @return true by successfully entering the trail.
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      */
 
     public  boolean homewardEnterTrail(Clearing c, Ant ant, boolean update) throws InterruptedException {
@@ -229,7 +229,7 @@ public class TrailEntry {
      * @param updateFood     check if we need to update-Hill-Pheromone
      * @param entryReason   the reason you have to enter this Trail.
      * @return      true if the entry was completed successfully.
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      */
      public boolean enter (Clearing currentClearing,Ant ant,EntryReason entryReason, boolean updateFood) throws InterruptedException {
         return switch (entryReason) {

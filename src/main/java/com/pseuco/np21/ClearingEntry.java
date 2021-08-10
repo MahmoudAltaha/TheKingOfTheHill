@@ -42,7 +42,7 @@ public class ClearingEntry {
      * @param t   The Trail from which the Ant comes.
      * @param ant   The ant which want to enter this clearing .
      * @return    true if the Ant has entered the Clearing successfully, false when the ant died you
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      */
     public boolean enterClearingFoodSearch(Trail t,Ant ant)throws InterruptedException {
         lock.lock();
@@ -77,7 +77,7 @@ public class ClearingEntry {
      * @param t    The Trail from which the Ant comes.
      * @param ant    The Ant which want to enter to this clearing .
      * @return     true if the Ant has entered the Clearing successfully.
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      */
      public boolean immediateReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
         return enterClearingFoodSearch(t,ant);
@@ -92,7 +92,7 @@ public class ClearingEntry {
      * @param t    The Trail from which the Ant comes.
      * @param ant    The Ant which want to enter to this clearing .
      * @return     true if the Ant has entered the Clearing successfully.
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      */
      public boolean noFoodReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
         return enterClearingFoodSearch(t,ant);
@@ -157,7 +157,7 @@ public class ClearingEntry {
      * @param ant       the Ant
      * @param entryReason   the reason you have to enter this Clearing.
      * @return      true if the entry was completed successfully.
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      */
      public boolean enter(Trail currentTrail,Ant ant,EntryReason entryReason) throws InterruptedException {
         return switch (entryReason) {
