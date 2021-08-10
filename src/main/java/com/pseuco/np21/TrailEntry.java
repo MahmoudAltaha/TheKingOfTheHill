@@ -115,7 +115,7 @@ public class TrailEntry {
      * @return      true if the Ant has entered the Trail successfully
      * @throws InterruptedException
      */
-    synchronized public boolean noFoodReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
+    public boolean noFoodReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
         lock.lock();
         try {
@@ -154,7 +154,7 @@ public class TrailEntry {
      * @throws InterruptedException
      */
 
-    public synchronized boolean homewardEnterTrail(Clearing c, Ant ant) throws InterruptedException {
+    public boolean homewardEnterTrail(Clearing c, Ant ant) throws InterruptedException {
         lock.lock();
         try{
             while (!trail.isSpaceLeft())
