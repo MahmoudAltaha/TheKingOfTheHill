@@ -125,7 +125,28 @@ public class ClearingEntry {
      * @return true if the Ant has entered the Clearing successfully.
      */
      public boolean homewardEnterClearing(Trail t, Ant ant) throws InterruptedException{
-       enterClearingFoodSearch(t,ant);
+         lock.lock();
+         try{
+             while (!clearing.isSpaceLeft())  // wait for space,,if the Ant has waited more than its disguise she can pass.
+                 if (!isSpaceLeft.await(ant.disguise(), TimeUnit.MILLISECONDS)) {
+                     ant.getRecorder().attractAttention(ant); // added new
+                     if(ant.hasFood()){
+                         ant.setHoldFood(false);
+                     }
+                     ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
+                     throw new InterruptedException();
+                 }
+             clearing.enter(); // enter the Clearing
+             ant.getRecorder().enter(ant,clearing); // recorder stuff.
+             ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
+             t.leave(); // leave the Trail.
+             ant.getRecorder().leave(ant,t); // recorder stuff
+             t.getTrailEntry().getIsSpaceLeft().signalAll();
+               /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
+                    //has been also notified */
+         }finally {
+             lock.unlock();
+         }
          return  true;
     }
 

@@ -1,6 +1,5 @@
 package com.pseuco.np21;
 
-import java.lang.annotation.Target;
 import java.util.*;
 
 public class HomeWardPathCheck {
@@ -37,12 +36,13 @@ public class HomeWardPathCheck {
                 }
             }
         }
-        List<Trail> nonNapTrails = new ArrayList<>();
-        addNapTrails(connectedTrails,nonNapTrails);
+         /*
+         List<Trail> nonNapTrails = new ArrayList<>();
+        addNapTrails(connectedTrails,nonNapTrails);*/
         List<Trail> minTrails = new ArrayList<>(); // all Trails which has the same min antHill-pheromone
-        for (int i = 0; i < (nonNapTrails.size() - 1) ; i++) {  // compare the Pheromones and add the min-ones to the list.
-            Trail t1 = nonNapTrails.get(i);
-            Trail t2 = nonNapTrails.get(i + 1);
+        for (int i = 0; i < (connectedTrails.size() - 1) ; i++) {  // compare the Pheromones and add the min-ones to the list.
+            Trail t1 = connectedTrails.get(i);
+            Trail t2 = connectedTrails.get(i + 1);
             compareTrails(t1, t2, minTrails);
         }
         Random random = new Random();
@@ -84,9 +84,9 @@ public class HomeWardPathCheck {
     }
 
     /**
-     *
-     * @param trailList
-     * @param nonNapTrails
+     * adding the Trails with the NON-Nap-Food-Pheromones to the second list (we may not use it!!)
+     * @param trailList connectedTrails
+     * @param nonNapTrails list of Trails with nonNap
      */
     private void addNapTrails(List<Trail> trailList,List<Trail> nonNapTrails) {
         assert (!trailList.isEmpty());  // check if the list are not Empty

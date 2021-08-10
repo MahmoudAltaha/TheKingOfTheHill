@@ -57,7 +57,7 @@ public class TrailEntry {
         try{
             while (!trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
                 isSpaceLeft.await();
-        /*// if the Trail isn't the best Trail anymore don't enter it ,,go get the new Trail.
+        /* if the Trail isn't the best Trail anymore don't enter it ,,go get the new Trail.
         SearchFoodPathCheck searchFoodPathCheck = new SearchFoodPathCheck(ant);
         if (! searchFoodPathCheck.checkIfTheTrailStillValidNormalCase(c,trail)){
             return false;
@@ -85,7 +85,7 @@ public class TrailEntry {
                 ant.getRecorder().updateAnthill(ant,trail,newPheromone); // recorder stuff.
             } else {
                 // if the trail i want to take leads to one Clearing which is already in the sequence , add it to this list.
-                ant.TrailsToVisetedClearing.put(trail.id(),trail);
+                ant.TrailsToVisitedClearing.put(trail.id(),trail);
             }
             }
         finally {

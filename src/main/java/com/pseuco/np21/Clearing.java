@@ -14,7 +14,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     private int ants;
     private int food;
     private final ClearingEntry clearingEntry;
-    public Lock lock = new ReentrantLock();
+    public Lock lock;
 
     /**
      * Constructs a new clearing.
@@ -27,6 +27,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
         super(name, food, capacity);
         this.food = initialFood;
         this.clearingEntry = new ClearingEntry(this);
+        this.lock= new ReentrantLock();
     }
 
     /**
@@ -75,9 +76,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
         food++;
     }
 
-    public boolean checkHasFood(){
-        return food != 0;
-    }
+
 
     public ClearingEntry getClearingEntry() {
         return clearingEntry;

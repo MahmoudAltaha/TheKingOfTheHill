@@ -26,7 +26,7 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
      */
     private  int selectionReason ;
     private TrailEntry trailEntry;    // to handle the entering to this Trail in a concurrent way.
-    public Lock lock = new ReentrantLock();
+    public Lock lock ;
 
     private Trail(final Trail reverse) {
         super(reverse);
@@ -35,7 +35,7 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
         this.food = Pheromone.NOT_A_PHEROMONE;
         this.ants = 0;
         this.trailEntry = new TrailEntry(this);
-
+        this.lock =  new ReentrantLock();
     }
 
     /**
@@ -62,7 +62,7 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
     }
 
     public TrailEntry getTrailEntry(){
-        return getTrailEntry();
+        return this.trailEntry;
     }
     /**
      * setter

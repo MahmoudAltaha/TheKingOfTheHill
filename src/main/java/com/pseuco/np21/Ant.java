@@ -46,7 +46,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   private final List<Clearing> clearingSequence = new ArrayList<>();
   private boolean adventurer = false;
   private boolean holdFood = false;
-  public HashMap<Integer, Trail> TrailsToVisetedClearing = new HashMap<>();
+  public HashMap<Integer, Trail> TrailsToVisitedClearing = new HashMap<>();
 
 
 
@@ -76,7 +76,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   /**
    * Set holdFood to true when the Ant has picked up some food and to false when it drops the food.
    *
-   * @param holdFood
+   * @param holdFood true or false.
    */
   public void setHoldFood(boolean holdFood) {
     this.holdFood = holdFood;
@@ -137,7 +137,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   /**
    * this methode is used to check if the Clearing is already in the sequence.
    *
-   * @param c Cleaing
+   * @param c Clearing
    * @return true if the Clearing is already in the sequence.
    */
   public boolean isInSequence(Clearing c) {

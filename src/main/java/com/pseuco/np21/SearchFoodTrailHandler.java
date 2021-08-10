@@ -58,7 +58,7 @@ public class SearchFoodTrailHandler {
      * @param ant the Ant
      */
     private void removeTrailsThatConnectsToVisitedClearing(List<Trail> trailsList, Ant ant){
-        Map<Integer, Trail > trailsToVisitedClearings = ant.TrailsToVisetedClearing;
+        Map<Integer, Trail > trailsToVisitedClearings = ant.TrailsToVisitedClearing;
         for (int i = 0 ; i< trailsList.size() ; i++){
             int trailsID = trailsList.get(i).id();
                 if(trailsToVisitedClearings.containsKey(trailsID) ){
