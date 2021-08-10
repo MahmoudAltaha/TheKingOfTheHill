@@ -24,16 +24,14 @@ public class ClearingEntry {
      * @throws InterruptedException
      */
     synchronized public boolean enterClearingFoodSearch(Trail t,Ant ant)throws InterruptedException {
-        while (!clearing.isSpaceLeft()){  // wait for space,,if the Ant has waited more than its disguise she can pass.
+        while (!clearing.isSpaceLeft())  // wait for space,,if the Ant has waited more than its disguise she can pass.
             wait(ant.disguise());
-        }
         // check how the Ant has left wait()
         if (!clearing.isSpaceLeft()){  // if there is
             ant.getRecorder().attractAttention(ant); // recorder stuff.
             Thread.currentThread().interrupt(); // interrupt the thread.
             return false;  // the ant is about to die.
         }
-
         clearing.enter(); // enter the Clearing
         ant.getRecorder().enter(ant,clearing); // recorder stuff.
         ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
