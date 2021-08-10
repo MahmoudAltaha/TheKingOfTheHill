@@ -22,7 +22,7 @@ public class SearchFoodPathCheck {
      * @param  targetTrail  the TargetTrail
      * @return true if the targetTrail still valid.
      */
-    synchronized  private boolean checkIfTheTrailStillValidNormalCase(Clearing currentClearing , Trail targetTrail){
+    private boolean checkIfTheTrailStillValidNormalCase(Clearing currentClearing , Trail targetTrail){
         return searchFoodTrailHandler.checkTrail(currentClearing,targetTrail,ant);
     }
 
@@ -34,7 +34,7 @@ public class SearchFoodPathCheck {
      * @param  currentClearing the currentClearing
      * @return the targetTrail.
      */
-    synchronized public Trail getTargetTrail(Clearing currentClearing){
+     public Trail getTargetTrail(Clearing currentClearing){
         List<Trail> trailList = currentClearing.connectsTo();
         return searchFoodTrailHandler.getTargetTrail(trailList,ant);
     }
@@ -46,7 +46,7 @@ public class SearchFoodPathCheck {
      * @param c  Current Clearing.
      * @return   return true if you found a Trail.
      */
-    synchronized public boolean checkTrail(Clearing c){
+     public boolean checkTrail(Clearing c){
         List<Trail> connectedTrails = c.connectsTo();
         return   searchFoodTrailHandler.checkTrail(c,connectedTrails,ant);
     }
@@ -58,7 +58,7 @@ public class SearchFoodPathCheck {
      * @param trailWeComeFrom           the Trail from which we come from the last time.
      * @return  the reversedTrail which we need to take
      */
-    synchronized  public Trail getTrailToStepBack(Clearing currentTwiceVisitedClearing,Trail trailWeComeFrom){
+     public Trail getTrailToStepBack(Clearing currentTwiceVisitedClearing,Trail trailWeComeFrom){
         assert (trailWeComeFrom.to().equals(currentTwiceVisitedClearing));
         Trail targetTrail = trailWeComeFrom.reverse();
         targetTrail.setSelectionReason(3);
