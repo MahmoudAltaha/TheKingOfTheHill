@@ -87,18 +87,22 @@ public class TrailEntry {
      * @return      true if the Ant has entered the Trail successfully
      * @throws InterruptedException
      */
-    synchronized public boolean immediateReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
+    public boolean immediateReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
-        while (!trail.isSpaceLeft()){ // wait for a free space.
-            isSpaceLeft.await();
-            //wait();
+        lock.lock();
+        try{
+            while (!trail.isSpaceLeft())// wait for a free space.
+                isSpaceLeft.await();
+            trail.enter();
+            ant.getRecorder().enter(ant,trail);
+            c.leave();  // leave the wrong Clearing
+            ant.getRecorder().leave(ant,c);
+            c.getClearingEntry().isSpaceLeft.signalAll();  // signal all Ants that the Clearing has now a free space.
+            ant.removeClearingFromSequence(c);
+        }finally {
+            lock.unlock();
         }
-        trail.enter();   // enter the trail.
-        ant.getRecorder().enter(ant,trail); // recorder stuff
-        c.leave();  // leave the wrong Clearing
-        ant.getRecorder().leave(ant,c);  // recorder stuff
-        notifyAll();  // notify all Ants that the Clearing has now a free space.
-        ant.removeClearingFromSequence(c);  // remove this wrong Clearing from the sequence.
+       // remove this wrong Clearing from the sequence.
         //ToDO make this void.
         return true;
     }
@@ -113,21 +117,28 @@ public class TrailEntry {
      */
     synchronized public boolean noFoodReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
-        while (!trail.isSpaceLeft()){
-            wait();
+        lock.lock();
+        try {
+            while (!trail.isSpaceLeft())
+            isSpaceLeft.await();
+
+            trail.enter();
+            ant.getRecorder().enter(ant,trail);
+            c.leave();  // leave the wrong Clearing
+            ant.getRecorder().leave(ant,c);
+            c.getClearingEntry().isSpaceLeft.signalAll();  // notify all Ants that the Clearing has now a free space.
+            // remove this Clearing from the sequence.there are no Food to find in this way.
+            ant.removeClearingFromSequence(c);
+            //create a Map food-Pheromone .
+            com.pseuco.np21.shared.Trail.Pheromone mapPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(-1);
+            //update the Food-Pheromone of the Trail to Map.
+            trail.getOrUpdateFood(true,mapPheromone,ant.isAdventurer());
+            ant.getRecorder().updateFood(ant,trail,mapPheromone); // recorder stuff.
+        }finally {
+            lock.unlock();
         }
-        trail.enter();   // enter the trail.
-        ant.getRecorder().enter(ant,trail); // recorder stuff
-        c.leave();  // leave the wrong Clearing
-        ant.getRecorder().leave(ant,c);  // recorder stuff
-        notifyAll();  // notify all Ants that the Clearing has now a free space.
-        // remove this Clearing from the sequence.there are no Food to find in this way.
-        ant.removeClearingFromSequence(c);
-        //create a Map food-Pheromone .
-        com.pseuco.np21.shared.Trail.Pheromone mapPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(-1);
-        //update the Food-Pheromone of the Trail to Map.
-        trail.getOrUpdateFood(true,mapPheromone,ant.isAdventurer());
-        ant.getRecorder().updateFood(ant,trail,mapPheromone); // recorder stuff.
+
+
         //ToDO make this void.
         return true;
     }
@@ -144,20 +155,25 @@ public class TrailEntry {
      */
 
     public synchronized boolean homewardEnterTrail(Clearing c, Ant ant) throws InterruptedException {
-        while (!trail.isSpaceLeft()) {
-            wait();
-        }
-        c.leave();
-        ant.getRecorder().leave(ant, c);
-        trail.enter();
-        ant.getRecorder().enter(ant, trail);
-        if (c.id()!= ant.getWorld().anthill().id()){
-            notifyAll();
-        }
-        //TODO Food-Pheromone update Handling
-        if(c.checkHasFood()){
+        lock.lock();
+        try{
+            while (!trail.isSpaceLeft())
+                isSpaceLeft.await();
+            c.leave();
+            ant.getRecorder().leave(ant, c);
+            trail.enter();
+            ant.getRecorder().enter(ant, trail);
+            if (c.id()!= ant.getWorld().anthill().id()){
+                c.getClearingEntry().isSpaceLeft.signalAll();
+            }
+            //TODO Food-Pheromone update Handling
+            if(c.checkHasFood()){
 
+            }
+        }finally {
+            lock.unlock();
         }
+
 
         return true;
     }
