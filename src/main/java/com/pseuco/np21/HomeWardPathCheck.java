@@ -21,10 +21,10 @@ public class HomeWardPathCheck {
         List<Trail> connectedTrails = currentClearing.connectsTo(); // the out Trails from the Current Clearing
         if (ant.isAdventurer()){ // check if the Ant is an Adventurer.
             int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
-            for (int i = 0 ; i <sequence.size();i++){     // by looping the sequence
-                if (sequence.get(i).id() != currentClearing.id()){
-                    currentClearingNumberFromTheSequence ++;
-                }else {
+            for (Clearing clearing : sequence) {     // by looping the sequence
+                if (clearing.id() != currentClearing.id()) {
+                    currentClearingNumberFromTheSequence++;
+                } else {
                     break;
                 }
             }

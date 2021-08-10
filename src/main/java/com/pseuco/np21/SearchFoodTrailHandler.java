@@ -124,27 +124,31 @@ public class SearchFoodTrailHandler {
     /**
      * this methode is used to choose the right Trail according to the project description.
      *
-     * @param trailList the Trails from which we the right one choose.
+     * @param trailList the Trails from which we the right one choose.(ConnectedTrails
      * @param ant       Ant.
      * @return      The Target Trail.
      */
     public Trail getTargetTrail(List<Trail> trailList,Ant ant){
         assert (!trailList.isEmpty());  // check if the list are not Empty
-        removeTrailsThatConnectsToVisitedClearing(trailList,ant); // remove the Trails That Connect To Visited Clearing.
-        removeMapTrailsFromTheList(trailList,ant); //remove Map Trails From The List.
+        // make new list object which has the same TrailsObject in the trailsList
+        List<Trail> trailsListToBeClearedAndChosenFrom = new ArrayList<>(trailList);
+        /* remove the Trails That Connect To Visited clearing in the new objectList
+         (but do not touch the real ConnectedTrails to the Clearing). */
+        removeTrailsThatConnectsToVisitedClearing(trailsListToBeClearedAndChosenFrom,ant);
+        removeMapTrailsFromTheList(trailsListToBeClearedAndChosenFrom,ant); // the same like above, remove Map Trails From The List.
         Trail targetTrail;
         boolean allNaP;  // check if all Trails has FoodPheromone = Nap
-        allNaP = checkIfAllTrailsHasNaP(trailList);
+        allNaP = checkIfAllTrailsHasNaP(trailsListToBeClearedAndChosenFrom);
         Random random = new Random();
         if (allNaP){  // if so then pick a NaP Trail randomly .
-            int index = random.nextInt(trailList.size());
-            targetTrail = trailList.get(index);
+            int index = random.nextInt(trailsListToBeClearedAndChosenFrom.size());
+            targetTrail = trailsListToBeClearedAndChosenFrom.get(index);
             targetTrail.setSelectionReason(2);  // update the SelectionReason in the Trail.
         }
         else {  // the trailList has Trails with non Nap-foodPheromone. it may also have Trails with Nap-ph tho.
             List<Trail> trailsListNonNap = new ArrayList<>(); // list with Trails which has non Nap-Food-ph.
             List<Trail> trailsListWithJustNap = new ArrayList<>();// list with Trails which has Nap-food-ph.
-            separateNapTrailsFromNonNapTrails(trailList,trailsListWithJustNap,trailsListNonNap);
+            separateNapTrailsFromNonNapTrails(trailsListToBeClearedAndChosenFrom,trailsListWithJustNap,trailsListNonNap);
             List<Trail> minTrails = new ArrayList<>(); // list which should contains the min-NonNap Pheromones.
             for (int i = 0; i < (trailsListNonNap.size() - 1); i++) {  // compare the NonNap-Pheromones and add the min-ones to the list.
                 Trail t1 = trailsListNonNap.get(i);
@@ -179,15 +183,19 @@ public class SearchFoodTrailHandler {
         if (connectedTrails.isEmpty()){
             return false;
         }
-        removeTrailsThatConnectsToVisitedClearing(connectedTrails,ant);
+        // make new list object which has the same TrailsObject in the trailsList
+        List<Trail> trailsListToBeClearedAndChosenFrom = new ArrayList<>(connectedTrails);
+        /* remove the Trails That Connect To Visited clearing in the new objectList
+         (but do not touch the real ConnectedTrails to the Clearing). */
+        removeTrailsThatConnectsToVisitedClearing(trailsListToBeClearedAndChosenFrom,ant);
         // if the Clearing is the Hill and has one single Trail which its Food not MaP return true
-        if (connectedTrails.size() == 1 && c.id() == ant.getWorld().anthill().id() ) {
-            com.pseuco.np21.shared.Trail.Pheromone p = connectedTrails.get(0).getOrUpdateFood(false,null,false);
+        if (trailsListToBeClearedAndChosenFrom.size() == 1 && c.id() == ant.getWorld().anthill().id() ) {
+            com.pseuco.np21.shared.Trail.Pheromone p = trailsListToBeClearedAndChosenFrom.get(0).getOrUpdateFood(false,null,false);
             return !p.isInfinite();
         }  // Hill or normal Clearing with more than one Trail( the one from which the Ant has reached this Clearing)
-        if (connectedTrails.size() > 1 ){
+        if (trailsListToBeClearedAndChosenFrom.size() > 1 ){
             List<Trail> TrailWithoutMaP = new ArrayList<>(); // list of non-Map-food-pheromone Trails
-            for (Trail t : connectedTrails) {
+            for (Trail t : trailsListToBeClearedAndChosenFrom) {
                 com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFood(false,null,false);
                 if (! p.isInfinite()) {
                     TrailWithoutMaP.add(t);

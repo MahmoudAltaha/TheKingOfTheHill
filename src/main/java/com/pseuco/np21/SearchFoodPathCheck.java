@@ -62,7 +62,7 @@ public class SearchFoodPathCheck {
         assert (trailWeComeFrom.to().equals(currentTwiceVisitedClearing));
         Trail targetTrail = trailWeComeFrom.reverse();
         targetTrail.setSelectionReason(3);
-        return trailWeComeFrom.reverse();
+        return targetTrail;
     }
 
 
