@@ -192,11 +192,16 @@ public class TrailEntry {
                     }else {
                         break;
                     }
-                }
+                }/*  sequence={A,B,Curr,C,D,Last} we want to update on Trail (curr->B)
+                currIndexInSeq = 2; , LastIndexInSeq =size()-1 = 5
+                5 - 2 = 3  ->> we have three Trails between the last und curr and the fourth is our Trail
+                (1) Last->D, (2) D->C ,(3) C->Curr, now we must write (4) on Curr->B
+                 SO size()=6 - (CurrIndex= 2) = 4 the right result
+                */
                 int r = (ant.getClearingSequence().size()) - currentClearingNumberFromTheSequence;
-                int FoodPher = trail.getOrUpdateFood(false, null, false).value();
-                int newPher = Math.min(r, FoodPher);
-                com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(newPher);
+                int FoodPheromoneValue = trail.getOrUpdateFood(false, null, false).value();
+                int minPheromoneValue = Math.min(r, FoodPheromoneValue);
+                com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(minPheromoneValue);
                 trail.getOrUpdateFood(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
                 ant.getRecorder().updateFood(ant,trail,newPheromone); // recorder stuff
             }
