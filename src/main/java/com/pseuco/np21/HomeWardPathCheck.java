@@ -24,7 +24,7 @@ public class HomeWardPathCheck {
      * @param currentClearing       The current Clearing
      * @return the targetTrail.
      */
-    public synchronized Trail getTargetTrail(Clearing currentClearing) {
+    public Trail getTargetTrail(Clearing currentClearing) {
         Clearing lastClearing;  //last clearing that have been visited
         List<Trail> connectedTrails = currentClearing.connectsTo(); //List of connected trials with currentClearing
         Trail targetTrail;
