@@ -17,67 +17,7 @@ public class HomeWardPathCheck {
         this.ant = ant;
     }
 
-
-    /**
-     * this methode is used to choose the right Trail according to the project description.
-     *
-     * @param currentClearing       The current Clearing
-     * @return the targetTrail.
-     */
-    public Trail getTargetTrail(Clearing currentClearing) {
-        Clearing lastClearing;  //last clearing that have been visited
-        List<Trail> connectedTrails = currentClearing.connectsTo(); //List of connected trials with currentClearing
-        Trail targetTrail;
-        if (ant.isAdventurer()) {  //when ant is an adventurer, take exact the same sequence back to anthill
-            int sequenceSize = ant.getClearingSequence().size();
-            lastClearing = ant.getClearingSequence().get(sequenceSize - 1);
-            targetTrail = connectedTrails.get(sequenceSize-1);
-            for (Trail trail : connectedTrails) { // searching the trail connected to last visited clearing
-                if (trail.to().equals(lastClearing)) {
-                    targetTrail = trail;
-                }
-            }
-        } else {
-            // when ant is NOT an adventurer, take the trail with minAnthillPheromone
-            HashMap<Trail, Integer> findingMin = new HashMap<Trail, Integer>();
-            HashMap<Integer, Trail> reverseMap = new HashMap<Integer, Trail>();
-            for (Trail t : connectedTrails) {
-                findingMin.put(t, t.getOrUpdateHill(false, null).value());
-                reverseMap.put(t.getOrUpdateHill(false, null).value(), t);
-            }
-            int min = Collections.min(findingMin.values());
-            targetTrail= reverseMap.get(min);
-
-        }
-        return targetTrail;
-    }
-
-    /* the methode above is false for many reasons: (but i didn't touch your implementation !!!!)
-       the reasons:
-      1) in the line 32 you are assuming that the currentClearing is always the last one in the sequence , which
-      is not true (the sequence should be cleared once the ant is in the Hill and not before according to the description.
-      then in line 33 you are using connectedTrails.get(sequence -1)!!!!(sequence!!!!).
-      the in the for loop you are retuning the Trail which leads to the last Clearing in the Sequence !! why??
-      even when you are assuming that the current Clearing is the last one in the sequence then you want to have a Trail
-      which is leading to the same currentClearing!! sorry but i didn't get it ..maybe you can prove to me when we meet online
-      that this code actually works, which i doubt.
-
-      2) now for the second part of the methode( not Adventurer) :
-        i see you are using here some hashMaps cool . but you can't give a hashMap the same key twice . the second
-        using of an already used key will override the first object and not adding the second one .
-        how you are using the same key? i will tell you ..you are taking the pheromone value as a key and more than
-        one Trail could have the same value of Pheromone. so you may actually override more than one object in this
-        way
-        the second problem is that even if we assumed that every thing was fine after that the Collection.min will
-        give always the last min object you compared (not randomly) i have built a programme like yours and can show
-        it to you tomorrow.
-        i hope you understand that my note here is not downgrading you every one of us has written some wrong code
-        and maybe you can prove to me tomorrow that i am wrong totally okay. just wanted to make sure that every thing works
-        have a good night.
-      * */
-    // this is the same methode i wrote i think till now that it is correct. if you are ok with it just edit the name.
-    // if not please don't delete it and discuss it with me later.
-    synchronized public Trail correctOne(Clearing currentClearing){
+    public Trail getTargetTrail(Clearing currentClearing){
         List<Clearing> sequence =ant.getClearingSequence();  // the sequence
         List<Trail> connectedTrails = currentClearing.connectsTo(); // the out Trails from the Current Clearing
         if (ant.isAdventurer()){ // check if the Ant is an Adventurer.
@@ -107,8 +47,8 @@ public class HomeWardPathCheck {
         }
         Random random = new Random();
         int randomIndex = random.nextInt(minTrails.size());//get random number
-         Trail targetTrail =  minTrails.get(randomIndex);
-         targetTrail.setSelectionReason(5); // set the selection reason.
+        Trail targetTrail =  minTrails.get(randomIndex);
+        targetTrail.setSelectionReason(5); // set the selection reason.
         return  targetTrail  ;// now return a random Trails which has min-antHill-Pheromone.
     }
 
@@ -136,14 +76,18 @@ public class HomeWardPathCheck {
                 minTrails.add(t1);
             }
         } else {
-                if (!minTrails.contains(t1)) {
-                    minTrails.add(t1);
-                }
-                minTrails.add(t2);
+            if (!minTrails.contains(t1)) {
+                minTrails.add(t1);
             }
+            minTrails.add(t2);
         }
+    }
 
-
+    /**
+     *
+     * @param trailList
+     * @param nonNapTrails
+     */
     private void addNapTrails(List<Trail> trailList,List<Trail> nonNapTrails) {
         assert (!trailList.isEmpty());  // check if the list are not Empty
         for (Trail trail : trailList) {
@@ -155,4 +99,5 @@ public class HomeWardPathCheck {
             }
         }
     }
+
 }
