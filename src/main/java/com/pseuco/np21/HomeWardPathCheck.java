@@ -97,10 +97,12 @@ public class HomeWardPathCheck {
                 }
             }
         }
+        List<Trail> nonNapTrails = new ArrayList<>();
+        addNapTrails(connectedTrails,nonNapTrails);
         List<Trail> minTrails = new ArrayList<>(); // all Trails which has the same min antHill-pheromone
-        for (int i = 0; i < (connectedTrails.size() - 1) ; i++) {  // compare the Pheromones and add the min-ones to the list.
-            Trail t1 = connectedTrails.get(i);
-            Trail t2 = connectedTrails.get(i + 1);
+        for (int i = 0; i < (nonNapTrails.size() - 1) ; i++) {  // compare the Pheromones and add the min-ones to the list.
+            Trail t1 = nonNapTrails.get(i);
+            Trail t2 = nonNapTrails.get(i + 1);
             compareTrails(t1, t2, minTrails);
         }
         Random random = new Random();
@@ -140,4 +142,17 @@ public class HomeWardPathCheck {
                 minTrails.add(t2);
             }
         }
+
+
+    private void addNapTrails(List<Trail> trailList,List<Trail> nonNapTrails) {
+        assert (!trailList.isEmpty());  // check if the list are not Empty
+        for (Trail trail : trailList) {
+            com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false, null, false);
+            int valueToCheck = p.value(); // pheromone of the Trail.
+            if (valueToCheck == -2) {  // check if the Trail has Nap food-Ph.
+                nonNapTrails.add(trail);
+
+            }
+        }
+    }
 }
