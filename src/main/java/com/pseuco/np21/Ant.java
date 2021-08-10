@@ -48,6 +48,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   private boolean holdFood = false;
   public HashMap<Integer, Trail> TrailsToVisetedClearing = new HashMap<>();
 
+
+
   /**
    * Constructs an ant given a basic ant, the world and a recorder.
    *
@@ -136,26 +138,25 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
    * this methode is used to check if the Clearing is already in the sequence.
    *
    * @param c Cleaing
-   * @return  true if the Clearing is already in the sequence.
+   * @return true if the Clearing is already in the sequence.
    */
-  public boolean isInSequence(Clearing c){
+  public boolean isInSequence(Clearing c) {
     return getClearingSequence().contains(c);
   }
 
   /**
    * this methode is used to check if the Clearing is the second last visited in the sequence.
    *
-   * @param c Cleaing
-   * @return  true if the Clearing is already in the sequence.
+   * @param c Clearing
+   * @return true if the Clearing is already in the sequence.
    */
-  public boolean isSecondLastVisitedInSequence(Clearing c){
-    if (clearingSequence.size()>=2) {
+  public boolean isSecondLastVisitedInSequence(Clearing c) {
+    if (clearingSequence.size() >= 2) {
       Clearing lastClearing = clearingSequence.get(clearingSequence.size() - 1);
       return lastClearing.id() == c.id();
     }
     return false;
   }
-
 
 
   /**
@@ -176,8 +177,32 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     return world;
   }
 
+  private void forwardMoving() throws InterruptedException {
+    SearchFoodPathCheck searchFood = new SearchFoodPathCheck(this);
+    Trail target = searchFood.getTargetTrail(position);
+    target.enterTrail(position, this, EntryReason.FOOD_SEARCH);
+    Clearing nextClearing = target.to();
+    nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH);
+    addClearingToSequence(nextClearing);
+    position = nextClearing;
+    if (nextClearing.TakeOnPieceOfFood(this)) {
+      homewardMoving();
+    }else{
+      addClearingToSequence(position);
+    }
+  }
 
-
+  private void homewardMoving() throws InterruptedException {
+    Trail target;
+    HomeWardPathCheck homeward = new HomeWardPathCheck(this);
+    while (position.id() != this.getWorld().anthill().id()) {
+      target = homeward.getTargetTrail(position);
+      target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME);
+      target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME);
+      position = target.to();
+    }
+    position.dropFood(position, this);
+  }
 
 
   /**
@@ -187,44 +212,17 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     position = world.anthill();
     recorder.spawn(this);
     addClearingToSequence(position);  // adding the antHill to the sequence
-    HomeWardPathCheck homeward = new HomeWardPathCheck(this);
-    SearchFoodPathCheck searchFood = new SearchFoodPathCheck(this);
-    try{
-    while (world.isFoodLeft()) {
 
-      Trail target = searchFood.getTargetTrail(position);
+    try {
+      while (world.isFoodLeft()) {
 
-        target.enterTrail(position, this, EntryReason.FOOD_SEARCH);
-        Clearing to = target.to();
-        to.enterClearing(target, this, EntryReason.FOOD_SEARCH);
-        addClearingToSequence(to);
-        position = to;
-        if(to.TakeOnPieceOfFood(this)){
-          while(position.id() != world.anthill().id()){
-            target = homeward.getTargetTrail(position);
-            target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME);
-            target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME);
-            position = target.to();
-          }
-          position.dropFood(position, this);
-          continue;
+        forwardMoving();
 
-        }else{
-          addClearingToSequence(position);
-          continue;
-
-        }
-
-
-
-
-
-    }
-    throw new InterruptedException();
-    }catch (InterruptedException e){
+      }
+      throw new InterruptedException();
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
-
 
     // TODO handle termination
 

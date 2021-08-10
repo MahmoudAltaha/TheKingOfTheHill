@@ -74,6 +74,11 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     public boolean checkHasFood(){
         return food != 0;
     }
+
+    public ClearingEntry getClearingEntry() {
+        return clearingEntry;
+    }
+
     // TODO
 
     /**

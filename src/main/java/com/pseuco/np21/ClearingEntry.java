@@ -1,11 +1,21 @@
 package com.pseuco.np21;
 
+import com.pseuco.np21.shared.Recorder.DespawnReason;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * this class can be seen as a gate for the clearing. each Clearing has one gate which is necessary
  * to ensure the concurrency
  */
 public class ClearingEntry {
     private final Clearing clearing;
+
+    static public final Lock lock = new ReentrantLock();
+    static public Condition isSpaceLeft= lock.newCondition();
+
 
     /**
      * construct a clearingEntry
@@ -23,28 +33,29 @@ public class ClearingEntry {
      * @return    true if the Ant has entered the Clearing successfully, false when the ant died you
      * @throws InterruptedException
      */
-    synchronized public boolean enterClearingFoodSearch(Trail t,Ant ant)throws InterruptedException {
-        while (!clearing.isSpaceLeft()){  // wait for space,,if the Ant has waited more than its disguise she can pass.
-            wait(ant.disguise());
-            ant.getRecorder().attractAttention(ant); // added new
-            throw new InterruptedException();  // TODO check
-        }
-        /*
-        // check how the Ant has left wait()
-        if (!clearing.isSpaceLeft()){  // if there is
-            ant.getRecorder().attractAttention(ant); // recorder stuff.
-            ant.setHoldFood(false); // delete any food if the ant was holding food.
-            return false;  // the ant is about to die.
-        }
-         */
-        clearing.enter(); // enter the Clearing
-        ant.getRecorder().enter(ant,clearing); // recorder stuff.
-        ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
-        t.leave(); // leave the Trail.
-        ant.getRecorder().leave(ant,t); // recorder stuff
-        notifyAll(); /* notify all the Ants to make sure that tha ant which is waiting to enter the Trail
-                    has been also notified */
+    public boolean enterClearingFoodSearch(Trail t,Ant ant)throws InterruptedException {
+        lock.lock();
+        try{
+            while (!clearing.isSpaceLeft())  // wait for space,,if the Ant has waited more than its disguise she can pass.
+                if (!isSpaceLeft.await(ant.disguise(), TimeUnit.MILLISECONDS)) {
+                    ant.getRecorder().attractAttention(ant); // added new
+                    ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
+                    throw new InterruptedException();
+                }
+
+                clearing.enter(); // enter the Clearing
+                ant.getRecorder().enter(ant,clearing); // recorder stuff.
+                ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
+                t.leave(); // leave the Trail.
+                ant.getRecorder().leave(ant,t); // recorder stuff
+                t.getTrailEntry().isSpaceLeft.signalAll();
+               /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
+                    //has been also notified */
+            }finally {
+                lock.unlock();
+            }
         return  true;
+
     }
 
     /**

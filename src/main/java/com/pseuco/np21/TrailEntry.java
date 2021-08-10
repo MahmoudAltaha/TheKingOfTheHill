@@ -1,6 +1,10 @@
 package com.pseuco.np21;
 
 
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * this class can be seen as a gate for the Trail. each Clearing has one gate which is necessary
  * to ensure the concurrency
@@ -10,6 +14,8 @@ public class TrailEntry {
 
 
     private final Trail trail ;
+    static public Lock lock = new ReentrantLock();
+    static public Condition isSpaceLeft= lock.newCondition();
 
     /**
      * construct a TrailEntry.
@@ -29,39 +35,47 @@ public class TrailEntry {
      * @return     true when the Ant has entered the Trail successfully.
      * @throws InterruptedException
      */
-    synchronized public boolean enterTrailFoodSearch(Clearing c,Ant ant)throws InterruptedException {
+    public boolean enterTrailFoodSearch(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
-        while (!trail.isSpaceLeft()){  // if the Trail is not available , the Ant should wait.
-            wait();
-        }
+        lock.lock();
+        try{
+            while (!trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
+                isSpaceLeft.await();
         /*// if the Trail isn't the best Trail anymore don't enter it ,,go get the new Trail.
         SearchFoodPathCheck searchFoodPathCheck = new SearchFoodPathCheck(ant);
         if (! searchFoodPathCheck.checkIfTheTrailStillValidNormalCase(c,trail)){
             return false;
         }*/
-        trail.enter();  // enter the Trail
-        ant.getRecorder().enter(ant,trail);  // recorder stuff.
-        c.leave(); // leave the Clearing
-        ant.getRecorder().leave(ant,c); // recorder stuff
-        if( c.id() != ant.getWorld().anthill().id()  ){ // if the left Clearing was not the hill->notifyAll.
-            notifyAll();
+            trail.enter();  // enter the Trail
+            ant.getRecorder().enter(ant,trail);  // recorder stuff.
+            c.leave(); // leave the Clearing
+
+            ant.getRecorder().leave(ant,c); // recorder stuff
+            if( c.id() != ant.getWorld().anthill().id()  ){ // if the left Clearing was not the hill->notifyAll.
+                //notifyAll();
+                c.getClearingEntry().isSpaceLeft.signalAll();
+            }
+            com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false,null,false);
+            if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
+                ant.setAntTOAdventurer();
+            }
+            // if the next Clearing was not in the sequence then update Hill-Pheromone. (no special cases)
+            if (! ant.isInSequence(trail.to())){
+                // get the new Hill_Pheromone value
+                com.pseuco.np21.shared.Trail.Pheromone hillPheromone = trail.getOrUpdateHill(false,null);
+                int value = Math.min(hillPheromone.value(),ant.getClearingSequence().size());
+                com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
+                trail.getOrUpdateHill(true,newPheromone); // update the HIll-Pheromone.
+                ant.getRecorder().updateAnthill(ant,trail,newPheromone); // recorder stuff.
+            } else {
+                // if the trail i want to take leads to one Clearing which is already in the sequence , add it to this list.
+                ant.TrailsToVisetedClearing.put(trail.id(),trail);
+            }
+            }
+        finally {
+            lock.unlock();
         }
-        com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false,null,false);
-        if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
-            ant.setAntTOAdventurer();
-        }
-        // if the next Clearing was not in the sequence then update Hill-Pheromone. (no special cases)
-        if (! ant.isInSequence(trail.to())){
-            // get the new Hill_Pheromone value
-            com.pseuco.np21.shared.Trail.Pheromone hillPheromone = trail.getOrUpdateHill(false,null);
-            int value = Math.min(hillPheromone.value(),ant.getClearingSequence().size());
-            com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
-            trail.getOrUpdateHill(true,newPheromone); // update the HIll-Pheromone.
-            ant.getRecorder().updateAnthill(ant,trail,newPheromone); // recorder stuff.
-        } else {
-            // if the trail i want to take leads to one Clearing which is already in the sequence , add it to this list.
-            ant.TrailsToVisetedClearing.put(trail.id(),trail);
-        }
+
         return true;
     }
     /**
@@ -76,7 +90,8 @@ public class TrailEntry {
     synchronized public boolean immediateReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
         while (!trail.isSpaceLeft()){ // wait for a free space.
-            wait();
+            isSpaceLeft.await();
+            //wait();
         }
         trail.enter();   // enter the trail.
         ant.getRecorder().enter(ant,trail); // recorder stuff
@@ -136,7 +151,7 @@ public class TrailEntry {
         ant.getRecorder().leave(ant, c);
         trail.enter();
         ant.getRecorder().enter(ant, trail);
-        if (!c.equals(ant.getWorld().anthill())){
+        if (c.id()!= ant.getWorld().anthill().id()){
             notifyAll();
         }
         //TODO Food-Pheromone update Handling

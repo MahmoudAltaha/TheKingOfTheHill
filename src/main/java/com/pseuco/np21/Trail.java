@@ -57,6 +57,9 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
         return selectionReason;
     }
 
+    public TrailEntry getTrailEntry(){
+        return getTrailEntry();
+    }
     /**
      * setter
      *
