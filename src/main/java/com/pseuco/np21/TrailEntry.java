@@ -14,8 +14,14 @@ public class TrailEntry {
 
 
     private final Trail trail ;
-    static public Lock lock = new ReentrantLock();
-    static public Condition isSpaceLeft= lock.newCondition();
+
+
+
+    public Lock lock = new ReentrantLock();
+
+
+
+    public Condition isSpaceLeft= lock.newCondition();
 
     /**
      * construct a TrailEntry.
@@ -23,6 +29,16 @@ public class TrailEntry {
      */
     public TrailEntry(Trail trail) {
         this.trail = trail;
+    }
+
+
+
+    /**
+     *  getter
+     * @return the condition.
+     */
+    public Condition getIsSpaceLeft() {
+        return isSpaceLeft;
     }
 
     /**
@@ -53,7 +69,7 @@ public class TrailEntry {
             ant.getRecorder().leave(ant,c); // recorder stuff
             if( c.id() != ant.getWorld().anthill().id()  ){ // if the left Clearing was not the hill->notifyAll.
                 //notifyAll();
-                c.getClearingEntry().isSpaceLeft.signalAll();
+                c.getClearingEntry().getIsSpaceLeft().signalAll();
             }
             com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false,null,false);
             if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
@@ -97,7 +113,7 @@ public class TrailEntry {
             ant.getRecorder().enter(ant,trail);
             c.leave();  // leave the wrong Clearing
             ant.getRecorder().leave(ant,c);
-            c.getClearingEntry().isSpaceLeft.signalAll();  // signal all Ants that the Clearing has now a free space.
+            c.getClearingEntry().getIsSpaceLeft().signalAll();  // signal all Ants that the Clearing has now a free space.
             ant.removeClearingFromSequence(c);
         }finally {
             lock.unlock();
@@ -115,7 +131,7 @@ public class TrailEntry {
      * @return      true if the Ant has entered the Trail successfully
      * @throws InterruptedException
      */
-    synchronized public boolean noFoodReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
+     public boolean noFoodReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
         lock.lock();
         try {
@@ -126,7 +142,7 @@ public class TrailEntry {
             ant.getRecorder().enter(ant,trail);
             c.leave();  // leave the wrong Clearing
             ant.getRecorder().leave(ant,c);
-            c.getClearingEntry().isSpaceLeft.signalAll();  // notify all Ants that the Clearing has now a free space.
+            c.getClearingEntry().getIsSpaceLeft().signalAll();  // notify all Ants that the Clearing has now a free space.
             // remove this Clearing from the sequence.there are no Food to find in this way.
             ant.removeClearingFromSequence(c);
             //create a Map food-Pheromone .
@@ -154,7 +170,7 @@ public class TrailEntry {
      * @throws InterruptedException
      */
 
-    public synchronized boolean homewardEnterTrail(Clearing c, Ant ant) throws InterruptedException {
+    public  boolean homewardEnterTrail(Clearing c, Ant ant) throws InterruptedException {
         lock.lock();
         try{
             while (!trail.isSpaceLeft())
@@ -164,7 +180,7 @@ public class TrailEntry {
             trail.enter();
             ant.getRecorder().enter(ant, trail);
             if (c.id()!= ant.getWorld().anthill().id()){
-                c.getClearingEntry().isSpaceLeft.signalAll();
+                c.getClearingEntry().getIsSpaceLeft().signalAll();
             }
             //TODO Food-Pheromone update Handling
             if(c.checkHasFood()){
@@ -194,7 +210,7 @@ public class TrailEntry {
      * @return      true if the entry was completed successfully.
      * @throws InterruptedException
      */
-    synchronized public boolean enter (Clearing currentClearing,Ant ant,EntryReason entryReason) throws InterruptedException {
+     public boolean enter (Clearing currentClearing,Ant ant,EntryReason entryReason) throws InterruptedException {
         return switch (entryReason) {
             case FOOD_SEARCH -> this.enterTrailFoodSearch(currentClearing,ant);
             case IMMEDIATE_RETURN -> this.immediateReturnToTrail(currentClearing,ant);

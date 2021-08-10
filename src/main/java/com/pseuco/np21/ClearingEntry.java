@@ -13,8 +13,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ClearingEntry {
     private final Clearing clearing;
 
-    static public final Lock lock = new ReentrantLock();
-    static public Condition isSpaceLeft= lock.newCondition();
+    public final Lock lock = new ReentrantLock();
+
+
+    public Condition isSpaceLeft= lock.newCondition();
 
 
     /**
@@ -23,6 +25,15 @@ public class ClearingEntry {
      */
     public ClearingEntry(Clearing clearing) {
         this.clearing = clearing;
+    }
+
+
+    /**
+     *  getter
+     * @return  the condition
+     */
+    public Condition getIsSpaceLeft() {
+        return isSpaceLeft;
     }
 
     /**
@@ -48,7 +59,7 @@ public class ClearingEntry {
                 ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
                 t.leave(); // leave the Trail.
                 ant.getRecorder().leave(ant,t); // recorder stuff
-                t.getTrailEntry().isSpaceLeft.signalAll();
+                t.getTrailEntry().getIsSpaceLeft().signalAll();
                /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
                     //has been also notified */
             }finally {
@@ -68,7 +79,7 @@ public class ClearingEntry {
      * @return     true if the Ant has entered the Clearing successfully.
      * @throws InterruptedException
      */
-    synchronized public boolean immediateReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
+     public boolean immediateReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
         return enterClearingFoodSearch(t,ant);
     }
 
@@ -83,7 +94,7 @@ public class ClearingEntry {
      * @return     true if the Ant has entered the Clearing successfully.
      * @throws InterruptedException
      */
-    synchronized public boolean noFoodReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
+     public boolean noFoodReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
         return enterClearingFoodSearch(t,ant);
     }
 
@@ -93,12 +104,17 @@ public class ClearingEntry {
      * @param ant    The Ant which want to enter to this clearing .
      * @return      true if the food was collected successfully. if so you can start the homeward.
      */
-    synchronized public boolean pickUPFood(Ant ant){
-        if (! clearing.getOrSetFood(FoodInClearing.HAS_FOOD)){  // check i there are no food exit with false.
-            return  false;
+     public boolean pickUPFood(Ant ant){
+         lock.lock();
+        try {
+            if (!clearing.getOrSetFood(FoodInClearing.HAS_FOOD)) {  // check i there are no food exit with false.
+                return false;
+            }
+            ant.setHoldFood(true);  // the Ant now has food
+            clearing.getOrSetFood(FoodInClearing.PICKUP_FOOD); // remove the picked up food from this Clearing.
+        } finally {
+            lock.unlock();
         }
-        ant.setHoldFood(true);  // the Ant now has food
-        clearing.getOrSetFood(FoodInClearing.PICKUP_FOOD); // remove the picked up food from this Clearing.
         return  true;
     }
 
@@ -108,20 +124,9 @@ public class ClearingEntry {
      * @param ant  the Ant
      * @return true if the Ant has entered the Clearing successfully.
      */
-    synchronized public boolean homewardEnterClearing(Trail t, Ant ant) throws InterruptedException{
-        while (!clearing.isSpaceLeft()){
-            wait(ant.disguise());  //TODO, handle die issue
-            ant.getRecorder().attractAttention(ant); // added new
-            Thread.currentThread().interrupt();  // TODO check
-            return false;
-
-        }
-        t.leave();
-        ant.getRecorder().leave(ant, t);
-        clearing.enter();
-        ant.getRecorder().enter(ant, clearing);
-        notifyAll();
-        return true;
+     public boolean homewardEnterClearing(Trail t, Ant ant) throws InterruptedException{
+       enterClearingFoodSearch(t,ant);
+         return  true;
     }
 
     /**
@@ -130,12 +135,17 @@ public class ClearingEntry {
      * @param c the Hill
      * @return true by successfully dropping food
      */
-    public synchronized boolean dropFood(Clearing c, Ant ant) {
-        if (c.id() == ant.getWorld().anthill().id()){
-            ant.getWorld().foodCollected();
-            c.getOrSetFood(FoodInClearing.DROP_FOOD);
-            ant.setHoldFood(false);
-            return true;
+    public boolean dropFood(Clearing c, Ant ant) {
+        lock.unlock();
+        try {
+            if (c.id() == ant.getWorld().anthill().id()) {
+                ant.getWorld().foodCollected();
+                c.getOrSetFood(FoodInClearing.DROP_FOOD);
+                ant.setHoldFood(false);
+                return true;
+            }
+        } finally {
+            lock.unlock();
         }
         return false;
     }
@@ -149,7 +159,7 @@ public class ClearingEntry {
      * @return      true if the entry was completed successfully.
      * @throws InterruptedException
      */
-    synchronized public boolean enter(Trail currentTrail,Ant ant,EntryReason entryReason) throws InterruptedException {
+     public boolean enter(Trail currentTrail,Ant ant,EntryReason entryReason) throws InterruptedException {
         return switch (entryReason) {
             case FOOD_SEARCH -> this.enterClearingFoodSearch(currentTrail, ant);
             case IMMEDIATE_RETURN -> this.immediateReturnTOClearing(currentTrail, ant);
