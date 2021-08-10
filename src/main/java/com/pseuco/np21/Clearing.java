@@ -134,7 +134,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
      * @param c the Hill
      * @return true by successfully dropping food
      */
-    public synchronized boolean dropFood(Clearing c, Ant ant) {
+    public boolean dropFood(Clearing c, Ant ant) {
         return clearingEntry.dropFood(c, ant);
     }
 
