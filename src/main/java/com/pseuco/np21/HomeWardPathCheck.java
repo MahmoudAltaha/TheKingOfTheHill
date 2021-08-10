@@ -83,7 +83,7 @@ public class HomeWardPathCheck {
         if (ant.isAdventurer()){ // check if the Ant is an Adventurer.
             int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
             for (int i = 0 ; i <sequence.size();i++){     // by looping the sequence
-                if (sequence.get(1).id() != currentClearing.id()){
+                if (sequence.get(i).id() != currentClearing.id()){
                     currentClearingNumberFromTheSequence ++;
                 }else {
                     break;

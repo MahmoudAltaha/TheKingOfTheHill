@@ -170,7 +170,8 @@ public class TrailEntry {
      * @throws InterruptedException
      */
 
-    public  boolean homewardEnterTrail(Clearing c, Ant ant) throws InterruptedException {
+    public  boolean homewardEnterTrail(Clearing c, Ant ant, boolean update) throws InterruptedException {
+
         lock.lock();
         try{
             while (!trail.isSpaceLeft())
@@ -182,10 +183,24 @@ public class TrailEntry {
             if (c.id()!= ant.getWorld().anthill().id()){
                 c.getClearingEntry().getIsSpaceLeft().signalAll();
             }
-            //TODO Food-Pheromone update Handling
-            if(c.checkHasFood()){
+            if (update){
+                int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
+                for (int i = 0 ; i <ant.getClearingSequence().size(); i++){     // by looping the sequence
+                    if (ant.getClearingSequence().get(i).id() != c.id()){
+                        currentClearingNumberFromTheSequence ++;
 
+                    }else {
+                        break;
+                    }
+                }
+                int r = (ant.getClearingSequence().size()) - currentClearingNumberFromTheSequence;
+                int FoodPher = trail.getOrUpdateFood(false, null, false).value();
+                int newPher = Math.min(r, FoodPher);
+                com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(newPher);
+                trail.getOrUpdateFood(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
+                ant.getRecorder().updateFood(ant,trail,newPheromone); // recorder stuff
             }
+
         }finally {
             lock.unlock();
         }
@@ -206,16 +221,17 @@ public class TrailEntry {
      *
      * @param currentClearing  the Current Clearing which the Ant should left,
      * @param ant       the Ant
+     * @param updateFood     check if we need to update-Hill-Pheromone
      * @param entryReason   the reason you have to enter this Trail.
      * @return      true if the entry was completed successfully.
      * @throws InterruptedException
      */
-     public boolean enter (Clearing currentClearing,Ant ant,EntryReason entryReason) throws InterruptedException {
+     public boolean enter (Clearing currentClearing,Ant ant,EntryReason entryReason, boolean updateFood) throws InterruptedException {
         return switch (entryReason) {
             case FOOD_SEARCH -> this.enterTrailFoodSearch(currentClearing,ant);
             case IMMEDIATE_RETURN -> this.immediateReturnToTrail(currentClearing,ant);
             case NO_FOOD_RETURN -> this.noFoodReturnToTrail(currentClearing,ant);
-            case HEADING_BACK_HOME -> this.homewardEnterTrail(currentClearing, ant);
+            case HEADING_BACK_HOME -> this.homewardEnterTrail(currentClearing, ant, updateFood);
         };
     }
 

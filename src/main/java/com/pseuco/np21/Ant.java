@@ -180,24 +180,30 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   private void forwardMoving() throws InterruptedException {
     SearchFoodPathCheck searchFood = new SearchFoodPathCheck(this);
     Trail target = searchFood.getTargetTrail(position);
-    target.enterTrail(position, this, EntryReason.FOOD_SEARCH);
+    target.enterTrail(position, this, EntryReason.FOOD_SEARCH, false);
     Clearing nextClearing = target.to();
     nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH);
     addClearingToSequence(nextClearing);
     position = nextClearing;
     if (nextClearing.TakeOnPieceOfFood(this)) {
-      homewardMoving();
+      if(nextClearing.getOrSetFood(FoodInClearing.HAS_FOOD)){
+        homewardMoving(true);
+      }else {
+        homewardMoving(false);
+      }
+
     }else{
       addClearingToSequence(position);
     }
   }
 
-  private void homewardMoving() throws InterruptedException {
+  private void homewardMoving(boolean update) throws InterruptedException {
+
     Trail target;
     HomeWardPathCheck homeward = new HomeWardPathCheck(this);
     while (position.id() != this.getWorld().anthill().id()) {
       target = homeward.getTargetTrail(position);
-      target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME);
+      target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME, update);
       target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME);
       position = target.to();
     }
