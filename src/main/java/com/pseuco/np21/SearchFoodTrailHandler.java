@@ -19,36 +19,6 @@ public class SearchFoodTrailHandler {
     }
 
 
-    /**
-     * this method used intern to compare the pheromone of two Trails and to add the min one to the list.
-     *you need to read this methode with the loop to understand what she do
-     * @param t1 first Trail
-     * @param t2 second Trail
-     * @param minTrails list of min Trails.
-     */
-    private void compareTrails(Trail t1, Trail t2, List<Trail> minTrails){
-        com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateFood(false,null,false);
-        com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateFood(false,null,false);
-        if ( p1.value() > p2.value()){
-            minTrails.add(t2);
-            // remove t1 if it is present and all the Trails with the same food-Value, if not nothing is happening
-            for (int i = 0; i < minTrails.size(); i++) {
-                if (minTrails.get(i).getOrUpdateHill(false, null).value() ==
-                        t1.getOrUpdateFood(false, null,false).value()) {
-                    minTrails.remove(minTrails.get(i));
-                }
-            }
-        }else if (p1.value() < p2.value()){
-            if (! minTrails.contains(t1)) {
-                minTrails.add(t1);
-            }
-        } else {
-            if(!minTrails.contains(t1)){
-                minTrails.add(t1);
-            }
-            minTrails.add(t2);
-        }
-    }
 
     /**
      * this methode used to remove the Trails which lead to the Clearing that i just visited and found that i
@@ -122,6 +92,41 @@ public class SearchFoodTrailHandler {
     }
 
     /**
+     * this methode used to add the Trails with min-Food Value to a min List.
+     *
+     * @param minTrailsList  List with min-Food Trails.
+     * @param trailsListNonNap  the Trails which has all Trails that have nonNap Food-Pheromone value.
+     */
+    private void makeListWithJustMin(List<Trail> minTrailsList ,List<Trail> trailsListNonNap){
+        for (int i = 0; i < (trailsListNonNap.size() - 1); i++) {  // compare the NonNap-Pheromones and add the min-ones to the list.
+            Trail t1 = trailsListNonNap.get(i);  // Trail 1
+            Trail t2 = trailsListNonNap.get(i + 1); // Trail 2
+            com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateFood(false,null,false);// Phe. of t1
+            com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateFood(false,null,false);// Phe. of t2
+            if ( p1.value() > p2.value()){
+                minTrailsList.add(t2);
+                // remove t1 if it is present and all the Trails with the same food-Value, if not nothing is happening
+                for (int k = 0; k < minTrailsList.size(); k++) {
+                    if (minTrailsList.get(k).getOrUpdateHill(false, null).value() ==
+                            t1.getOrUpdateFood(false, null,false).value()) {
+                        minTrailsList.remove(minTrailsList.get(k));
+                    }
+                }
+            }else if (p1.value() < p2.value()){
+                if (! minTrailsList.contains(t1)) {
+                    minTrailsList.add(t1);
+                }
+            } else {
+                if(!minTrailsList.contains(t1)){
+                    minTrailsList.add(t1);
+                }
+                minTrailsList.add(t2);
+            }
+        }
+
+    }
+
+    /**
      * this methode is used to choose the right Trail according to the project description.
      *
      * @param trailList the Trails from which we the right one choose.(ConnectedTrails
@@ -132,8 +137,7 @@ public class SearchFoodTrailHandler {
         assert (!trailList.isEmpty());  // check if the list are not Empty
         // make new list object which has the same TrailsObject in the trailsList
         List<Trail> trailsListToBeClearedAndChosenFrom = new ArrayList<>(trailList);
-        /* remove the Trails That Connect To Visited clearing in the new objectList
-         (but do not touch the real ConnectedTrails to the Clearing). */
+       //remove the Trails That Connect To Visited clearing in the new objectList (but do not touch the real ConnectedTrails to the Clearing).
         removeTrailsThatConnectsToVisitedClearing(trailsListToBeClearedAndChosenFrom,ant);
         removeMapTrailsFromTheList(trailsListToBeClearedAndChosenFrom,ant); // the same like above, remove Map Trails From The List.
         Trail targetTrail;
@@ -150,11 +154,7 @@ public class SearchFoodTrailHandler {
             List<Trail> trailsListWithJustNap = new ArrayList<>();// list with Trails which has Nap-food-ph.
             separateNapTrailsFromNonNapTrails(trailsListToBeClearedAndChosenFrom,trailsListWithJustNap,trailsListNonNap);
             List<Trail> minTrails = new ArrayList<>(); // list which should contains the min-NonNap Pheromones.
-            for (int i = 0; i < (trailsListNonNap.size() - 1); i++) {  // compare the NonNap-Pheromones and add the min-ones to the list.
-                Trail t1 = trailsListNonNap.get(i);
-                Trail t2 = trailsListNonNap.get(i + 1);
-                compareTrails(t1, t2, minTrails);
-            }
+            makeListWithJustMin(minTrails,trailsListNonNap); // make List with just min Food-Pheromone Value.
             int randomIndex = random.nextInt(trailsListNonNap.size());//get random number
             Trail suggestedTrail = trailsListNonNap.get(randomIndex);// the randomly picked Trail which has the min Ph.
             // check if the impatience of the Ant are smaller than the min pheromone. if so get a random Nap-food-ph Trail.

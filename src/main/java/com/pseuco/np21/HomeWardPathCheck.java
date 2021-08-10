@@ -37,14 +37,10 @@ public class HomeWardPathCheck {
             }
         }
          /*
-         List<Trail> nonNapTrails = new ArrayList<>();
+        List<Trail> nonNapTrails = new ArrayList<>();
         addNapTrails(connectedTrails,nonNapTrails);*/
         List<Trail> minTrails = new ArrayList<>(); // all Trails which has the same min antHill-pheromone
-        for (int i = 0; i < (connectedTrails.size() - 1) ; i++) {  // compare the Pheromones and add the min-ones to the list.
-            Trail t1 = connectedTrails.get(i);
-            Trail t2 = connectedTrails.get(i + 1);
-            compareTrails(t1, t2, minTrails);
-        }
+        makeListWithJustMin(minTrails,connectedTrails);
         Random random = new Random();
         int randomIndex = random.nextInt(minTrails.size());//get random number
         Trail targetTrail =  minTrails.get(randomIndex);
@@ -53,35 +49,40 @@ public class HomeWardPathCheck {
     }
 
     /**
-     * this method used intern to compare the pheromone of two Trails and to add the min one to the list.
-     * and remove the non min from it.(you need to read this methode with the loop to understand what she do)
-     *
-     * @param t1 first Trail
-     * @param t2 second Trail
-     * @param minTrails list of min Trails.
+     * this methode used to add the Trails with min-Hill Value to a min List.
+     * @param minTrailsList  List with min-Hill Trails.
+     * @param connectedTrails   the Trails which has all Trails .
      */
-    private void compareTrails(Trail t1, Trail t2, List<Trail> minTrails) {
-        com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateHill(false,null);
-        com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateHill(false,null);
-        if (p1.value() > p2.value()) {
-            minTrails.add(t2);
-            // remove t1 if it is present and all the Trails with the same Hill-Value , if not nothing is happening(is written in javaDoc)
-            for (int i = 0; i < minTrails.size(); i++) {
-                if (minTrails.get(i).getOrUpdateHill(false, null).value() == t1.getOrUpdateHill(false, null).value()) {
-                    minTrails.remove(minTrails.get(i));
+    private void makeListWithJustMin(List<Trail> minTrailsList ,List<Trail> connectedTrails){
+        for (int i = 0; i < (connectedTrails.size() - 1) ; i++) {  // compare the Pheromones and add the min-ones to the list.
+            Trail t1 = connectedTrails.get(i);
+            Trail t2 = connectedTrails.get(i + 1);
+            com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateHill(false,null);
+            com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateHill(false,null);
+            if (p1.value() > p2.value()) {
+                minTrailsList.add(t2);
+                // remove t1 if it is present and all the Trails with the same Hill-Value , if not nothing is happening(is written in javaDoc)
+                for (int k = 0; k < minTrailsList.size(); k++) {
+                    int hillValueOfTrailInList = minTrailsList.get(k).getOrUpdateHill(false, null).value();
+                    if (hillValueOfTrailInList == t1.getOrUpdateHill(false, null).value()) {
+                        minTrailsList.remove(minTrailsList.get(k));
+                    }
                 }
+            } else if (p1.value() < p2.value()) {
+                if (! minTrailsList.contains(t1)) {
+                    minTrailsList.add(t1);
+                }
+            } else {
+                if (!minTrailsList.contains(t1)) {
+                    minTrailsList.add(t1);
+                }
+                minTrailsList.add(t2);
             }
-        } else if (p1.value() < p2.value()) {
-            if (! minTrails.contains(t1)) {
-                minTrails.add(t1);
-            }
-        } else {
-            if (!minTrails.contains(t1)) {
-                minTrails.add(t1);
-            }
-            minTrails.add(t2);
         }
+
     }
+
+
 
     /**
      * adding the Trails with the NON-Nap-Food-Pheromones to the second list (we may not use it!!)
