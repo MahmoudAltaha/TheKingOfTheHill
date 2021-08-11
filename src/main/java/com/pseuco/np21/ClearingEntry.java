@@ -216,6 +216,7 @@ public class ClearingEntry {
              ant.getRecorder().leave(ant,t); // recorder stuff
             // signal all to the threads which are waiting  to enter the Trail we left
              sendSignalAll(t);
+             com.pseuco.np21.shared.Trail.Pheromone currentPheromone =  t.reverse().getOrUpdateFood(false, null, false);
              if (update){
                  int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
                  for (int i = 0 ; i <ant.getClearingSequence().size(); i++){     // by looping the sequence
@@ -233,7 +234,6 @@ public class ClearingEntry {
                 */
                  int r = (ant.getClearingSequence().size()) - currentClearingNumberFromTheSequence;
                  //new added
-                 com.pseuco.np21.shared.Trail.Pheromone currentPheromone = t.reverse().getOrUpdateFood(false, null, false);
                  com.pseuco.np21.shared.Trail.Pheromone newPheromone ;
                  if(currentPheromone.isAPheromone()){
                      int minPheromoneValue = Math.min(r,currentPheromone.value());
@@ -243,6 +243,8 @@ public class ClearingEntry {
                  }
                  t.reverse().getOrUpdateFood(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
                  ant.getRecorder().updateFood(ant,t.reverse(),newPheromone); // recorder stuff
+             } else {
+                 ant.getRecorder().updateFood(ant,t.reverse(),currentPheromone); // recorder stuff
              }
          }finally {
              lock.unlock();
