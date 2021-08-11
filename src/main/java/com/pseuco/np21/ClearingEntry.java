@@ -2,7 +2,6 @@ package com.pseuco.np21;
 
 import com.pseuco.np21.shared.Recorder.DespawnReason;
 
-import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -42,7 +41,18 @@ public class ClearingEntry {
     }
 
 
-
+    /**
+     * this methode is used to send SignAll to the threads which are waiting for the Condition in the Monitor of the Trail.
+     * @param t the Trail where we want to wake up the threads.
+     */
+    private void sendSignalAll(Trail t){
+        t.getTrailEntry().getLook().lock();
+        try {
+            t.getTrailEntry().getIsSpaceLeft().signalAll();
+        } finally {
+            t.getTrailEntry().getLook().unlock();
+        }
+    }
     /**
      * this methode will be used to handle the entering to a Clearing according to the behavior of an Ant.
      *
@@ -65,36 +75,31 @@ public class ClearingEntry {
             t.leave(); // leave the Trail.
             ant.getRecorder().leave(ant, t); // recorder stuff
             ant.addClearingToSequence(clearing);
-            t.getTrailEntry().getLook().lock();
-            try {
-                t.getTrailEntry().getIsSpaceLeft().signalAll();
-            } finally {
-                t.getTrailEntry().getLook().unlock();
-            }
-               /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
-                    //has been also notified */
-            // if the  Clearing was not in the sequence then update Hill-Pheromone. (no special cases)
-          // if (!ant.TrailsToVisitedClearing.containsKey(t.id())) {
+            // signal all to the threads which are waiting  to enter the Trail we left
+            sendSignalAll(t);
+            com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.reverse().getOrUpdateHill(false, null);
+            com.pseuco.np21.shared.Trail.Pheromone newPheromone;
+            // if the  Clearing was not twice in the sequence then update Hill-Pheromone. (no special cases)
+            if (!ant.TrailsToVisitedClearing.containsKey(t.id())) {
                 // get the new Hill_Pheromone value
-                com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.reverse().getOrUpdateHill(false, null);
-                com.pseuco.np21.shared.Trail.Pheromone newPheromone;
                 if ( hillPheromone.isAPheromone()) {
                     int w =  ant.getClearingSequence().size() -1 ;
                     int value = Math.min(hillPheromone.value(), w);
                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
-
                 }else{
                     int w =  ant.getClearingSequence().size() -1 ;
                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(w);
                     }
                 t.reverse().getOrUpdateHill(true, newPheromone); // update the HIll-Pheromone.
                 ant.getRecorder().updateAnthill(ant, t.reverse(), newPheromone); // recorder stuff.
-            //   }
+             } else { // don't update the Pheromone.
+                ant.getRecorder().updateAnthill(ant, t.reverse(),hillPheromone ); }// recorder stuff.
             }finally{
                 lock.unlock();
             }
             return true;
     }
+
 
     /**
      * this methode will be used to step back after being in a Trail which is connected
@@ -120,14 +125,8 @@ public class ClearingEntry {
              ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
              t.leave(); // leave the Trail.
              ant.getRecorder().leave(ant, t); // recorder stuff
-             t.getTrailEntry().getLook().lock();
-             try {
-                 t.getTrailEntry().getIsSpaceLeft().signalAll();
-             } finally {
-                 t.getTrailEntry().getLook().unlock();
-             }
-               /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
-                    //has been also notified */
+               // signal all to the threads which are waiting  to enter the Trail we left
+            sendSignalAll(t);
          }finally{
              lock.unlock();
          }
@@ -159,15 +158,8 @@ public class ClearingEntry {
              ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
              t.leave(); // leave the Trail.
              ant.getRecorder().leave(ant, t); // recorder stuff
-             t.getTrailEntry().getLook().lock();
-             try {
-                 t.getTrailEntry().getIsSpaceLeft().signalAll();
-             } finally {
-                 t.getTrailEntry().getLook().unlock();
-             }
-               /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
-                    //has been also notified */
-
+             // signal all to the threads which are waiting  to enter the Trail we left
+             sendSignalAll(t);
              //create a Map food-Pheromone .
              com.pseuco.np21.shared.Trail.Pheromone mapPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(-1);
              //update the Food-Pheromone of the Trail to Map.
@@ -222,16 +214,8 @@ public class ClearingEntry {
              ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
              t.leave(); // leave the Trail.
              ant.getRecorder().leave(ant,t); // recorder stuff
-
-             //new added
-             t.getTrailEntry().getLook().lock();
-             try{
-                 t.getTrailEntry().getIsSpaceLeft().signalAll();
-             }finally {
-                 t.getTrailEntry().getLook().unlock();
-             }
-               /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
-                    //has been also notified */
+            // signal all to the threads which are waiting  to enter the Trail we left
+             sendSignalAll(t);
              if (update){
                  int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
                  for (int i = 0 ; i <ant.getClearingSequence().size(); i++){     // by looping the sequence
