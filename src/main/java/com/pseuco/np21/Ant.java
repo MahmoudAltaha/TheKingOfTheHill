@@ -142,7 +142,12 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
    * @return true if the Clearing is already in the sequence.
    */
   public boolean isInSequence(Clearing c) {
-    return getClearingSequence().contains(c);
+    for (int i = 0 ; i < getClearingSequence().size() ; i++){
+      if (getClearingSequence().get(i).id() == c.id()){
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -188,14 +193,12 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
     Clearing nextClearing = target.to();
     nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
-    addClearingToSequence(nextClearing);
+    //addClearingToSequence(nextClearing);
     position = nextClearing;
     if (nextClearing.TakeOnPieceOfFood(this)) {
-      recorder.pickupFood(this, nextClearing);
+      recorder.pickupFood(this,nextClearing);
       recorder.startFoodReturn(this);
-
       if(nextClearing.getOrSetFood(FoodInClearing.HAS_FOOD)){
-
         homewardMoving(true);
       }else {
         homewardMoving(false);
@@ -207,7 +210,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
   private void homewardMoving(boolean update) throws InterruptedException {
     HomeWardPathCheck homeward = new HomeWardPathCheck(this);
-    recorder.startFoodReturn(this);
+    //recorder.startFoodReturn(this);
     Trail target;
     while (position.id() != this.getWorld().anthill().id()) {
       target = homeward.getTargetTrail(position);

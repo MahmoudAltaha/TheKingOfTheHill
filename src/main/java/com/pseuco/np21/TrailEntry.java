@@ -47,6 +47,19 @@ public class TrailEntry {
     }
 
     /**
+     * this methode is used to send SignAll to the threads which are waiting for the Condition in the Monitor of the Clearing.
+     * @param c the Clearing where we want to wake up the threads.
+     */
+    private void sendSignalAll(Clearing c){
+        c.getClearingEntry().getLock().lock();
+        try {
+            c.getClearingEntry().getIsSpaceLeft().signalAll();
+        } finally {
+            c.getClearingEntry().getLock().unlock();
+        }
+    }
+
+    /**
      * this methode will be used to handle the entering to a Trail according to the behavior of an Ant.
      * if this methode returns false that means that this trail is not the best Trail anymore, so go get again the
      * new one
@@ -67,14 +80,13 @@ public class TrailEntry {
             ant.getRecorder().enter(ant,trail);  // recorder stuff.
             c.leave(); // leave the Clearing
             ant.getRecorder().leave(ant,c); // recorder stuff
-            if( c.id() != ant.getWorld().anthill().id()  ){ // if the left Clearing was not the hill->notifyAll.
-                c.getClearingEntry().getIsSpaceLeft().signalAll();
+            if( c.id() != ant.getWorld().anthill().id()  ){ // if the left Clearing was not the hill->signalAll.
+              sendSignalAll(c);
             }
             com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false,null,false);
             if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
                 ant.setAntTOAdventurer();
-            }
-            // if the next Clearing was not in the sequence then update Hill-Pheromone. (no special cases)
+            } // if the Trail leads to a Clearing which is already in the sequence then add it to the VisitedTrailsList
             if ( ant.isInSequence(trail.to())){
                 ant.TrailsToVisitedClearing.put(trail.id(),trail);
                  }
@@ -104,7 +116,7 @@ public class TrailEntry {
             ant.getRecorder().enter(ant,trail);
             c.leave();  // leave the wrong Clearing
             ant.getRecorder().leave(ant,c);
-            c.getClearingEntry().getIsSpaceLeft().signalAll();  // signal all Ants that the Clearing has now a free space.
+            sendSignalAll(c); // signal all Ants that the Clearing has now a free space.
             // remove this wrong Clearing from the sequence.
             ant.removeClearingFromSequence(c);
         }finally {
@@ -131,7 +143,7 @@ public class TrailEntry {
             ant.getRecorder().enter(ant,trail);
             c.leave();  // leave the wrong Clearing
             ant.getRecorder().leave(ant,c);
-            c.getClearingEntry().getIsSpaceLeft().signalAll();  // notify all Ants that the Clearing has now a free space.
+           sendSignalAll(c);  // signalAll to  Ants that the Clearing has now a free space.
             // remove this Clearing from the sequence.there are no Food to find in this way.
             ant.removeClearingFromSequence(c);
         }finally {
@@ -155,30 +167,19 @@ public class TrailEntry {
      */
 
     public  boolean homewardEnterTrail(Clearing c, Ant ant) throws InterruptedException {
-
         lock.lock();
         try{
             while (!trail.isSpaceLeft())
                 isSpaceLeft.await();
-            c.leave();
-            ant.getRecorder().leave(ant, c);
+
             trail.enter();
             ant.getRecorder().enter(ant, trail);
-            if (c.id()!= ant.getWorld().anthill().id()){
-                c.getClearingEntry().getLock().lock();
-                try{
-                    c.getClearingEntry().getIsSpaceLeft().signalAll();
-                }finally {
-                    c.getClearingEntry().getLock().unlock();
-                }
-            }
-
-
+            ant.getRecorder().leave(ant, c);
+            c.leave();
+            sendSignalAll(c);
         }finally {
             lock.unlock();
         }
-
-
         return true;
     }
 
