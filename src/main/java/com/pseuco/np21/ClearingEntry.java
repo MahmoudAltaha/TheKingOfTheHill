@@ -247,7 +247,7 @@ public class ClearingEntry {
                  //new added
                  com.pseuco.np21.shared.Trail.Pheromone currentPheromone = t.getOrUpdateFood(false, null, false);
                  com.pseuco.np21.shared.Trail.Pheromone newPheromone ;
-                 if(currentPheromone.isAPheromone()){
+                 if( ! currentPheromone.isAPheromone() ){
                    newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(r);
                  }else{
                      int minPheromoneValue = Math.min(r,currentPheromone.value());
