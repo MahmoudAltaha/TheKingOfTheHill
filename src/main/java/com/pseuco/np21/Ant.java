@@ -184,10 +184,10 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     recorder.startExploration(this);
     Trail target = searchFood.getTargetTrail(position);
     recorder.select(this, target, position.connectsTo(), SelectionReason.EXPLORATION);
-    target.enterTrail(position, this, EntryReason.FOOD_SEARCH, true);
+    //target.enterTrail(position, this, EntryReason.FOOD_SEARCH, true);
 
     Clearing nextClearing = target.to();
-    nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH);
+    //nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH);
     addClearingToSequence(nextClearing);
     position = nextClearing;
     if (nextClearing.TakeOnPieceOfFood(this)) {
@@ -209,8 +209,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       target = homeward.getTargetTrail(position);
       //TODO Check SelectionsReason, Return_FOOD or Immdiate_Return
       recorder.select(this, target, position.connectsTo(), SelectionReason.RETURN_FOOD);
-      target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME, update);
-      target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME);
+      //target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME, update);
+      //target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME);
       position = target.to();
     }
     position.dropFood(position, this);

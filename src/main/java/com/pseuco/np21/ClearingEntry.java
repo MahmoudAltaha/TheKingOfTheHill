@@ -1,6 +1,8 @@
 package com.pseuco.np21;
 
 import com.pseuco.np21.shared.Recorder.DespawnReason;
+
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -39,6 +41,14 @@ public class ClearingEntry {
         return lock;
     }
 
+                  /* //new added
+                int pherValue= 0;
+                try {
+                    pherValue= hillPheromone.value();
+                }catch (NoSuchElementException e){
+                    pherValue = 4;
+                }
+                int value = Math.min(pherValue,ant.getClearingSequence().size());*/
     /**
      * this methode will be used to handle the entering to a Clearing according to the behavior of an Ant.
      *
@@ -49,34 +59,38 @@ public class ClearingEntry {
      */
     public boolean enterClearingFoodSearch(Trail t,Ant ant)throws InterruptedException {
         lock.lock();
-        try{
+        try {
             while (!clearing.isSpaceLeft())  // wait for space,,if the Ant has waited more than its disguise she can pass.
                 if (!isSpaceLeft.await(ant.disguise(), TimeUnit.MILLISECONDS)) {
                     ant.getRecorder().attractAttention(ant); // added new
                     ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
                     throw new InterruptedException();
                 }
-
-                clearing.enter(); // enter the Clearing
-                ant.getRecorder().enter(ant,clearing); // recorder stuff.
-                ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
-                t.leave(); // leave the Trail.
-                ant.getRecorder().leave(ant,t); // recorder stuff
-               // t.getOrUpdateHill(true, );
+            clearing.enter(); // enter the Clearing
+            ant.getRecorder().enter(ant, clearing); // recorder stuff.
+            ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
+            t.leave(); // leave the Trail.
+            ant.getRecorder().leave(ant, t); // recorder stuff
             t.getTrailEntry().getLook().lock();
-            try{
+            try {
                 t.getTrailEntry().getIsSpaceLeft().signalAll();
-            }finally {
+            } finally {
                 t.getTrailEntry().getLook().unlock();
             }
-
                /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
                     //has been also notified */
-            }finally {
+            if (!ant.isInSequence(this.clearing)) {
+                // get the new Hill_Pheromone value
+                com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.getOrUpdateHill(false, null);
+                int value = Math.min(hillPheromone.value(), ant.getClearingSequence().size());
+                com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
+                t.getOrUpdateHill(true, newPheromone); // update the HIll-Pheromone.
+                ant.getRecorder().updateAnthill(ant, t, newPheromone); // recorder stuff.
+                 }
+            }finally{
                 lock.unlock();
             }
-        return  true;
-
+            return true;
     }
 
     /**
@@ -90,7 +104,31 @@ public class ClearingEntry {
      * @throws InterruptedException InterruptedException
      */
      public boolean immediateReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
-        return enterClearingFoodSearch(t,ant);
+         lock.lock();
+         try {
+             while (!clearing.isSpaceLeft())  // wait for space,,if the Ant has waited more than its disguise she can pass.
+                 if (!isSpaceLeft.await(ant.disguise(), TimeUnit.MILLISECONDS)) {
+                     ant.getRecorder().attractAttention(ant); // added new
+                     ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
+                     throw new InterruptedException();
+                 }
+             clearing.enter(); // enter the Clearing
+             ant.getRecorder().enter(ant, clearing); // recorder stuff.
+             ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
+             t.leave(); // leave the Trail.
+             ant.getRecorder().leave(ant, t); // recorder stuff
+             t.getTrailEntry().getLook().lock();
+             try {
+                 t.getTrailEntry().getIsSpaceLeft().signalAll();
+             } finally {
+                 t.getTrailEntry().getLook().unlock();
+             }
+               /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
+                    //has been also notified */
+         }finally{
+             lock.unlock();
+         }
+         return true;
     }
 
     /**
@@ -105,7 +143,37 @@ public class ClearingEntry {
      * @throws InterruptedException InterruptedException
      */
      public boolean noFoodReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
-        return enterClearingFoodSearch(t,ant);
+         lock.lock();
+         try {
+             while (!clearing.isSpaceLeft())  // wait for space,,if the Ant has waited more than its disguise she can pass.
+                 if (!isSpaceLeft.await(ant.disguise(), TimeUnit.MILLISECONDS)) {
+                     ant.getRecorder().attractAttention(ant); // added new
+                     ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
+                     throw new InterruptedException();
+                 }
+             clearing.enter(); // enter the Clearing
+             ant.getRecorder().enter(ant, clearing); // recorder stuff.
+             ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
+             t.leave(); // leave the Trail.
+             ant.getRecorder().leave(ant, t); // recorder stuff
+             t.getTrailEntry().getLook().lock();
+             try {
+                 t.getTrailEntry().getIsSpaceLeft().signalAll();
+             } finally {
+                 t.getTrailEntry().getLook().unlock();
+             }
+               /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
+                    //has been also notified */
+
+             //create a Map food-Pheromone .
+             com.pseuco.np21.shared.Trail.Pheromone mapPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(-1);
+             //update the Food-Pheromone of the Trail to Map.
+             t.getOrUpdateFood(true,mapPheromone,ant.isAdventurer());
+             ant.getRecorder().updateFood(ant,t,mapPheromone); // recorder stuff.
+         }finally{
+             lock.unlock();
+         }
+         return true;
     }
 
 
@@ -134,7 +202,7 @@ public class ClearingEntry {
      * @param ant  the Ant
      * @return true if the Ant has entered the Clearing successfully.
      */
-     public boolean homewardEnterClearing(Trail t, Ant ant) throws InterruptedException{
+     public boolean homewardEnterClearing(Trail t, Ant ant, boolean update) throws InterruptedException{
          lock.lock();
          try{
              while (!clearing.isSpaceLeft())  // wait for space,,if the Ant has waited more than its disguise she can pass.
@@ -161,6 +229,35 @@ public class ClearingEntry {
              }
                /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
                     //has been also notified */
+             if (update){
+                 int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
+                 for (int i = 0 ; i <ant.getClearingSequence().size(); i++){     // by looping the sequence
+                     if (ant.getClearingSequence().get(i).id() != this.clearing.id()){
+                         currentClearingNumberFromTheSequence ++;
+
+                     }else {
+                         break;
+                     }
+                 }/*  sequence={A,B,Curr,C,D,Last} we want to update on Trail (curr->B)
+                currIndexInSeq = 2; , LastIndexInSeq =size()-1 = 5
+                5 - 2 = 3  ->> we have three Trails between the last und curr and the fourth is our Trail
+                (1) Last->D, (2) D->C ,(3) C->Curr, now we must write (4) on Curr->B
+                 SO size()=6 - (CurrIndex= 2) = 4 the right result
+                */
+                 int r = (ant.getClearingSequence().size()) - currentClearingNumberFromTheSequence;
+
+                 //new added
+                 int FoodPheromoneValue;
+                 try{
+                     FoodPheromoneValue = t.getOrUpdateFood(false, null, false).value();
+                 }catch (NoSuchElementException e){
+                     FoodPheromoneValue = 4;
+                 }
+                 int minPheromoneValue = Math.min(r, FoodPheromoneValue);
+                 com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(minPheromoneValue);
+                 t.getOrUpdateFood(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
+                 ant.getRecorder().updateFood(ant,t,newPheromone); // recorder stuff
+             }
          }finally {
              lock.unlock();
          }
@@ -197,12 +294,12 @@ public class ClearingEntry {
      * @return      true if the entry was completed successfully.
      * @throws InterruptedException InterruptedException
      */
-     public boolean enter(Trail currentTrail,Ant ant,EntryReason entryReason) throws InterruptedException {
+     public boolean enter(Trail currentTrail,Ant ant,EntryReason entryReason, boolean updateFood) throws InterruptedException {
         return switch (entryReason) {
             case FOOD_SEARCH -> this.enterClearingFoodSearch(currentTrail, ant);
             case IMMEDIATE_RETURN -> this.immediateReturnTOClearing(currentTrail, ant);
             case NO_FOOD_RETURN -> this.noFoodReturnTOClearing(currentTrail, ant);
-            case HEADING_BACK_HOME -> this.homewardEnterClearing(currentTrail, ant);
+            case HEADING_BACK_HOME -> this.homewardEnterClearing(currentTrail, ant, updateFood);
         };
     }
 

@@ -103,6 +103,7 @@ public class SearchFoodTrailHandler {
      * @param trailsListNonNap  the Trails which has all Trails that have nonNap Food-Pheromone value.
      */
     private void makeListWithJustMin(List<Trail> minTrailsList ,List<Trail> trailsListNonNap){
+
         for (int i = 0; i < (trailsListNonNap.size() - 1); i++) {  // compare the NonNap-Pheromones and add the min-ones to the list.
             Trail t1 = trailsListNonNap.get(i);  // Trail 1
             Trail t2 = trailsListNonNap.get(i + 1); // Trail 2
