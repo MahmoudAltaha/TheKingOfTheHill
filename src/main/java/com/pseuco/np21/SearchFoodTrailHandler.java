@@ -223,6 +223,9 @@ public class SearchFoodTrailHandler {
             return !p.isInfinite();
         }  // Hill or normal Clearing with more than one Trail( the one from which the Ant has reached this Clearing)
             // list of non-Map-food-pheromone Trails
+            if(trailsListToBeClearedAndChosenFrom.isEmpty()){
+                return false;
+            }
             removeMapTrailsAndTheTrailWeComeFrom(trailsListToBeClearedAndChosenFrom,ant);
             // if the number of Trails with (non-Map-Food-ph.)
             // bigger than 1( cause there is always the one from which we come) return true

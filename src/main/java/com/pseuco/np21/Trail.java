@@ -186,6 +186,8 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
      * @throws InterruptedException InterruptedException
      */
     public boolean enterTrail(Clearing currentClearing,Ant ant,EntryReason entryReason) throws InterruptedException {
+        //this assert make sure that we get the right Clearing and the right Trail from The Ant methodes(run for example)
+        assert (currentClearing.id() == this.from.id());
         return trailEntry.enter(currentClearing,ant,entryReason);
     }
 
