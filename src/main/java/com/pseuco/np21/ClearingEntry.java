@@ -41,14 +41,7 @@ public class ClearingEntry {
         return lock;
     }
 
-                  /* //new added
-                int pherValue= 0;
-                try {
-                    pherValue= hillPheromone.value();
-                }catch (NoSuchElementException e){
-                    pherValue = 4;
-                }
-                int value = Math.min(pherValue,ant.getClearingSequence().size());*/
+
     /**
      * this methode will be used to handle the entering to a Clearing according to the behavior of an Ant.
      *
@@ -82,8 +75,14 @@ public class ClearingEntry {
             if (!ant.isInSequence(this.clearing)) {
                 // get the new Hill_Pheromone value
                 com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.getOrUpdateHill(false, null);
-                int value = Math.min(hillPheromone.value(), ant.getClearingSequence().size());
-                com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
+                com.pseuco.np21.shared.Trail.Pheromone newPheromone;
+                if (! hillPheromone.isAPheromone()) {
+                    int value = Math.min(hillPheromone.value(), ant.getClearingSequence().size());
+                    newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
+                }else{
+                        int w =  ant.getClearingSequence().size() -1 ;
+                        newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(w);
+                    }
                 t.getOrUpdateHill(true, newPheromone); // update the HIll-Pheromone.
                 ant.getRecorder().updateAnthill(ant, t, newPheromone); // recorder stuff.
                  }
@@ -245,16 +244,15 @@ public class ClearingEntry {
                  SO size()=6 - (CurrIndex= 2) = 4 the right result
                 */
                  int r = (ant.getClearingSequence().size()) - currentClearingNumberFromTheSequence;
-
                  //new added
-                 int FoodPheromoneValue;
-                 try{
-                     FoodPheromoneValue = t.getOrUpdateFood(false, null, false).value();
-                 }catch (NoSuchElementException e){
-                     FoodPheromoneValue = 4;
+                 com.pseuco.np21.shared.Trail.Pheromone currentPheromone = t.getOrUpdateFood(false, null, false);
+                 com.pseuco.np21.shared.Trail.Pheromone newPheromone ;
+                 if(currentPheromone.isAPheromone()){
+                   newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(r);
+                 }else{
+                     int minPheromoneValue = Math.min(r,currentPheromone.value());
+                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(minPheromoneValue);
                  }
-                 int minPheromoneValue = Math.min(r, FoodPheromoneValue);
-                 com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(minPheromoneValue);
                  t.getOrUpdateFood(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
                  ant.getRecorder().updateFood(ant,t,newPheromone); // recorder stuff
              }
