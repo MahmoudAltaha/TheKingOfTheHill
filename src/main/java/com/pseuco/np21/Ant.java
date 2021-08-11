@@ -191,7 +191,11 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     addClearingToSequence(nextClearing);
     position = nextClearing;
     if (nextClearing.TakeOnPieceOfFood(this)) {
+      recorder.pickupFood(this, nextClearing);
+      recorder.startFoodReturn(this);
+
       if(nextClearing.getOrSetFood(FoodInClearing.HAS_FOOD)){
+
         homewardMoving(true);
       }else {
         homewardMoving(false);
