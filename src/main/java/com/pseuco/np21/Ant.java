@@ -204,6 +204,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         break;
       }
 
+
       if (searchFood.checkTrail(position)) {
         Trail target = searchFood.getTargetTrail(position);
         if (target.getOrUpdateFood(false, null, false).isAPheromone()) {
@@ -250,6 +251,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       position.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
       return target;
     } else {
+      recorder.leave(this,position);
       recorder.despawn(this, Recorder.DespawnReason.TERMINATED);
       throw new InterruptedException();
     }
@@ -270,6 +272,9 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       position = target.to();
     }
     position.dropFood(position, this);
+    clearingSequence.clear();
+    TrailsToVisitedClearing.clear();
+    recorder.returnedFood(this);
 
   }
 
@@ -283,7 +288,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     addClearingToSequence(position);  // adding the antHill to the sequence
     recorder.enter(this, position);
     recorder.startFoodSearch(this);
-    recorder.startExploration(this);
+    //recorder.startExploration(this);
     try {
 
       while (world.isFoodLeft()) {
@@ -294,9 +299,12 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         }
 
       }
+      recorder.leave(this, position);
       recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
+
       throw new InterruptedException();
     } catch (InterruptedException e) {
+      recorder.stop();
       Thread.currentThread().interrupt();
     }
 
