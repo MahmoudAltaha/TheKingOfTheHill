@@ -123,7 +123,6 @@ public class ClearingEntry {
                  }
              clearing.enter(); // enter the Clearing
              ant.getRecorder().enter(ant, clearing); // recorder stuff.
-           //  ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
              t.leave(); // leave the Trail.
              ant.getRecorder().leave(ant, t); // recorder stuff
                // signal all to the threads which are waiting  to enter the Trail we left
@@ -156,7 +155,6 @@ public class ClearingEntry {
                  }
              clearing.enter(); // enter the Clearing
              ant.getRecorder().enter(ant, clearing); // recorder stuff.
-             //ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
              t.leave(); // leave the Trail.
              ant.getRecorder().leave(ant, t); // recorder stuff
              // signal all to the threads which are waiting  to enter the Trail we left
@@ -212,7 +210,6 @@ public class ClearingEntry {
                  }
              clearing.enter(); // enter the Clearing
              ant.getRecorder().enter(ant,clearing); // recorder stuff.
-            //ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
              t.leave(); // leave the Trail.
              ant.getRecorder().leave(ant,t); // recorder stuff
             // signal all to the threads which are waiting  to enter the Trail we left

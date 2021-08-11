@@ -42,14 +42,19 @@ public class SearchFoodTrailHandler {
      * @param trailList trailsList
      * @param ant ant
      */
-    private void removeMapTrailsFromTheList(List<Trail> trailList,Ant ant){
+    private void removeMapTrailsAndTheTrailWeComeFrom(List<Trail> trailList, Ant ant) {
         assert (!trailList.isEmpty());  // check if the list are not Empty
         for (int i = 0; i < trailList.size(); i++) {
             Trail t = trailList.get(i);
             // remove all Trails which are already has Map Value Or the last one in Sequence.
-            com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFood(false,null,false);
-            if (ant.isSecondLastVisitedInSequence(t.to()) || p.isInfinite()) {
+            com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFood(false, null, false);
+            if (p.isInfinite()) {
                 trailList.remove(t);
+                if ((ant.getClearingSequence().size() > 1) && ant.isSecondLastVisitedInSequence(t.to())) {
+                    {
+                        trailList.remove(t);
+                    }
+                }
             }
         }
     }
@@ -152,7 +157,7 @@ public class SearchFoodTrailHandler {
        //remove the Trails That Connect To Visited clearing in the new objectList (but do not touch the real ConnectedTrails to the Clearing).
         removeTrailsThatConnectsToVisitedClearing(trailsListToBeClearedAndChosenFrom,ant);
         assert(!trailsListToBeClearedAndChosenFrom.isEmpty());
-        removeMapTrailsFromTheList(trailsListToBeClearedAndChosenFrom,ant); // the same like above, remove Map Trails From The List.
+        removeMapTrailsAndTheTrailWeComeFrom(trailsListToBeClearedAndChosenFrom,ant); // the same like above, remove Map Trails From The List.
         assert(!trailsListToBeClearedAndChosenFrom.isEmpty());
         Trail targetTrail;
         boolean allNaP;  // check if all Trails has FoodPheromone = Nap
@@ -218,7 +223,7 @@ public class SearchFoodTrailHandler {
             return !p.isInfinite();
         }  // Hill or normal Clearing with more than one Trail( the one from which the Ant has reached this Clearing)
             // list of non-Map-food-pheromone Trails
-            removeMapTrailsFromTheList(trailsListToBeClearedAndChosenFrom,ant);
+            removeMapTrailsAndTheTrailWeComeFrom(trailsListToBeClearedAndChosenFrom,ant);
             // if the number of Trails with (non-Map-Food-ph.)
             // bigger than 1( cause there is always the one from which we come) return true
             return !trailsListToBeClearedAndChosenFrom.isEmpty();

@@ -86,10 +86,7 @@ public class TrailEntry {
             com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false,null,false);
             if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
                 ant.setAntTOAdventurer();
-            } // if the Trail leads to a Clearing which is already in the sequence then add it to the VisitedTrailsList
-            if ( ant.isInSequence(trail.to())){
-                ant.TrailsToVisitedClearing.put(trail.id(),trail);
-                 }
+                }
             }
         finally {
             lock.unlock();
@@ -119,6 +116,7 @@ public class TrailEntry {
             sendSignalAll(c); // signal all Ants that the Clearing has now a free space.
             // remove this wrong Clearing from the sequence.
             ant.removeClearingFromSequence(c);
+            ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
         }finally {
             lock.unlock();
         }
@@ -146,6 +144,7 @@ public class TrailEntry {
            sendSignalAll(c);  // signalAll to  Ants that the Clearing has now a free space.
             // remove this Clearing from the sequence.there are no Food to find in this way.
             ant.removeClearingFromSequence(c);
+            ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
         }finally {
             lock.unlock();
         }
