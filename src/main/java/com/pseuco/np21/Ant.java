@@ -193,7 +193,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
     Clearing nextClearing = target.to();
     nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
-    addClearingToSequence(nextClearing);
+    //addClearingToSequence(nextClearing);
     position = nextClearing;
     if (nextClearing.TakeOnPieceOfFood(this)) {
       recorder.pickupFood(this,nextClearing);
@@ -210,7 +210,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
   private void homewardMoving(boolean update) throws InterruptedException {
     HomeWardPathCheck homeward = new HomeWardPathCheck(this);
-    recorder.startFoodReturn(this);
+    //recorder.startFoodReturn(this);
     Trail target;
     while (position.id() != this.getWorld().anthill().id()) {
       target = homeward.getTargetTrail(position);
