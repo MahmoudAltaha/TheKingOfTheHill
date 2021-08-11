@@ -77,7 +77,8 @@ public class ClearingEntry {
                 com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.getOrUpdateHill(false, null);
                 com.pseuco.np21.shared.Trail.Pheromone newPheromone;
                 if (! hillPheromone.isAPheromone()) {
-                    int value = Math.min(hillPheromone.value(), ant.getClearingSequence().size());
+                    int w =  ant.getClearingSequence().size() -1 ;
+                    int value = Math.min(hillPheromone.value(), w);
                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
                 }else{
                         int w =  ant.getClearingSequence().size() -1 ;
