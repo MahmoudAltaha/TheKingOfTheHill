@@ -35,6 +35,9 @@ public class ClearingEntry {
     public Condition getIsSpaceLeft() {
         return isSpaceLeft;
     }
+    public Lock getLock(){
+        return lock;
+    }
 
     /**
      * this methode will be used to handle the entering to a Clearing according to the behavior of an Ant.
@@ -59,7 +62,14 @@ public class ClearingEntry {
                 ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
                 t.leave(); // leave the Trail.
                 ant.getRecorder().leave(ant,t); // recorder stuff
+               // t.getOrUpdateHill(true, );
+            t.getTrailEntry().getLook().lock();
+            try{
                 t.getTrailEntry().getIsSpaceLeft().signalAll();
+            }finally {
+                t.getTrailEntry().getLook().unlock();
+            }
+
                /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
                     //has been also notified */
             }finally {
@@ -141,7 +151,14 @@ public class ClearingEntry {
              ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
              t.leave(); // leave the Trail.
              ant.getRecorder().leave(ant,t); // recorder stuff
-             t.getTrailEntry().getIsSpaceLeft().signalAll();
+
+             //new added
+             t.getTrailEntry().getLook().lock();
+             try{
+                 t.getTrailEntry().getIsSpaceLeft().signalAll();
+             }finally {
+                 t.getTrailEntry().getLook().unlock();
+             }
                /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
                     //has been also notified */
          }finally {
@@ -157,7 +174,7 @@ public class ClearingEntry {
      * @return true by successfully dropping food
      */
     public boolean dropFood(Clearing c, Ant ant) {
-        lock.unlock();
+        lock.lock();
         try {
             if (c.id() == ant.getWorld().anthill().id()) {
                 ant.getWorld().foodCollected();

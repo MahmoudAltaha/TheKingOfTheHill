@@ -3,6 +3,7 @@ package com.pseuco.np21;
 
 import com.pseuco.np21.shared.Position;
 import com.pseuco.np21.shared.Recorder;
+import com.pseuco.np21.shared.Recorder.SelectionReason;
 import com.pseuco.np21.shared.World;
 
 
@@ -179,8 +180,12 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
   private void forwardMoving() throws InterruptedException {
     SearchFoodPathCheck searchFood = new SearchFoodPathCheck(this);
+    recorder.startFoodSearch(this);
+    recorder.startExploration(this);
     Trail target = searchFood.getTargetTrail(position);
-    target.enterTrail(position, this, EntryReason.FOOD_SEARCH, false);
+    recorder.select(this, target, position.connectsTo(), SelectionReason.EXPLORATION);
+    target.enterTrail(position, this, EntryReason.FOOD_SEARCH, true);
+
     Clearing nextClearing = target.to();
     nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH);
     addClearingToSequence(nextClearing);

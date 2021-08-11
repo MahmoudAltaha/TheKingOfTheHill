@@ -1,6 +1,7 @@
 package com.pseuco.np21;
 
 
+import java.util.NoSuchElementException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -41,6 +42,10 @@ public class TrailEntry {
         return isSpaceLeft;
     }
 
+    public Lock getLook(){
+        return lock;
+    }
+
     /**
      * this methode will be used to handle the entering to a Trail according to the behavior of an Ant.
      * if this methode returns false that means that this trail is not the best Trail anymore, so go get again the
@@ -79,7 +84,17 @@ public class TrailEntry {
             if (! ant.isInSequence(trail.to())){
                 // get the new Hill_Pheromone value
                 com.pseuco.np21.shared.Trail.Pheromone hillPheromone = trail.getOrUpdateHill(false,null);
-                int value = Math.min(hillPheromone.value(),ant.getClearingSequence().size());
+
+
+                //new added
+                int pherValue= 0;
+                try {
+                    pherValue= hillPheromone.value();
+                }catch (NoSuchElementException e){
+                    pherValue = 4;
+                }
+
+                int value = Math.min(pherValue,ant.getClearingSequence().size());
                 com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
                 trail.getOrUpdateHill(true,newPheromone); // update the HIll-Pheromone.
                 ant.getRecorder().updateAnthill(ant,trail,newPheromone); // recorder stuff.
@@ -181,7 +196,12 @@ public class TrailEntry {
             trail.enter();
             ant.getRecorder().enter(ant, trail);
             if (c.id()!= ant.getWorld().anthill().id()){
-                c.getClearingEntry().getIsSpaceLeft().signalAll();
+                c.getClearingEntry().getLock().lock();
+                try{
+                    c.getClearingEntry().getIsSpaceLeft().signalAll();
+                }finally {
+                    c.getClearingEntry().getLock().unlock();
+                }
             }
             if (update){
                 int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
@@ -199,7 +219,15 @@ public class TrailEntry {
                  SO size()=6 - (CurrIndex= 2) = 4 the right result
                 */
                 int r = (ant.getClearingSequence().size()) - currentClearingNumberFromTheSequence;
-                int FoodPheromoneValue = trail.getOrUpdateFood(false, null, false).value();
+
+                //new added
+                int FoodPheromoneValue;
+                try{
+                     FoodPheromoneValue = trail.getOrUpdateFood(false, null, false).value();
+                }catch (NoSuchElementException e){
+                    FoodPheromoneValue = 4;
+                }
+
                 int minPheromoneValue = Math.min(r, FoodPheromoneValue);
                 com.pseuco.np21.shared.Trail.Pheromone newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(minPheromoneValue);
                 trail.getOrUpdateFood(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.

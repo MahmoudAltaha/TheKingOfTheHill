@@ -46,6 +46,12 @@ public class Simulator {
                 .collect(Collectors.toList());
 
         // TODO implement this
+       for(Ant a: ants){
+           a.getRecorder().start();
+           a.run();
+       }
+
+
     }
 
     /**

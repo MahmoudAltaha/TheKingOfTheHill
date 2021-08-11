@@ -16,6 +16,8 @@ public class HomeWardPathCheck {
         this.ant = ant;
     }
 
+
+
     public Trail getTargetTrail(Clearing currentClearing){
         List<Clearing> sequence =ant.getClearingSequence();  // the sequence
         List<Trail> connectedTrails = currentClearing.connectsTo(); // the out Trails from the Current Clearing
@@ -61,6 +63,7 @@ public class HomeWardPathCheck {
             com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateHill(false,null);
             if (p1.value() > p2.value()) {
                 minTrailsList.add(t2);
+
                 // remove t1 if it is present and all the Trails with the same Hill-Value , if not nothing is happening(is written in javaDoc)
                 for (int k = 0; k < minTrailsList.size(); k++) {
                     int hillValueOfTrailInList = minTrailsList.get(k).getOrUpdateHill(false, null).value();
@@ -81,6 +84,8 @@ public class HomeWardPathCheck {
         }
 
     }
+
+
 
 
 

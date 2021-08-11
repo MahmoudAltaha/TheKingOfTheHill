@@ -82,12 +82,17 @@ public class SearchFoodTrailHandler {
         assert (!trailList.isEmpty());  // check if the list are not Empty
         for (Trail trail : trailList) {
             com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false,null,false);
-            int valueToCheck = p.value(); // pheromone of the Trail.
-            if (valueToCheck == -2) {  // check if the Trail has Nap food-Ph.
-                napTrails.add(trail); // if so add it to the JustNap list.
-            } else {
-                nonNapTrails.add(trail); //otherwise add it to the NonNap list.
+            try{
+                int valueToCheck = p.value(); // pheromone of the Trail.
+                if (valueToCheck == -2) {  // check if the Trail has Nap food-Ph.
+                    napTrails.add(trail); // if so add it to the JustNap list.
+                } else {
+                    nonNapTrails.add(trail); //otherwise add it to the NonNap list.
+                }
+            }catch (NoSuchElementException e){
+                nonNapTrails.add(trail);
             }
+
         }
     }
 
@@ -159,7 +164,17 @@ public class SearchFoodTrailHandler {
             Trail suggestedTrail = trailsListNonNap.get(randomIndex);// the randomly picked Trail which has the min Ph.
             // check if the impatience of the Ant are smaller than the min pheromone. if so get a random Nap-food-ph Trail.
             com.pseuco.np21.shared.Trail.Pheromone p = suggestedTrail.getOrUpdateFood(false,null,false);
-            if (ant.impatience() < p.value() && !trailsListWithJustNap.isEmpty()){
+
+            //new added
+            int value = 0;
+            try{
+                value= p.value();
+            }catch (NoSuchElementException e){
+                value = 4;
+            }
+
+
+            if (ant.impatience() < value && !trailsListWithJustNap.isEmpty()){
                 int randomNapIndex = random.nextInt(trailsListWithJustNap.size());
                 targetTrail = trailsListWithJustNap.get(randomNapIndex);
                 targetTrail.setSelectionReason(2); // update the SelectionReason in the Trail.
