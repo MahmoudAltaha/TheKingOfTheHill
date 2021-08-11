@@ -209,8 +209,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       target = homeward.getTargetTrail(position);
       //TODO Check SelectionsReason, Return_FOOD or Immdiate_Return
       recorder.select(this, target, position.connectsTo(), SelectionReason.RETURN_FOOD);
-      //target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME, update);
-      //target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME);
+      target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME);
+      target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME, update);
       position = target.to();
     }
     position.dropFood(position, this);
