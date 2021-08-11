@@ -83,8 +83,8 @@ public class ClearingEntry {
                         int w =  ant.getClearingSequence().size() -1 ;
                         newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(w);
                     }
-                t.getOrUpdateHill(true, newPheromone); // update the HIll-Pheromone.
-                ant.getRecorder().updateAnthill(ant, t, newPheromone); // recorder stuff.
+                t.reverse().getOrUpdateHill(true, newPheromone); // update the HIll-Pheromone.
+                ant.getRecorder().updateAnthill(ant, t.reverse(), newPheromone); // recorder stuff.
                  }
             }finally{
                 lock.unlock();
@@ -167,8 +167,8 @@ public class ClearingEntry {
              //create a Map food-Pheromone .
              com.pseuco.np21.shared.Trail.Pheromone mapPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(-1);
              //update the Food-Pheromone of the Trail to Map.
-             t.getOrUpdateFood(true,mapPheromone,ant.isAdventurer());
-             ant.getRecorder().updateFood(ant,t,mapPheromone); // recorder stuff.
+             t.reverse().getOrUpdateFood(true,mapPheromone,ant.isAdventurer());
+             ant.getRecorder().updateFood(ant,t.reverse(),mapPheromone); // recorder stuff.
          }finally{
              lock.unlock();
          }
@@ -253,8 +253,8 @@ public class ClearingEntry {
                      int minPheromoneValue = Math.min(r,currentPheromone.value());
                      newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(minPheromoneValue);
                  }
-                 t.getOrUpdateFood(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
-                 ant.getRecorder().updateFood(ant,t,newPheromone); // recorder stuff
+                 t.reverse().getOrUpdateFood(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
+                 ant.getRecorder().updateFood(ant,t.reverse(),newPheromone); // recorder stuff
              }
          }finally {
              lock.unlock();
