@@ -102,34 +102,37 @@ public class SearchFoodTrailHandler {
      * @param minTrailsList  List with min-Food Trails.
      * @param trailsListNonNap  the Trails which has all Trails that have nonNap Food-Pheromone value.
      */
-    private void makeListWithJustMin(List<Trail> minTrailsList ,List<Trail> trailsListNonNap){
-
-        for (int i = 0; i < (trailsListNonNap.size() - 1); i++) {  // compare the NonNap-Pheromones and add the min-ones to the list.
-            Trail t1 = trailsListNonNap.get(i);  // Trail 1
-            Trail t2 = trailsListNonNap.get(i + 1); // Trail 2
-            com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateFood(false,null,false);// Phe. of t1
-            com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateFood(false,null,false);// Phe. of t2
-            if ( p1.value() > p2.value()){
-                minTrailsList.add(t2);
-                // remove t1 if it is present and all the Trails with the same food-Value, if not nothing is happening
-                for (int k = 0; k < minTrailsList.size(); k++) {
-                    if (minTrailsList.get(k).getOrUpdateHill(false, null).value() ==
-                            t1.getOrUpdateFood(false, null,false).value()) {
-                        minTrailsList.remove(minTrailsList.get(k));
+    private void makeListWithJustMin(List<Trail> minTrailsList ,List<Trail> trailsListNonNap) {
+        assert trailsListNonNap.size() != 0;
+        if (trailsListNonNap.size() == 1) {
+            minTrailsList.add(trailsListNonNap.get(0));
+        } else {
+            for (int i = 0; i < (trailsListNonNap.size() - 1); i++) {  // compare the NonNap-Pheromones and add the min-ones to the list.
+                Trail t1 = trailsListNonNap.get(i);  // Trail 1
+                Trail t2 = trailsListNonNap.get(i + 1); // Trail 2
+                com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateFood(false, null, false);// Phe. of t1
+                com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateFood(false, null, false);// Phe. of t2
+                if (p1.value() > p2.value()) {
+                    minTrailsList.add(t2);
+                    // remove t1 if it is present and all the Trails with the same food-Value, if not nothing is happening
+                    for (int k = 0; k < minTrailsList.size(); k++) {
+                        if (minTrailsList.get(k).getOrUpdateHill(false, null).value() ==
+                                t1.getOrUpdateFood(false, null, false).value()) {
+                            minTrailsList.remove(minTrailsList.get(k));
+                        }
                     }
+                } else if (p1.value() < p2.value()) {
+                    if (!minTrailsList.contains(t1)) {
+                        minTrailsList.add(t1);
+                    }
+                } else {
+                    if (!minTrailsList.contains(t1)) {
+                        minTrailsList.add(t1);
+                    }
+                    minTrailsList.add(t2);
                 }
-            }else if (p1.value() < p2.value()){
-                if (! minTrailsList.contains(t1)) {
-                    minTrailsList.add(t1);
-                }
-            } else {
-                if(!minTrailsList.contains(t1)){
-                    minTrailsList.add(t1);
-                }
-                minTrailsList.add(t2);
             }
         }
-
     }
 
     /**
