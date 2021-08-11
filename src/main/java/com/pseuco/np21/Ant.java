@@ -3,6 +3,7 @@ package com.pseuco.np21;
 
 import com.pseuco.np21.shared.Position;
 import com.pseuco.np21.shared.Recorder;
+import com.pseuco.np21.shared.Recorder.DespawnReason;
 import com.pseuco.np21.shared.Recorder.SelectionReason;
 import com.pseuco.np21.shared.World;
 
@@ -48,7 +49,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   private boolean adventurer = false;
   private boolean holdFood = false;
   public HashMap<Integer, Trail> TrailsToVisitedClearing = new HashMap<>();
-
+  SearchFoodPathCheck searchFood = new SearchFoodPathCheck(this);
 
 
   /**
@@ -142,8 +143,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
    * @return true if the Clearing is already in the sequence.
    */
   public boolean isInSequence(Clearing c) {
-    for (int i = 0 ; i < getClearingSequence().size() ; i++){
-      if (getClearingSequence().get(i).id() == c.id()){
+    for (int i = 0; i < getClearingSequence().size(); i++) {
+      if (getClearingSequence().get(i).id() == c.id()) {
         return true;
       }
     }
@@ -183,44 +184,93 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     return world;
   }
 
-  private void forwardMoving() throws InterruptedException {
-    SearchFoodPathCheck searchFood = new SearchFoodPathCheck(this);
-    recorder.startFoodSearch(this);
-    recorder.startExploration(this);
-    Trail target = searchFood.getTargetTrail(position);
-    recorder.select(this, target, position.connectsTo(), SelectionReason.EXPLORATION);
-    target.enterTrail(position, this, EntryReason.FOOD_SEARCH);
+  private void forwardMoving(Trail from) throws InterruptedException {
 
-    Clearing nextClearing = target.to();
-    nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
-    //addClearingToSequence(nextClearing);
-    position = nextClearing;
-    if (nextClearing.TakeOnPieceOfFood(this)) {
-      recorder.pickupFood(this,nextClearing);
-      recorder.startFoodReturn(this);
-      if(nextClearing.getOrSetFood(FoodInClearing.HAS_FOOD)){
-        homewardMoving(true);
-      }else {
-        homewardMoving(false);
+    while (!this.holdFood) {
+      if (position.TakeOnPieceOfFood(this)) {
+        recorder.pickupFood(this, position);
+        recorder.startFoodReturn(this);
+        if(this.isAdventurer()){
+          recorder.select(this, from.reverse(), position.connectsTo(), SelectionReason.RETURN_IN_SEQUENCE);
+        }else{
+          recorder.select(this, from.reverse(), position.connectsTo(), SelectionReason.RETURN_FOOD);
+        }
+
+        if (position.getOrSetFood(FoodInClearing.HAS_FOOD)) {
+          homewardMoving(true);
+        } else {
+          homewardMoving(false);
+        }
+        break;
       }
-    }else{
-      addClearingToSequence(position);
+
+      if (searchFood.checkTrail(position)) {
+        Trail target = searchFood.getTargetTrail(position);
+        if (target.getOrUpdateFood(false, null, false).isAPheromone()) {
+          recorder.select(this, target, position.connectsTo(), SelectionReason.FOOD_SEARCH);
+        } else {
+          recorder.select(this, target, position.connectsTo(), SelectionReason.EXPLORATION);
+        }
+        target.enterTrail(position, this, EntryReason.FOOD_SEARCH);
+        Clearing nextClearing = target.to();
+        boolean isClearingInSequence = isInSequence(nextClearing);
+        nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
+        position = nextClearing;
+        if (isClearingInSequence) {
+          target = searchFood.getTrailToStepBack(position, target);
+          recorder.select(this, target, position.connectsTo(), SelectionReason.IMMEDIATE_RETURN);
+          target.enterTrail(nextClearing, this, EntryReason.IMMEDIATE_RETURN);
+          target.to().enterClearing(target, this, EntryReason.IMMEDIATE_RETURN, false);
+          position = target.to();
+
+        }
+        from = target;
+
+      } else {
+       Trail t = searchFood.getTrailToStepBack(position, from);
+       recorder.select(this, t, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
+       t.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
+       t.to().enterClearing(t, this, EntryReason.NO_FOOD_RETURN, false);
+       position = t.to();
+      }
     }
   }
+
+  private Trail init() throws InterruptedException {
+
+    if (searchFood.checkTrail(position)) {
+      Trail target = searchFood.getTargetTrail(position);
+      if (target.getOrUpdateFood(false, null, false).isAPheromone()) {
+        recorder.select(this, target, position.connectsTo(), SelectionReason.FOOD_SEARCH);
+      } else {
+        recorder.select(this, target, position.connectsTo(), SelectionReason.EXPLORATION);
+      }
+      target.enterTrail(position, this, EntryReason.FOOD_SEARCH);
+      position = target.to();
+      position.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
+      return target;
+    } else {
+      recorder.despawn(this, Recorder.DespawnReason.TERMINATED);
+      throw new InterruptedException();
+    }
+
+  }
+
 
   private void homewardMoving(boolean update) throws InterruptedException {
     HomeWardPathCheck homeward = new HomeWardPathCheck(this);
     //recorder.startFoodReturn(this);
     Trail target;
     while (position.id() != this.getWorld().anthill().id()) {
+
       target = homeward.getTargetTrail(position);
-      //TODO Check SelectionsReason, Return_FOOD or Immdiate_Return
       recorder.select(this, target, position.connectsTo(), SelectionReason.RETURN_FOOD);
       target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME);
       target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME, update);
       position = target.to();
     }
     position.dropFood(position, this);
+
   }
 
 
@@ -231,13 +281,20 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     position = world.anthill();
     recorder.spawn(this);
     addClearingToSequence(position);  // adding the antHill to the sequence
-
+    recorder.enter(this, position);
+    recorder.startFoodSearch(this);
+    recorder.startExploration(this);
     try {
-      while (world.isFoodLeft()) {
 
-        forwardMoving();
+      while (world.isFoodLeft()) {
+        Trail from = init();
+        forwardMoving(from);
+        if (world.isFoodLeft()) {
+          recorder.startFoodSearch(this);
+        }
 
       }
+      recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
       throw new InterruptedException();
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();

@@ -201,6 +201,9 @@ public class SearchFoodTrailHandler {
      * @return   return true if you found a Trail.
      */
     public boolean checkTrail(Clearing c,List<Trail> connectedTrails,Ant ant){
+        if(connectedTrails.isEmpty()){
+            return false;
+        }
         // make new list object which has the same TrailsObject in the trailsList
         List<Trail> trailsListToBeClearedAndChosenFrom = new ArrayList<>(connectedTrails);
         /* remove the Trails That Connect To Visited clearing in the new objectList

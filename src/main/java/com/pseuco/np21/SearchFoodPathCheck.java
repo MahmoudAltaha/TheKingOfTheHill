@@ -50,11 +50,7 @@ public class SearchFoodPathCheck {
      */
      public boolean checkTrail(Clearing c) throws InterruptedException {
         List<Trail> connectedTrails = c.connectsTo();
-        if (connectedTrails.isEmpty()){
-            ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
-            throw new InterruptedException();
-        }
-        return   searchFoodTrailHandler.checkTrail(c,connectedTrails,ant);
+        return searchFoodTrailHandler.checkTrail(c,connectedTrails,ant);
     }
 
 
