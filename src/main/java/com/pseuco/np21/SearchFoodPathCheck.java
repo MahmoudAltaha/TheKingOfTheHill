@@ -1,5 +1,7 @@
 package com.pseuco.np21;
 
+import com.pseuco.np21.shared.Recorder;
+
 import java.util.List;
 
 /**
@@ -46,8 +48,12 @@ public class SearchFoodPathCheck {
      * @param c  Current Clearing.
      * @return   return true if you found a Trail.
      */
-     public boolean checkTrail(Clearing c){
+     public boolean checkTrail(Clearing c) throws InterruptedException {
         List<Trail> connectedTrails = c.connectsTo();
+        if (connectedTrails.isEmpty()){
+            ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+            throw new InterruptedException();
+        }
         return   searchFoodTrailHandler.checkTrail(c,connectedTrails,ant);
     }
 

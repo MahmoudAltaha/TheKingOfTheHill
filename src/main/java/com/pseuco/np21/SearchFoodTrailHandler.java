@@ -112,24 +112,26 @@ public class SearchFoodTrailHandler {
                 Trail t2 = trailsListNonNap.get(i + 1); // Trail 2
                 com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateFood(false, null, false);// Phe. of t1
                 com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateFood(false, null, false);// Phe. of t2
-                if (p1.value() > p2.value()) {
-                    minTrailsList.add(t2);
-                    // remove t1 if it is present and all the Trails with the same food-Value, if not nothing is happening
-                    for (int k = 0; k < minTrailsList.size(); k++) {
-                        if (minTrailsList.get(k).getOrUpdateHill(false, null).value() ==
-                                t1.getOrUpdateFood(false, null, false).value()) {
-                            minTrailsList.remove(minTrailsList.get(k));
+                if (p1.isAPheromone() && p2.isAPheromone()) {
+                    if (p1.value() > p2.value()) {
+                        minTrailsList.add(t2);
+                        // remove t1 if it is present and all the Trails with the same food-Value, if not nothing is happening
+                        for (int k = 0; k < minTrailsList.size(); k++) {
+                            if (minTrailsList.get(k).getOrUpdateHill(false, null).value() ==
+                                    t1.getOrUpdateFood(false, null, false).value()) {
+                                minTrailsList.remove(minTrailsList.get(k));
+                            }
                         }
+                    } else if (p1.value() < p2.value()) {
+                        if (!minTrailsList.contains(t1)) {
+                            minTrailsList.add(t1);
+                        }
+                    } else {
+                        if (!minTrailsList.contains(t1)) {
+                            minTrailsList.add(t1);
+                        }
+                        minTrailsList.add(t2);
                     }
-                } else if (p1.value() < p2.value()) {
-                    if (!minTrailsList.contains(t1)) {
-                        minTrailsList.add(t1);
-                    }
-                } else {
-                    if (!minTrailsList.contains(t1)) {
-                        minTrailsList.add(t1);
-                    }
-                    minTrailsList.add(t2);
                 }
             }
         }
@@ -199,9 +201,6 @@ public class SearchFoodTrailHandler {
      * @return   return true if you found a Trail.
      */
     public boolean checkTrail(Clearing c,List<Trail> connectedTrails,Ant ant){
-        if (connectedTrails.isEmpty()){
-            return false;
-        }
         // make new list object which has the same TrailsObject in the trailsList
         List<Trail> trailsListToBeClearedAndChosenFrom = new ArrayList<>(connectedTrails);
         /* remove the Trails That Connect To Visited clearing in the new objectList
