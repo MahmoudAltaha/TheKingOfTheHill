@@ -74,15 +74,16 @@ public class ClearingEntry {
                     //has been also notified */
             if (!ant.isInSequence(this.clearing)) {
                 // get the new Hill_Pheromone value
-                com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.getOrUpdateHill(false, null);
+                com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.reverse().getOrUpdateHill(false, null);
                 com.pseuco.np21.shared.Trail.Pheromone newPheromone;
-                if (! hillPheromone.isAPheromone()) {
+                if ( hillPheromone.isAPheromone()) {
                     int w =  ant.getClearingSequence().size() -1 ;
                     int value = Math.min(hillPheromone.value(), w);
                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
+
                 }else{
-                        int w =  ant.getClearingSequence().size() -1 ;
-                        newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(w);
+                    int w =  ant.getClearingSequence().size() -1 ;
+                    newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(w);
                     }
                 t.reverse().getOrUpdateHill(true, newPheromone); // update the HIll-Pheromone.
                 ant.getRecorder().updateAnthill(ant, t.reverse(), newPheromone); // recorder stuff.
@@ -246,13 +247,13 @@ public class ClearingEntry {
                 */
                  int r = (ant.getClearingSequence().size()) - currentClearingNumberFromTheSequence;
                  //new added
-                 com.pseuco.np21.shared.Trail.Pheromone currentPheromone = t.getOrUpdateFood(false, null, false);
+                 com.pseuco.np21.shared.Trail.Pheromone currentPheromone = t.reverse().getOrUpdateFood(false, null, false);
                  com.pseuco.np21.shared.Trail.Pheromone newPheromone ;
-                 if( ! currentPheromone.isAPheromone() ){
-                   newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(r);
-                 }else{
+                 if(currentPheromone.isAPheromone()){
                      int minPheromoneValue = Math.min(r,currentPheromone.value());
                      newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(minPheromoneValue);
+                 }else{
+                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(r);
                  }
                  t.reverse().getOrUpdateFood(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
                  ant.getRecorder().updateFood(ant,t.reverse(),newPheromone); // recorder stuff
