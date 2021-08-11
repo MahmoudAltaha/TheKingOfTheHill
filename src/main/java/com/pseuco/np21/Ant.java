@@ -184,10 +184,10 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     recorder.startExploration(this);
     Trail target = searchFood.getTargetTrail(position);
     recorder.select(this, target, position.connectsTo(), SelectionReason.EXPLORATION);
-    //target.enterTrail(position, this, EntryReason.FOOD_SEARCH, true);
+    target.enterTrail(position, this, EntryReason.FOOD_SEARCH);
 
     Clearing nextClearing = target.to();
-    //nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH);
+    nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
     addClearingToSequence(nextClearing);
     position = nextClearing;
     if (nextClearing.TakeOnPieceOfFood(this)) {
