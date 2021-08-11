@@ -216,35 +216,36 @@ public class ClearingEntry {
              ant.getRecorder().leave(ant,t); // recorder stuff
             // signal all to the threads which are waiting  to enter the Trail we left
              sendSignalAll(t);
-             com.pseuco.np21.shared.Trail.Pheromone currentPheromone =  t.reverse().getOrUpdateFood(false, null, false);
+             com.pseuco.np21.shared.Trail.Pheromone currentPheromone = t.reverse().getOrUpdateFood(false, null, false);
+             com.pseuco.np21.shared.Trail.Pheromone newPheromone ;
              if (update){
                  int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
                  for (int i = 0 ; i <ant.getClearingSequence().size(); i++){     // by looping the sequence
                      if (ant.getClearingSequence().get(i).id() != this.clearing.id()){
                          currentClearingNumberFromTheSequence ++;
-
                      }else {
                          break;
                      }
                  }/*  sequence={A,B,Curr,C,D,Last} we want to update on Trail (curr->B)
                 currIndexInSeq = 2; , LastIndexInSeq =size()-1 = 5
                 5 - 2 = 3  ->> we have three Trails between the last und curr and the fourth is our Trail
-                (1) Last->D, (2) D->C ,(3) C->Curr, now we must write (4) on Curr->B
-                 SO size()=6 - (CurrIndex= 2) = 4 the right result
+                (1) Last->D, (2) D->C , now we must write (3) C->Curr,
+                 SO size()=6 - (CurrIndex= 2) = 4 the right result is 3  so we do (-1)
                 */
-                 int r = (ant.getClearingSequence().size()) - currentClearingNumberFromTheSequence;
+                 int r = (ant.getClearingSequence().size()-1) - currentClearingNumberFromTheSequence;
                  //new added
-                 com.pseuco.np21.shared.Trail.Pheromone newPheromone ;
-                 if(currentPheromone.isAPheromone()){
-                     int minPheromoneValue = Math.min(r,currentPheromone.value());
-                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(minPheromoneValue);
-                 }else{
+                 if(! ant.isAdventurer()){
                      newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(r);
+                 } else {
+                     if (currentPheromone.isAPheromone()) {
+                         int minPheromoneValue = Math.min(r, currentPheromone.value());
+                         newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(minPheromoneValue);
+                     } else {
+                         newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(r);
+                     }
                  }
                  t.reverse().getOrUpdateFood(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
                  ant.getRecorder().updateFood(ant,t.reverse(),newPheromone); // recorder stuff
-             } else {
-                 ant.getRecorder().updateFood(ant,t.reverse(),currentPheromone); // recorder stuff
              }
          }finally {
              lock.unlock();
