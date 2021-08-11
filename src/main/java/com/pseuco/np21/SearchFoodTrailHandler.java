@@ -148,9 +148,12 @@ public class SearchFoodTrailHandler {
         assert (!trailList.isEmpty());  // check if the list are not Empty
         // make new list object which has the same TrailsObject in the trailsList
         List<Trail> trailsListToBeClearedAndChosenFrom = new ArrayList<>(trailList);
+        assert(!trailsListToBeClearedAndChosenFrom.isEmpty());
        //remove the Trails That Connect To Visited clearing in the new objectList (but do not touch the real ConnectedTrails to the Clearing).
         removeTrailsThatConnectsToVisitedClearing(trailsListToBeClearedAndChosenFrom,ant);
+        assert(!trailsListToBeClearedAndChosenFrom.isEmpty());
         removeMapTrailsFromTheList(trailsListToBeClearedAndChosenFrom,ant); // the same like above, remove Map Trails From The List.
+        assert(!trailsListToBeClearedAndChosenFrom.isEmpty());
         Trail targetTrail;
         boolean allNaP;  // check if all Trails has FoodPheromone = Nap
         allNaP = checkIfAllTrailsHasNaP(trailsListToBeClearedAndChosenFrom);
@@ -214,20 +217,12 @@ public class SearchFoodTrailHandler {
             com.pseuco.np21.shared.Trail.Pheromone p = trailsListToBeClearedAndChosenFrom.get(0).getOrUpdateFood(false,null,false);
             return !p.isInfinite();
         }  // Hill or normal Clearing with more than one Trail( the one from which the Ant has reached this Clearing)
-        if (trailsListToBeClearedAndChosenFrom.size() > 1 ){
-            List<Trail> TrailWithoutMaP = new ArrayList<>(); // list of non-Map-food-pheromone Trails
-            for (Trail t : trailsListToBeClearedAndChosenFrom) {
-                com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFood(false,null,false);
-                if (! p.isInfinite()) {
-                    TrailWithoutMaP.add(t);
-                }
-            }
+            // list of non-Map-food-pheromone Trails
+            removeMapTrailsFromTheList(trailsListToBeClearedAndChosenFrom,ant);
             // if the number of Trails with (non-Map-Food-ph.)
             // bigger than 1( cause there is always the one from which we come) return true
-            return TrailWithoutMaP.size() > 1;
+            return !trailsListToBeClearedAndChosenFrom.isEmpty();
         }
-        return false;
-    }
 
 
 }
