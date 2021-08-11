@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
     private Pheromone anthill;
     private Pheromone food;
-    private int ants;
+    private int ants;   
 
     /**
      * helps by the selection for the Recorder

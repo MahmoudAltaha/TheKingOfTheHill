@@ -196,18 +196,19 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       }else {
         homewardMoving(false);
       }
-
     }else{
       addClearingToSequence(position);
     }
   }
 
   private void homewardMoving(boolean update) throws InterruptedException {
-
-    Trail target;
     HomeWardPathCheck homeward = new HomeWardPathCheck(this);
+    recorder.startFoodReturn(this);
+    Trail target;
     while (position.id() != this.getWorld().anthill().id()) {
       target = homeward.getTargetTrail(position);
+      //TODO Check SelectionsReason, Return_FOOD or Immdiate_Return
+      recorder.select(this, target, position.connectsTo(), SelectionReason.RETURN_FOOD);
       target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME, update);
       target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME);
       position = target.to();
