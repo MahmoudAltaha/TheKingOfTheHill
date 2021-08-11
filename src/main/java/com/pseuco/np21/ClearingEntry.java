@@ -61,7 +61,6 @@ public class ClearingEntry {
                 }
             clearing.enter(); // enter the Clearing
             ant.getRecorder().enter(ant, clearing); // recorder stuff.
-            ant.addClearingToSequence(clearing); // add the Clearing to the Sequence.
             t.leave(); // leave the Trail.
             ant.getRecorder().leave(ant, t); // recorder stuff
             t.getTrailEntry().getLook().lock();
@@ -72,7 +71,8 @@ public class ClearingEntry {
             }
                /* signal all the Ants to make sure that tha ant which is waiting to enter the Trail
                     //has been also notified */
-            if (!ant.isInSequence(this.clearing)) {
+            // if the next Clearing was not in the sequence then update Hill-Pheromone. (no special cases)
+           if (!ant.isInSequence(this.clearing)) {
                 // get the new Hill_Pheromone value
                 com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.reverse().getOrUpdateHill(false, null);
                 com.pseuco.np21.shared.Trail.Pheromone newPheromone;

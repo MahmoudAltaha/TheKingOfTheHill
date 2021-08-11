@@ -74,7 +74,7 @@ public class TrailEntry {
             if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
                 ant.setAntTOAdventurer();
             }
-            // if the next Clearing was not in the sequence then update Hill-Pheromone. (no special cases)
+
             if ( ant.isInSequence(trail.to())){
                 ant.TrailsToVisitedClearing.put(trail.id(),trail);
                  }

@@ -142,7 +142,12 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
    * @return true if the Clearing is already in the sequence.
    */
   public boolean isInSequence(Clearing c) {
-    return getClearingSequence().contains(c);
+    for (int i = 0 ; i < getClearingSequence().size() ; i++){
+      if (getClearingSequence().get(i).id() == c.id()){
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -191,6 +196,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     addClearingToSequence(nextClearing);
     position = nextClearing;
     if (nextClearing.TakeOnPieceOfFood(this)) {
+      recorder.pickupFood(this,nextClearing);
+      recorder.startFoodReturn(this);
       if(nextClearing.getOrSetFood(FoodInClearing.HAS_FOOD)){
         homewardMoving(true);
       }else {
