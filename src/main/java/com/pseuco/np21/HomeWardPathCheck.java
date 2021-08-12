@@ -30,6 +30,7 @@ public class HomeWardPathCheck {
                     break;
                 }
             }
+            //{AntHill, currentClearing, .. ...}
             //now return the Trail which leads to the Clearing which is Ordered in the sequence -->
             for (Trail target : connectedTrails) {    //--> exactly one index behind the CurrentClearing
                 if (target.to().id() == sequence.get(currentClearingNumberFromTheSequence - 1).id()) {
