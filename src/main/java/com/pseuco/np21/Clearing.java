@@ -103,7 +103,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
             }
         }
         finally {
-            lock.lock();
+            lock.unlock();
         }
     }
 
