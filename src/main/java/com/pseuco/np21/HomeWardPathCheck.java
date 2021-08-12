@@ -100,12 +100,13 @@ public class HomeWardPathCheck {
             Trail t = trailList.get(i);
             // remove all Trails which are already has Map Value Or the last one in Sequence.
             com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateHill(false, null);
+            if ((ant.getClearingSequence().size() > 1) && ant.isSecondLastVisitedInSequence(t.to())) {
+                {
+                    trailList.remove(t);
+                }
             if (p.isInfinite() || !p.isAPheromone()) {
                 trailList.remove(t);
-                if ((ant.getClearingSequence().size() > 1) && ant.isSecondLastVisitedInSequence(t.to())) {
-                    {
-                        trailList.remove(t);
-                    }
+
                 }
             }
         }
