@@ -230,7 +230,7 @@ public class SearchFoodTrailHandler {
 
             // if the number of Trails with (non-Map-Food-ph.)
             // bigger than 1( cause there is always the one from which we come) return true
-            return !trailsListToBeClearedAndChosenFrom.isEmpty();
+            return !listWithoutVisitedOrMapTrailsOrTheTrailsWeComeFrome.isEmpty();
         }
 
 
