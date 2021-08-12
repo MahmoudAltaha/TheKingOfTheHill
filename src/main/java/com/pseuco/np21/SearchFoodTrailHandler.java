@@ -48,16 +48,16 @@ public class SearchFoodTrailHandler {
             Trail t = trailList.get(i);
             // remove all Trails which are already has Map Value Or the last one in Sequence.
             com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFood(false, null, false);
+            if ((ant.getClearingSequence().size() > 1) && ant.isSecondLastVisitedInSequence(t.to())) {
+                    trailList.remove(t);
+                }
             if (p.isInfinite()) {
                 trailList.remove(t);
-                if ((ant.getClearingSequence().size() > 1) && ant.isSecondLastVisitedInSequence(t.to())) {
-                    {
-                        trailList.remove(t);
-                    }
+
                 }
             }
         }
-    }
+
 
     /**
      *  this methode checks if all the Trails in the list has Nap-Pheromones.
@@ -217,6 +217,9 @@ public class SearchFoodTrailHandler {
         /* remove the Trails That Connect To Visited clearing in the new objectList
          (but do not touch the real ConnectedTrails to the Clearing). */
         removeTrailsThatConnectsToVisitedClearing(trailsListToBeClearedAndChosenFrom,ant);
+        if(trailsListToBeClearedAndChosenFrom.isEmpty()){
+            return false;
+        }
         // if the Clearing is the Hill and has one single Trail which its Food not MaP return true
         if (trailsListToBeClearedAndChosenFrom.size() == 1 && c.id() == ant.getWorld().anthill().id() ) {
             com.pseuco.np21.shared.Trail.Pheromone p = trailsListToBeClearedAndChosenFrom.get(0).getOrUpdateFood(false,null,false);
@@ -226,7 +229,7 @@ public class SearchFoodTrailHandler {
             if(trailsListToBeClearedAndChosenFrom.isEmpty()){
                 return false;
             }
-            removeMapTrailsAndTheTrailWeComeFrom(trailsListToBeClearedAndChosenFrom,ant);
+        removeMapTrailsAndTheTrailWeComeFrom(trailsListToBeClearedAndChosenFrom,ant);
             // if the number of Trails with (non-Map-Food-ph.)
             // bigger than 1( cause there is always the one from which we come) return true
             return !trailsListToBeClearedAndChosenFrom.isEmpty();
