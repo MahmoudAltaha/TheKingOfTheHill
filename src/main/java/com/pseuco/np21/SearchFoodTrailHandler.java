@@ -47,12 +47,17 @@ public class SearchFoodTrailHandler {
         for (Trail t : trailList) {
             // remove all Trails which are already has Map Value Or the last one in Sequence.
             com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFood(false, null, false);
-            if (!((ant.getClearingSequence().size() > 1) && ant.isSecondLastVisitedInSequence(t.to())) && !p.isInfinite()) {
+            if ( ant.getClearingSequence().size() >1) {
+               if (! ant.isSecondLastVisitedInSequence(t.to()) ){
+                    if (!p.isInfinite()){
+                        listWithoutMapAndTrailWeComeFrom.add(t);
+                    }
+                }
+            } else if (!p.isInfinite()) {
                 listWithoutMapAndTrailWeComeFrom.add(t);
             }
-
         }
-        }
+    }
 
 
     /**

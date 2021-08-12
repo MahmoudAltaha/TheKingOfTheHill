@@ -40,15 +40,23 @@ public class HomeWardPathCheck {
             }
         }
         List<Trail>  listToBeCleared = new ArrayList<>(connectedTrails);
+
         List<Trail> listWithoutMapOrNapTrailsAndTheTrailWeComeFrom = new ArrayList<>();
-        removeMapOrNapTrailsAndTheTrailWeComeFrom(listToBeCleared,listWithoutMapOrNapTrailsAndTheTrailWeComeFrom,ant);
+
+        removeMapOrNapTrailsAndTheTrailWeComeFrom(listToBeCleared,listWithoutMapOrNapTrailsAndTheTrailWeComeFrom,
+                currentClearing,ant);
+
         assert (! listWithoutMapOrNapTrailsAndTheTrailWeComeFrom.isEmpty());
+
         List<Trail> minTrails = new ArrayList<>(); // all Trails which has the same min antHill-pheromone
+
         makeListWithJustMin(minTrails,listWithoutMapOrNapTrailsAndTheTrailWeComeFrom);
+
         Random random = new Random();
+
         int randomIndex = random.nextInt(minTrails.size());//get random number
         Trail targetTrail =  minTrails.get(randomIndex);
-        targetTrail.setSelectionReason(5); // set the selection reason.
+
         return  targetTrail  ;// now return a random Trails which has min-antHill-Pheromone.
     }
 
@@ -97,20 +105,42 @@ public class HomeWardPathCheck {
      * @param trailList trailsList
      * @param ant ant
      */
-    private void removeMapOrNapTrailsAndTheTrailWeComeFrom(List<Trail> trailList,List<Trail> listWithoutMapOrNapTrailsAndTheTrailWeComeFrom, Ant ant) {
+    private void removeMapOrNapTrailsAndTheTrailWeComeFrom(List<Trail> trailList,List<Trail> listWithoutMapOrNapTrailsAndTheTrailWeComeFrom
+            ,Clearing currentClearing, Ant ant) {
         assert (!trailList.isEmpty());  // check if the list are not Empty
         for (Trail t : trailList) {
             // remove all Trails which are already has Map Value Or the last one in Sequence.
             com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateHill(false, null);
-            if (!((ant.getClearingSequence().size() > 1) && ant.isSecondLastVisitedInSequence(t.to()))) {
-
+            boolean b = trailToClearingAfterCurrentInSequence(currentClearing,t);
+            if ( (!((ant.getClearingSequence().size() > 1) && !b) )) {
+                if (p.isAPheromone() && !p.isInfinite()) {
                     listWithoutMapOrNapTrailsAndTheTrailWeComeFrom.add(t);
                 }
-            if (!p.isInfinite() && p.isAPheromone()) {
+            } else {
+                if (p.isAPheromone() && !p.isInfinite()) {
                     listWithoutMapOrNapTrailsAndTheTrailWeComeFrom.add(t);
-
                 }
             }
+                }
+            }
+
+
+
+
+        public boolean trailToClearingAfterCurrentInSequence(Clearing current , Trail trailToBeChecked){
+            int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
+            List<Clearing> sequence = ant.getClearingSequence();
+            for (Clearing clearing : sequence) {     // by looping the sequence
+                if (clearing.id() != current.id()) {
+                    currentClearingNumberFromTheSequence++;
+                } else {
+                    break;
+                }
+            }
+            if (currentClearingNumberFromTheSequence == sequence.size() -1){
+                return  false;
+            }
+            return trailToBeChecked.to().id() == sequence.get(currentClearingNumberFromTheSequence + 1).id();
         }
 
 
