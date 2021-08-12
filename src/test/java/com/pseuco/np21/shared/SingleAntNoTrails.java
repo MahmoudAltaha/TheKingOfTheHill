@@ -98,6 +98,7 @@ public class SingleAntNoTrails {
     inOrder.verify(recorder).enter(eq(ant), same(anthill));
 
     inOrder.verify(recorder).startFoodSearch(eq(ant));
+    inOrder.verify(recorder).startExploration(eq(ant)); //new added
 
     inOrder.verify(recorder).leave(ant, anthill);
     inOrder.verify(recorder).despawn(ant, Recorder.DespawnReason.TERMINATED);
