@@ -67,6 +67,8 @@ public class ClearingEntry {
             while (!clearing.isSpaceLeft())  // wait for space,,if the Ant has waited more than its disguise she can pass.
                 if (!isSpaceLeft.await(ant.disguise(), TimeUnit.MILLISECONDS)) {
                     ant.getRecorder().attractAttention(ant); // added new
+                    t.leave();
+                    sendSignalAll(t);
                     ant.getRecorder().leave(ant, t);
                     ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
                     throw new InterruptedException();
@@ -118,6 +120,9 @@ public class ClearingEntry {
              while (!clearing.isSpaceLeft())  // wait for space,,if the Ant has waited more than its disguise she can pass.
                  if (!isSpaceLeft.await(ant.disguise(), TimeUnit.MILLISECONDS)) {
                      ant.getRecorder().attractAttention(ant); // added new
+                     t.leave();
+                     sendSignalAll(t);
+                     ant.getRecorder().leave(ant, t);
                      ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
                      throw new InterruptedException();
                  }
@@ -150,6 +155,9 @@ public class ClearingEntry {
              while (!clearing.isSpaceLeft())  // wait for space,,if the Ant has waited more than its disguise she can pass.
                  if (!isSpaceLeft.await(ant.disguise(), TimeUnit.MILLISECONDS)) {
                      ant.getRecorder().attractAttention(ant); // added new
+                     t.leave();
+                     sendSignalAll(t);
+                     ant.getRecorder().leave(ant, t);
                      ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
                      throw new InterruptedException();
                  }
