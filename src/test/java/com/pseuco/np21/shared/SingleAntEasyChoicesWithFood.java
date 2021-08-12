@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
@@ -95,7 +96,8 @@ public class SingleAntEasyChoicesWithFood {
 
   }
 
-  @RepeatedTest(5)
+ // @RepeatedTest(5)
+  @Test
   void run() {
     simulator.run();
 
