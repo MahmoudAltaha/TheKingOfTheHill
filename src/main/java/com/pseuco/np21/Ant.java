@@ -275,6 +275,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     position.dropFood(position, this);
     clearingSequence.clear();
     TrailsToVisitedClearing.clear();
+    this.setAntTONormalState();
     recorder.returnedFood(this);
 
   }
