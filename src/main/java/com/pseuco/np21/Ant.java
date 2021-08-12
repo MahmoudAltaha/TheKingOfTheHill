@@ -266,7 +266,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     while (position.id() != this.getWorld().anthill().id()) {
 
       target = homeward.getTargetTrail(position);
-      recorder.select(this, target, position.connectsTo(), SelectionReason.RETURN_FOOD);
+      // is already in forward  added
+      // recorder.select(this, target, position.connectsTo(), SelectionReason.RETURN_FOOD);
       target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME);
       target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME, update);
       position = target.to();
