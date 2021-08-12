@@ -66,24 +66,26 @@ public class HomeWardPathCheck {
                 Trail t2 = connectedTrails.get(i + 1);
                 com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateHill(false, null);
                 com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateHill(false, null);
-                if (p1.value() > p2.value()) {
-                    minTrailsList.add(t2);
-                    // remove t1 if it is present and all the Trails with the same Hill-Value , if not nothing is happening(is written in javaDoc)
-                    for (int k = 0; k < minTrailsList.size(); k++) {
-                        int hillValueOfTrailInList = minTrailsList.get(k).getOrUpdateHill(false, null).value();
-                        if (hillValueOfTrailInList == t1.getOrUpdateHill(false, null).value()) {
-                            minTrailsList.remove(minTrailsList.get(k));
+                if (p1.isAPheromone() && p2.isAPheromone()) {
+                    if (p1.value() > p2.value()) {
+                        minTrailsList.add(t2);
+                        // remove t1 if it is present and all the Trails with the same Hill-Value , if not nothing is happening(is written in javaDoc)
+                        for (int k = 0; k < minTrailsList.size(); k++) {
+                            int hillValueOfTrailInList = minTrailsList.get(k).getOrUpdateHill(false, null).value();
+                            if (hillValueOfTrailInList == t1.getOrUpdateHill(false, null).value()) {
+                                minTrailsList.remove(minTrailsList.get(k));
+                            }
                         }
+                    } else if (p1.value() < p2.value()) {
+                        if (!minTrailsList.contains(t1)) {
+                            minTrailsList.add(t1);
+                        }
+                    } else {
+                        if (!minTrailsList.contains(t1)) {
+                            minTrailsList.add(t1);
+                        }
+                        minTrailsList.add(t2);
                     }
-                } else if (p1.value() < p2.value()) {
-                    if (!minTrailsList.contains(t1)) {
-                        minTrailsList.add(t1);
-                    }
-                } else {
-                    if (!minTrailsList.contains(t1)) {
-                        minTrailsList.add(t1);
-                    }
-                    minTrailsList.add(t2);
                 }
             }
         }
