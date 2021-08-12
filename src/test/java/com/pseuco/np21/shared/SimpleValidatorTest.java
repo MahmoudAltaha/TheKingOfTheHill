@@ -40,7 +40,7 @@ public class SimpleValidatorTest {
     }
 
     @Test
-    @Timeout(value = 1)
+    @Timeout(value = 5)
     void run() {
         simulator.run();
 
