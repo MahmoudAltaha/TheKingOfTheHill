@@ -173,8 +173,8 @@ public class TrailEntry {
 
             trail.enter();
             ant.getRecorder().enter(ant, trail);
-            ant.getRecorder().leave(ant, c);
             c.leave();
+            ant.getRecorder().leave(ant, c);
             sendSignalAll(c);
         }finally {
             lock.unlock();
