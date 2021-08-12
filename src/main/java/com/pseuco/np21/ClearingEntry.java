@@ -235,7 +235,7 @@ public class ClearingEntry {
                  if(! ant.isAdventurer()){
                      newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(r);
                  } else {
-                     if (currentPheromone.isAPheromone()) {
+                     if (currentPheromone.isAPheromone() && (!currentPheromone.isInfinite() )) {
                          int minPheromoneValue = Math.min(r, currentPheromone.value());
                          newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(minPheromoneValue);
                      } else {

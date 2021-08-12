@@ -39,17 +39,17 @@ public class HomeWardPathCheck {
                 }
             }
         }
-         /*
-        List<Trail> nonNapTrails = new ArrayList<>();
-        addNapTrails(connectedTrails,nonNapTrails);*/
+        List<Trail>  listToBeCleared = new ArrayList<>(connectedTrails);
+        removeMapOrNapTrailsAndTheTrailWeComeFrom(listToBeCleared,ant);
         List<Trail> minTrails = new ArrayList<>(); // all Trails which has the same min antHill-pheromone
-        makeListWithJustMin(minTrails,connectedTrails);
+        makeListWithJustMin(minTrails,listToBeCleared);
         Random random = new Random();
         int randomIndex = random.nextInt(minTrails.size());//get random number
         Trail targetTrail =  minTrails.get(randomIndex);
         targetTrail.setSelectionReason(5); // set the selection reason.
         return  targetTrail  ;// now return a random Trails which has min-antHill-Pheromone.
     }
+
 
     /**
      * this methode used to add the Trails with min-Hill Value to a min List.
@@ -89,26 +89,27 @@ public class HomeWardPathCheck {
         }
 
     }
-
-
-
-
-
     /**
-     * adding the Trails with the NON-Nap-Food-Pheromones to the second list (we may not use it!!)
-     * @param trailList connectedTrails
-     * @param nonNapTrails list of Trails with nonNap
+     * this methode remove all Trails with Map-Pheromone from the given list.
+     * @param trailList trailsList
+     * @param ant ant
      */
-    private void addNapTrails(List<Trail> trailList,List<Trail> nonNapTrails) {
+    private void removeMapOrNapTrailsAndTheTrailWeComeFrom(List<Trail> trailList, Ant ant) {
         assert (!trailList.isEmpty());  // check if the list are not Empty
-        for (Trail trail : trailList) {
-            com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false, null, false);
-            int valueToCheck = p.value(); // pheromone of the Trail.
-            if (valueToCheck == -2) {  // check if the Trail has Nap food-Ph.
-                nonNapTrails.add(trail);
-
+        for (int i = 0; i < trailList.size(); i++) {
+            Trail t = trailList.get(i);
+            // remove all Trails which are already has Map Value Or the last one in Sequence.
+            com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateHill(false, null);
+            if (p.isInfinite() || !p.isAPheromone()) {
+                trailList.remove(t);
+                if ((ant.getClearingSequence().size() > 1) && ant.isSecondLastVisitedInSequence(t.to())) {
+                    {
+                        trailList.remove(t);
+                    }
+                }
             }
         }
     }
+
 
 }

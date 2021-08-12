@@ -61,10 +61,9 @@ public class SearchFoodPathCheck {
      * @return  the reversedTrail which we need to take
      */
      public Trail getTrailToStepBack(Clearing currentTwiceVisitedClearing,Trail trailWeComeFrom){
-        assert (trailWeComeFrom.to().equals(currentTwiceVisitedClearing));
-        Trail targetTrail = trailWeComeFrom.reverse();
-        targetTrail.setSelectionReason(3);
-        return targetTrail;
+         //this assert make sure that we get the right Clearing and the right Trail from The Ant methodes(run for example)
+        assert (trailWeComeFrom.to().id() == (currentTwiceVisitedClearing.id()));
+         return trailWeComeFrom.reverse();
     }
 
 
