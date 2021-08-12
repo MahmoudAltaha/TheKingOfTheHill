@@ -185,7 +185,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   }
 
   private void forwardMoving(Trail from) throws InterruptedException {
-
+    Trail trailFrom = from;
     while (!this.holdFood) {
       if (position.TakeOnPieceOfFood(this)) {
         recorder.pickupFood(this, position);
@@ -217,22 +217,24 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         boolean isClearingInSequence = isInSequence(nextClearing);
         nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
         position = nextClearing;
+        trailFrom = target;
         if (isClearingInSequence) {
           target = searchFood.getTrailToStepBack(position, target);
           recorder.select(this, target, position.connectsTo(), SelectionReason.IMMEDIATE_RETURN);
           target.enterTrail(nextClearing, this, EntryReason.IMMEDIATE_RETURN);
           target.to().enterClearing(target, this, EntryReason.IMMEDIATE_RETURN, false);
           position = target.to();
-
+          trailFrom = target;
         }
-        from = target;
+        //from = target;
 
       } else {
-       Trail t = searchFood.getTrailToStepBack(position, from);
+       Trail t = searchFood.getTrailToStepBack(position, trailFrom);
        recorder.select(this, t, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
        t.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
        t.to().enterClearing(t, this, EntryReason.NO_FOOD_RETURN, false);
        position = t.to();
+       trailFrom = t;
       }
     }
   }
