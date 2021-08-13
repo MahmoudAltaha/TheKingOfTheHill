@@ -324,9 +324,12 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       Thread.currentThread().interrupt();
     }
 
-    // TODO handle termination
+    //       TODO handle termination
 
   }
 
 
 }
+
+
+
