@@ -2,7 +2,7 @@ package com.pseuco.np21;
 
 
 import com.pseuco.np21.shared.Recorder.DespawnReason;
-import java.util.NoSuchElementException;
+
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -19,11 +19,11 @@ public class TrailEntry {
 
 
 
-    public Lock lock = new ReentrantLock();
+    public Lock TrailLock = new ReentrantLock();
 
 
 
-    public Condition isSpaceLeft= lock.newCondition();
+    public Condition isSpaceLeft= TrailLock.newCondition();
 
     /**
      * construct a TrailEntry.
@@ -43,8 +43,8 @@ public class TrailEntry {
         return isSpaceLeft;
     }
 
-    public Lock getLook(){
-        return lock;
+    public Lock getTrailLook(){
+        return TrailLock;
     }
 
     /**
@@ -52,11 +52,11 @@ public class TrailEntry {
      * @param c the Clearing where we want to wake up the threads.
      */
     private void sendSignalAll(Clearing c){
-        c.getClearingEntry().getLock().lock();
+        c.getClearingEntry().getClearingLock().lock();
         try {
             c.getClearingEntry().getIsSpaceLeft().signalAll();
         } finally {
-            c.getClearingEntry().getLock().unlock();
+            c.getClearingEntry().getClearingLock().unlock();
         }
     }
 
@@ -72,7 +72,7 @@ public class TrailEntry {
      */
     public boolean enterTrailFoodSearch(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
-        lock.lock();
+        TrailLock.lock();
         try{
             while (!trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
                 isSpaceLeft.await();
@@ -90,7 +90,7 @@ public class TrailEntry {
             }
         }
         finally {
-            lock.unlock();
+            TrailLock.unlock();
         }
 
         return true;
@@ -106,7 +106,7 @@ public class TrailEntry {
      */
     public boolean immediateReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
-        lock.lock();
+        TrailLock.lock();
         try{
             while (!trail.isSpaceLeft())// wait for a free space.
                 isSpaceLeft.await();
@@ -119,7 +119,7 @@ public class TrailEntry {
             ant.removeClearingFromSequence(c);
             ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
         }finally {
-            lock.unlock();
+            TrailLock.unlock();
         }
         return true;
     }
@@ -134,7 +134,7 @@ public class TrailEntry {
      */
     public boolean noFoodReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
-        lock.lock();
+        TrailLock.lock();
         try {
             while (!trail.isSpaceLeft())
                 isSpaceLeft.await();
@@ -147,7 +147,7 @@ public class TrailEntry {
             ant.removeClearingFromSequence(c);
             ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
         }finally {
-            lock.unlock();
+            TrailLock.unlock();
         }
 
 
@@ -168,7 +168,7 @@ public class TrailEntry {
 
     public  boolean homewardEnterTrail(Clearing c, Ant ant) throws InterruptedException {
         while (!Thread.currentThread().isInterrupted()){
-            lock.lock();
+            TrailLock.lock();
             try{
                 while (!trail.isSpaceLeft())
                     isSpaceLeft.await();
@@ -180,7 +180,7 @@ public class TrailEntry {
                 sendSignalAll(c);
             }
             finally {
-                lock.unlock();
+                TrailLock.unlock();
             }
             return true;
         }

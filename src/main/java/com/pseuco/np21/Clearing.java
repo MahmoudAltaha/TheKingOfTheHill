@@ -125,7 +125,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
      * @param ant  The Ant
      * @return true if the Ant has pickedUp the food.
      */
-    public boolean TakeOnPieceOfFood(Ant ant){
+    public boolean TakeOnPieceOfFood(Ant ant) throws InterruptedException {
         return clearingEntry.pickUPFood(ant);
     }
 
@@ -136,7 +136,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
      * @param c the Hill
      * @return true by successfully dropping food
      */
-    public boolean dropFood(Clearing c, Ant ant) {
+    public boolean dropFood(Clearing c, Ant ant) throws InterruptedException {
         return clearingEntry.dropFood(c, ant);
     }
 

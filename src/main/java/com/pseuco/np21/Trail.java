@@ -25,7 +25,7 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
      * 6---> RETURN_IN_SEQUENCE,
      */
     private  int selectionReason ;
-    private TrailEntry trailEntry = new TrailEntry(this);;    // to handle the entering to this Trail in a concurrent way.
+    private final TrailEntry trailEntry = new TrailEntry(this);;    // to handle the entering to this Trail in a concurrent way.
     public Lock lock =  new ReentrantLock();
 
     private Trail(final Trail reverse) {
