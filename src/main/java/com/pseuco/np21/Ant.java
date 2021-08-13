@@ -18,7 +18,7 @@ import java.util.List;
  * You may change the code however you see fit.
  */
 public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
-//just a comment
+
   private static class AntDiedException extends Throwable {
 
     private final boolean eaten;
@@ -60,7 +60,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
    * @param recorder to log all actions against
    */
   public Ant(final com.pseuco.np21.shared.Ant ant, final World<Clearing, Trail> world,
-      final Recorder recorder) {
+             final Recorder recorder) {
     super(ant);
     this.world = world;
     this.recorder = recorder;
@@ -185,63 +185,64 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   }
 
   private void forwardMoving(Trail from) throws InterruptedException {
-   try {
-     Trail trailFrom = from;
-     while (!this.holdFood) {
-       if (position.TakeOnPieceOfFood(this)) {
-         recorder.pickupFood(this, position);
-         recorder.startFoodReturn(this);
-         if (this.isAdventurer()) {
-           recorder.select(this, from.reverse(), position.connectsTo(), SelectionReason.RETURN_IN_SEQUENCE);
-         } else {
-           recorder.select(this, from.reverse(), position.connectsTo(), SelectionReason.RETURN_FOOD);
-         }
+    Trail trailFrom = from;
+    try {
+      while (!this.holdFood) {
+        if (position.TakeOnPieceOfFood(this)) {
+          recorder.pickupFood(this, position);
+          recorder.startFoodReturn(this);
 
-         if (position.getOrSetFood(FoodInClearing.HAS_FOOD)) {
-           homewardMoving(true);
-         } else {
-           homewardMoving(false);
-         }
-         break;
-       }
+          if (!this.isAdventurer()) {
+            recorder.select(this, from.reverse(), position.connectsTo(),
+                    SelectionReason.RETURN_FOOD);
+          }
 
+          if (position.getOrSetFood(FoodInClearing.HAS_FOOD)) {
+            homewardMoving(true);
+          } else {
+            homewardMoving(false);
+          }
+          break;
+        }
 
-       if (searchFood.checkTrail(position)) {
-         Trail target = searchFood.getTargetTrail(position);
-         if (target.getOrUpdateFood(false, null, false).isAPheromone()) {
-           recorder.select(this, target, position.connectsTo(), SelectionReason.FOOD_SEARCH);
-         } else {
-           recorder.select(this, target, position.connectsTo(), SelectionReason.EXPLORATION);
-         }
-         target.enterTrail(position, this, EntryReason.FOOD_SEARCH);
-         Clearing nextClearing = target.to();
-         boolean isClearingInSequence = isInSequence(nextClearing);
-         nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
-         position = nextClearing;
-         trailFrom = target;
-         if (isClearingInSequence) {
-           target = searchFood.getTrailToStepBack(position, target);
-           recorder.select(this, target, position.connectsTo(), SelectionReason.IMMEDIATE_RETURN);
-           target.enterTrail(nextClearing, this, EntryReason.IMMEDIATE_RETURN);
-           target.to().enterClearing(target, this, EntryReason.IMMEDIATE_RETURN, false);
-           position = target.to();
-           trailFrom = target;
-         }
-         //from = target;
+        if (searchFood.checkTrail(position)) {
+          Trail target = searchFood.getTargetTrail(position);
+          if (target.getOrUpdateFood(false, null, false).isAPheromone()) {
+            recorder.select(this, target, position.connectsTo(), SelectionReason.FOOD_SEARCH);
+          } else {
+            recorder.select(this, target, position.connectsTo(), SelectionReason.EXPLORATION);
+          }
+          target.enterTrail(position, this, EntryReason.FOOD_SEARCH);
+          Clearing nextClearing = target.to();
+          boolean isClearingInSequence = isInSequence(nextClearing);
+          nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
+          position = nextClearing;
+          trailFrom = target;
+          if (isClearingInSequence) {
+            target = searchFood.getTrailToStepBack(position, target);
+            recorder.select(this, target, position.connectsTo(), SelectionReason.IMMEDIATE_RETURN);
+            target.enterTrail(nextClearing, this, EntryReason.IMMEDIATE_RETURN);
+            target.to().enterClearing(target, this, EntryReason.IMMEDIATE_RETURN, false);
+            position = target.to();
+            trailFrom = target;
+          }
+          //from = target;
 
-       } else {
-         Trail t = searchFood.getTrailToStepBack(position, trailFrom);
-         recorder.select(this, t, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
-         t.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
-         t.to().enterClearing(t, this, EntryReason.NO_FOOD_RETURN, false);
-         position = t.to();
-         trailFrom = t;
-       }
-     }
-    }  catch(InterruptedException ex) {
-     recorder.despawn(this, DespawnReason.TERMINATED);
-     Thread.currentThread().interrupt();
-   }
+        } else {
+          Trail t = searchFood.getTrailToStepBack(position, trailFrom);
+          recorder.select(this, t, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
+          t.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
+          t.to().enterClearing(t, this, EntryReason.NO_FOOD_RETURN, false);
+          position = t.to();
+          trailFrom = t;
+        }
+      }
+    }catch (InterruptedException e){
+      trailFrom.from().leave();
+      recorder.leave(this, trailFrom);
+      recorder.despawn(this, DespawnReason.TERMINATED);
+      Thread.currentThread().interrupt();
+    }
   }
 
   private Trail init() throws InterruptedException {
@@ -258,8 +259,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       position.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
       return target;
     } else {
-      recorder.leave(this,position);
-     // recorder.despawn(this, Recorder.DespawnReason.TERMINATED);
+      recorder.leave(this, position);
+      recorder.despawn(this, Recorder.DespawnReason.TERMINATED);
       throw new InterruptedException();
     }
 
@@ -267,28 +268,25 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
 
   private void homewardMoving(boolean update) throws InterruptedException {
-   try {
-     HomeWardPathCheck homeward = new HomeWardPathCheck(this);
-     //recorder.startFoodReturn(this);
-     Trail target;
-     while (position.id() != this.getWorld().anthill().id()) {
+    HomeWardPathCheck homeward = new HomeWardPathCheck(this);
+    //recorder.startFoodReturn(this);
+    Trail target;
+    while (!Thread.currentThread().isInterrupted()){
+      while (position.id() != this.getWorld().anthill().id()) {
 
-       target = homeward.getTargetTrail(position);
-       // is already in forward  added
-       // recorder.select(this, target, position.connectsTo(), SelectionReason.RETURN_FOOD);
-       target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME);
-       target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME, update);
-       position = target.to();
-     }
-     position.dropFood(position, this);
-     clearingSequence.clear();
-     TrailsToVisitedClearing.clear();
-     this.setAntTONormalState();
-     recorder.returnedFood(this);
-       }
-   catch(InterruptedException ex) {
-      recorder.despawn(this, DespawnReason.TERMINATED);
-      Thread.currentThread().interrupt();
+        target = homeward.getTargetTrail(position);
+        // is already in forward  added
+        // recorder.select(this, target, position.connectsTo(), SelectionReason.RETURN_FOOD);
+        target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME);
+        target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME, update);
+        position = target.to();
+      }
+      position.dropFood(position, this);
+      clearingSequence.clear();
+      TrailsToVisitedClearing.clear();
+      this.setAntTONormalState();
+      recorder.returnedFood(this);
+      break;
     }
   }
 
@@ -297,39 +295,44 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
    * Primary ant behavior.
    */
   public void run() {
-    position = world.anthill();
-    recorder.spawn(this);
-    //TODO CHECK, Anthill should not be added to the Sequence
+    while(!Thread.currentThread().isInterrupted()){
+      position = world.anthill();
+      recorder.spawn(this);
+      //TODO CHECK, Anthill should not be added to the Sequence
 
-    recorder.enter(this, position);
-    recorder.startFoodSearch(this);
-    recorder.startExploration(this);
-    try {
-
-      while (world.isFoodLeft()) {
-        addClearingToSequence(position);  // adding the antHill to the sequence
-        Trail from = init();
-        forwardMoving(from);
-        if (world.isFoodLeft()) {
-          recorder.startFoodSearch(this);
-        }
-
+      recorder.enter(this, position);
+      if (world.isFoodLeft()) {
+        recorder.startFoodSearch(this);
+        recorder.startExploration(this);
       }
-      recorder.leave(this, position);
-      recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
-      Thread.currentThread().interrupt();
+      try {
 
-    } catch (InterruptedException e) {
-      recorder.despawn(this, DespawnReason.TERMINATED);
-      Thread.currentThread().interrupt();
+        while (world.isFoodLeft()) {
+          addClearingToSequence(position);  // adding the antHill to the sequence
+          Trail from = init();
+          forwardMoving(from);
+          if (world.isFoodLeft()) {
+            recorder.startFoodSearch(this);
+          }
+
+        }
+        recorder.leave(this, position);
+        recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
+
+        throw new InterruptedException();
+      } catch (InterruptedException e) {
+        for (Thread t : Thread.getAllStackTraces().keySet())
+        {  if (t.getState()==Thread.State.RUNNABLE)
+          t.interrupt();
+        }
+        // Thread.currentThread().interrupt();
+      }
+
+      // TODO handle termination
+
     }
-
-    //       TODO handle termination
-
   }
 
 
+
 }
-
-
-

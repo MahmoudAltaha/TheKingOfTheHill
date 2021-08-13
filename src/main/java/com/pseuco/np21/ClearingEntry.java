@@ -206,7 +206,7 @@ public class ClearingEntry {
      * @return true if the Ant has entered the Clearing successfully.
      */
     public boolean homewardEnterClearing(Trail t, Ant ant, boolean update) throws InterruptedException{
-       // while (!Thread.currentThread().isInterrupted()){
+        while (!Thread.currentThread().isInterrupted()){
             lock.lock();
             try{
                 while (!clearing.isSpaceLeft())  // wait for space,,if the Ant has waited more than its disguise she can pass.
@@ -259,7 +259,8 @@ public class ClearingEntry {
                 lock.unlock();
             }
             return  true;
-
+        }
+        return true;
     }
 
     /**
