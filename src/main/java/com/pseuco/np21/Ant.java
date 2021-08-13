@@ -271,7 +271,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     HomeWardPathCheck homeward = new HomeWardPathCheck(this);
     //recorder.startFoodReturn(this);
     Trail target;
-    while (!Thread.currentThread().isInterrupted()){
+   // while (!Thread.currentThread().isInterrupted()){
       while (position.id() != this.getWorld().anthill().id()) {
 
         target = homeward.getTargetTrail(position);
@@ -286,8 +286,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       TrailsToVisitedClearing.clear();
       this.setAntTONormalState();
       recorder.returnedFood(this);
-      break;
-    }
+     // break;
+    //}
   }
 
 

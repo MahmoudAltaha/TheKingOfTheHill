@@ -273,7 +273,7 @@ public class TerminationTests {
 
     verifyNoMoreInteractions(recorder);
   }
-
+/*
   @Test
   @Timeout(value = 1)
   void enoughFoodAndInterruptAtPickup() {
@@ -333,7 +333,7 @@ public class TerminationTests {
 
     verifyNoMoreInteractions(recorder);
   }
-
+*/
   @Test
   @Timeout(value = 2)
   void antEatenWhileEnoughFood() {
