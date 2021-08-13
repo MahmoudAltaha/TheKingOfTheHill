@@ -82,13 +82,13 @@ public class TrailEntry {
             c.leave(); // leave the Clearing
             ant.getRecorder().leave(ant,c); // recorder stuff
             if( c.id() != ant.getWorld().anthill().id()  ){ // if the left Clearing was not the hill->signalAll.
-              sendSignalAll(c);
+                sendSignalAll(c);
             }
             com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false,null,false);
             if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
                 ant.setAntTOAdventurer();
-                }
             }
+        }
         finally {
             lock.unlock();
         }
@@ -132,17 +132,17 @@ public class TrailEntry {
      * @return      true if the Ant has entered the Trail successfully
      * @throws InterruptedException InterruptedException
      */
-     public boolean noFoodReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
+    public boolean noFoodReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
         lock.lock();
         try {
             while (!trail.isSpaceLeft())
-            isSpaceLeft.await();
+                isSpaceLeft.await();
             trail.enter();
             ant.getRecorder().enter(ant,trail);
             c.leave();  // leave the wrong Clearing
             ant.getRecorder().leave(ant,c);
-           sendSignalAll(c);  // signalAll to  Ants that the Clearing has now a free space.
+            sendSignalAll(c);  // signalAll to  Ants that the Clearing has now a free space.
             // remove this Clearing from the sequence.there are no Food to find in this way.
             ant.removeClearingFromSequence(c);
             ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
@@ -187,7 +187,7 @@ public class TrailEntry {
         c.leave();
         ant.getRecorder().leave(ant, c);
         ant.getRecorder().despawn(ant, DespawnReason.TERMINATED);
-       return false;
+        return false;
     }
 
 
@@ -206,7 +206,7 @@ public class TrailEntry {
      * @return      true if the entry was completed successfully.
      * @throws InterruptedException InterruptedException
      */
-     public boolean enter (Clearing currentClearing,Ant ant,EntryReason entryReason) throws InterruptedException {
+    public boolean enter (Clearing currentClearing,Ant ant,EntryReason entryReason) throws InterruptedException {
         return switch (entryReason) {
             case FOOD_SEARCH -> this.enterTrailFoodSearch(currentClearing,ant);
             case IMMEDIATE_RETURN -> this.immediateReturnToTrail(currentClearing,ant);

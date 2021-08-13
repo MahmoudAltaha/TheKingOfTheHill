@@ -272,22 +272,22 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     //recorder.startFoodReturn(this);
     Trail target;
     while (!Thread.currentThread().isInterrupted()){
-    while (position.id() != this.getWorld().anthill().id()) {
+      while (position.id() != this.getWorld().anthill().id()) {
 
-      target = homeward.getTargetTrail(position);
-      // is already in forward  added
-      // recorder.select(this, target, position.connectsTo(), SelectionReason.RETURN_FOOD);
-      target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME);
-      target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME, update);
-      position = target.to();
+        target = homeward.getTargetTrail(position);
+        // is already in forward  added
+        // recorder.select(this, target, position.connectsTo(), SelectionReason.RETURN_FOOD);
+        target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME);
+        target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME, update);
+        position = target.to();
+      }
+      position.dropFood(position, this);
+      clearingSequence.clear();
+      TrailsToVisitedClearing.clear();
+      this.setAntTONormalState();
+      recorder.returnedFood(this);
+      break;
     }
-    position.dropFood(position, this);
-    clearingSequence.clear();
-    TrailsToVisitedClearing.clear();
-    this.setAntTONormalState();
-    recorder.returnedFood(this);
-    break;
-  }
   }
 
 
@@ -331,7 +331,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       // TODO handle termination
 
     }
-    }
+  }
 
 
 
