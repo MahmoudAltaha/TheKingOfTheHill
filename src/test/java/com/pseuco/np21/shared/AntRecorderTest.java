@@ -40,6 +40,7 @@ class AntRecorderTest {
         simulator = new Simulator(world, recorder);
     }
 
+
     @Test
     @Timeout(value = 1)
     void run() {
