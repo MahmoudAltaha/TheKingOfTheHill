@@ -18,7 +18,7 @@ import java.util.List;
  * You may change the code however you see fit.
  */
 public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
-
+//just a comment
   private static class AntDiedException extends Throwable {
 
     private final boolean eaten;
