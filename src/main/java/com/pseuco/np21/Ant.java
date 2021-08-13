@@ -254,7 +254,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       return target;
     } else {
       recorder.leave(this,position);
-      recorder.despawn(this, Recorder.DespawnReason.TERMINATED);
+     // recorder.despawn(this, Recorder.DespawnReason.TERMINATED);
       throw new InterruptedException();
     }
 
@@ -307,10 +307,10 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       }
       recorder.leave(this, position);
       recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
+      Thread.currentThread().interrupt();
 
-      throw new InterruptedException();
     } catch (InterruptedException e) {
-
+      recorder.despawn(this, DespawnReason.TERMINATED);
       Thread.currentThread().interrupt();
     }
 

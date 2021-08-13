@@ -68,10 +68,11 @@ public class ClearingEntry {
                 if (!isSpaceLeft.await(ant.disguise(), TimeUnit.MILLISECONDS)) {
                     ant.getRecorder().attractAttention(ant); // added new
                     t.leave();
-                    sendSignalAll(t);
                     ant.getRecorder().leave(ant, t);
+                    sendSignalAll(t);
                     ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
-                    throw new InterruptedException();
+                   // throw new InterruptedException();
+                    Thread.currentThread().interrupt();
                 }
             clearing.enter(); // enter the Clearing
             ant.getRecorder().enter(ant, clearing); // recorder stuff.
@@ -124,7 +125,8 @@ public class ClearingEntry {
                      sendSignalAll(t);
                      ant.getRecorder().leave(ant, t);
                      ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
-                     throw new InterruptedException();
+                     //throw new InterruptedException();
+                     Thread.currentThread().interrupt();
                  }
              clearing.enter(); // enter the Clearing
              ant.getRecorder().enter(ant, clearing); // recorder stuff.
@@ -132,7 +134,7 @@ public class ClearingEntry {
              ant.getRecorder().leave(ant, t); // recorder stuff
                // signal all to the threads which are waiting  to enter the Trail we left
             sendSignalAll(t);
-         }finally{
+         } finally{
              lock.unlock();
          }
          return true;
@@ -159,7 +161,8 @@ public class ClearingEntry {
                      sendSignalAll(t);
                      ant.getRecorder().leave(ant, t);
                      ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
-                     throw new InterruptedException();
+                     //throw new InterruptedException();
+                     Thread.currentThread().interrupt();
                  }
              clearing.enter(); // enter the Clearing
              ant.getRecorder().enter(ant, clearing); // recorder stuff.
@@ -213,8 +216,12 @@ public class ClearingEntry {
                      if(ant.hasFood()){
                          ant.setHoldFood(false);
                      }
+                     t.leave();
+                     sendSignalAll(t);
+                     ant.getRecorder().leave(ant, t);
                      ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
-                     throw new InterruptedException();
+                     //throw new InterruptedException();
+                     Thread.currentThread().interrupt();
                  }
              clearing.enter(); // enter the Clearing
              ant.getRecorder().enter(ant,clearing); // recorder stuff.

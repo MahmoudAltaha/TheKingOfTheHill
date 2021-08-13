@@ -123,9 +123,8 @@ public class SingleAntOnlyMaP {
 
     inOrder.verify(recorder).spawn(ArgumentMatchers.eq(ant));
     inOrder.verify(recorder).enter(ArgumentMatchers.eq(ant), ArgumentMatchers.same(anthill));
-
     inOrder.verify(recorder).startFoodSearch(ArgumentMatchers.eq(ant));
-
+    inOrder.verify(recorder).startExploration(ArgumentMatchers.eq(ant));
     inOrder.verify(recorder).leave(ant, anthill);
     inOrder.verify(recorder).despawn(ant, Recorder.DespawnReason.TERMINATED);
 
