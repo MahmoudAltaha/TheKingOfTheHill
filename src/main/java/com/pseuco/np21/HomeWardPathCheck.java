@@ -20,6 +20,7 @@ public class HomeWardPathCheck {
 
 
     public Trail getTargetTrail(Clearing currentClearing){
+
         List<Clearing> sequence =ant.getClearingSequence();  // the sequence
         List<Trail> connectedTrails = currentClearing.connectsTo(); // the out Trails from the Current Clearing
         if (ant.isAdventurer()){ // check if the Ant is an Adventurer.
@@ -60,6 +61,7 @@ public class HomeWardPathCheck {
         Trail targetTrail =  minTrails.get(randomIndex);
 
         return  targetTrail  ;// now return a random Trails which has min-antHill-Pheromone.
+
     }
 
 

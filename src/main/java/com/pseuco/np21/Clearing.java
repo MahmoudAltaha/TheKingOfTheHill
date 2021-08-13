@@ -77,7 +77,6 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     }
 
 
-
     public ClearingEntry getClearingEntry() {
         return clearingEntry;
     }

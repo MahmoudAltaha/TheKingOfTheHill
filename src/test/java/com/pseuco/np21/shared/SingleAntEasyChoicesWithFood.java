@@ -96,8 +96,8 @@ public class SingleAntEasyChoicesWithFood {
 
   }
 
- // @RepeatedTest(5)
-  @Test
+ @RepeatedTest(5)
+ // @Test
   void run() {
     simulator.run();
 
@@ -173,7 +173,7 @@ public class SingleAntEasyChoicesWithFood {
   }
 
   private void exploreSingleTrail(Trail trail) {
-    inOrder.verify(recorder).select(ant, trail, List.of(trail), SelectionReason.EXPLORATION);
+    //inOrder.verify(recorder).select(ant, trail, List.of(trail), SelectionReason.EXPLORATION);
     inOrder.verify(recorder).enter(ant, trail);
     inOrder.verify(recorder).leave(ant, trail.from());
     inOrder.verify(recorder).enter(ant, trail.to());

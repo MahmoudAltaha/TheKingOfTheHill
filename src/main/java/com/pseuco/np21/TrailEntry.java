@@ -1,6 +1,7 @@
 package com.pseuco.np21;
 
 
+import com.pseuco.np21.shared.Recorder.DespawnReason;
 import java.util.NoSuchElementException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -166,20 +167,27 @@ public class TrailEntry {
      */
 
     public  boolean homewardEnterTrail(Clearing c, Ant ant) throws InterruptedException {
-        lock.lock();
-        try{
-            while (!trail.isSpaceLeft())
-                isSpaceLeft.await();
+        while (!Thread.currentThread().isInterrupted()){
+            lock.lock();
+            try{
+                while (!trail.isSpaceLeft())
+                    isSpaceLeft.await();
 
-            trail.enter();
-            ant.getRecorder().enter(ant, trail);
-            c.leave();
-            ant.getRecorder().leave(ant, c);
-            sendSignalAll(c);
-        }finally {
-            lock.unlock();
+                trail.enter();
+                ant.getRecorder().enter(ant, trail);
+                c.leave();
+                ant.getRecorder().leave(ant, c);
+                sendSignalAll(c);
+            }
+            finally {
+                lock.unlock();
+            }
+            return true;
         }
-        return true;
+        c.leave();
+        ant.getRecorder().leave(ant, c);
+        ant.getRecorder().despawn(ant, DespawnReason.TERMINATED);
+       return false;
     }
 
 
