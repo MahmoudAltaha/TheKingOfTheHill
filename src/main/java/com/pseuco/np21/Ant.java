@@ -185,58 +185,63 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   }
 
   private void forwardMoving(Trail from) throws InterruptedException {
-    Trail trailFrom = from;
-    while (!this.holdFood) {
-      if (position.TakeOnPieceOfFood(this)) {
-        recorder.pickupFood(this, position);
-        recorder.startFoodReturn(this);
-        if(this.isAdventurer()){
-          recorder.select(this, from.reverse(), position.connectsTo(), SelectionReason.RETURN_IN_SEQUENCE);
-        }else{
-          recorder.select(this, from.reverse(), position.connectsTo(), SelectionReason.RETURN_FOOD);
-        }
+   try {
+     Trail trailFrom = from;
+     while (!this.holdFood) {
+       if (position.TakeOnPieceOfFood(this)) {
+         recorder.pickupFood(this, position);
+         recorder.startFoodReturn(this);
+         if (this.isAdventurer()) {
+           recorder.select(this, from.reverse(), position.connectsTo(), SelectionReason.RETURN_IN_SEQUENCE);
+         } else {
+           recorder.select(this, from.reverse(), position.connectsTo(), SelectionReason.RETURN_FOOD);
+         }
 
-        if (position.getOrSetFood(FoodInClearing.HAS_FOOD)) {
-          homewardMoving(true);
-        } else {
-          homewardMoving(false);
-        }
-        break;
-      }
+         if (position.getOrSetFood(FoodInClearing.HAS_FOOD)) {
+           homewardMoving(true);
+         } else {
+           homewardMoving(false);
+         }
+         break;
+       }
 
 
-      if (searchFood.checkTrail(position)) {
-        Trail target = searchFood.getTargetTrail(position);
-        if (target.getOrUpdateFood(false, null, false).isAPheromone()) {
-          recorder.select(this, target, position.connectsTo(), SelectionReason.FOOD_SEARCH);
-        } else {
-          recorder.select(this, target, position.connectsTo(), SelectionReason.EXPLORATION);
-        }
-        target.enterTrail(position, this, EntryReason.FOOD_SEARCH);
-        Clearing nextClearing = target.to();
-        boolean isClearingInSequence = isInSequence(nextClearing);
-        nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
-        position = nextClearing;
-        trailFrom = target;
-        if (isClearingInSequence) {
-          target = searchFood.getTrailToStepBack(position, target);
-          recorder.select(this, target, position.connectsTo(), SelectionReason.IMMEDIATE_RETURN);
-          target.enterTrail(nextClearing, this, EntryReason.IMMEDIATE_RETURN);
-          target.to().enterClearing(target, this, EntryReason.IMMEDIATE_RETURN, false);
-          position = target.to();
-          trailFrom = target;
-        }
-        //from = target;
+       if (searchFood.checkTrail(position)) {
+         Trail target = searchFood.getTargetTrail(position);
+         if (target.getOrUpdateFood(false, null, false).isAPheromone()) {
+           recorder.select(this, target, position.connectsTo(), SelectionReason.FOOD_SEARCH);
+         } else {
+           recorder.select(this, target, position.connectsTo(), SelectionReason.EXPLORATION);
+         }
+         target.enterTrail(position, this, EntryReason.FOOD_SEARCH);
+         Clearing nextClearing = target.to();
+         boolean isClearingInSequence = isInSequence(nextClearing);
+         nextClearing.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
+         position = nextClearing;
+         trailFrom = target;
+         if (isClearingInSequence) {
+           target = searchFood.getTrailToStepBack(position, target);
+           recorder.select(this, target, position.connectsTo(), SelectionReason.IMMEDIATE_RETURN);
+           target.enterTrail(nextClearing, this, EntryReason.IMMEDIATE_RETURN);
+           target.to().enterClearing(target, this, EntryReason.IMMEDIATE_RETURN, false);
+           position = target.to();
+           trailFrom = target;
+         }
+         //from = target;
 
-      } else {
-       Trail t = searchFood.getTrailToStepBack(position, trailFrom);
-       recorder.select(this, t, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
-       t.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
-       t.to().enterClearing(t, this, EntryReason.NO_FOOD_RETURN, false);
-       position = t.to();
-       trailFrom = t;
-      }
-    }
+       } else {
+         Trail t = searchFood.getTrailToStepBack(position, trailFrom);
+         recorder.select(this, t, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
+         t.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
+         t.to().enterClearing(t, this, EntryReason.NO_FOOD_RETURN, false);
+         position = t.to();
+         trailFrom = t;
+       }
+     }
+    }  catch(InterruptedException ex) {
+     recorder.despawn(this, DespawnReason.TERMINATED);
+     Thread.currentThread().interrupt();
+   }
   }
 
   private Trail init() throws InterruptedException {
@@ -262,24 +267,29 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
 
   private void homewardMoving(boolean update) throws InterruptedException {
-    HomeWardPathCheck homeward = new HomeWardPathCheck(this);
-    //recorder.startFoodReturn(this);
-    Trail target;
-    while (position.id() != this.getWorld().anthill().id()) {
+   try {
+     HomeWardPathCheck homeward = new HomeWardPathCheck(this);
+     //recorder.startFoodReturn(this);
+     Trail target;
+     while (position.id() != this.getWorld().anthill().id()) {
 
-      target = homeward.getTargetTrail(position);
-      // is already in forward  added
-      // recorder.select(this, target, position.connectsTo(), SelectionReason.RETURN_FOOD);
-      target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME);
-      target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME, update);
-      position = target.to();
+       target = homeward.getTargetTrail(position);
+       // is already in forward  added
+       // recorder.select(this, target, position.connectsTo(), SelectionReason.RETURN_FOOD);
+       target.enterTrail(position, this, EntryReason.HEADING_BACK_HOME);
+       target.to().enterClearing(target, this, EntryReason.HEADING_BACK_HOME, update);
+       position = target.to();
+     }
+     position.dropFood(position, this);
+     clearingSequence.clear();
+     TrailsToVisitedClearing.clear();
+     this.setAntTONormalState();
+     recorder.returnedFood(this);
+       }
+   catch(InterruptedException ex) {
+      recorder.despawn(this, DespawnReason.TERMINATED);
+      Thread.currentThread().interrupt();
     }
-    position.dropFood(position, this);
-    clearingSequence.clear();
-    TrailsToVisitedClearing.clear();
-    this.setAntTONormalState();
-    recorder.returnedFood(this);
-
   }
 
 
