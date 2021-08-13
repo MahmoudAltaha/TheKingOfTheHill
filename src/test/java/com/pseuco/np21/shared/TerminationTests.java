@@ -397,13 +397,14 @@ public class TerminationTests {
     // Stub recorder.pickupFood() such we simulate a faster ant: At the moment when
     // Herbert enters clearing C, the food disappers and the food threshold is
     // reached.
-    /*
+
+
     doAnswer(invocation -> {
       clearingFoodField.setInt(clearingC, 0);
       world.foodCollected();
       return null;
     }).when(recorder).enter(any(), eq(clearingC));
-*/
+
     new Simulator(world, recorder).run();
 
     // don’t care a lot about pheromones

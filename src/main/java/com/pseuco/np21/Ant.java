@@ -190,9 +190,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       if (position.TakeOnPieceOfFood(this)) {
         recorder.pickupFood(this, position);
         recorder.startFoodReturn(this);
-        if(this.isAdventurer()){
-          recorder.select(this, from.reverse(), position.connectsTo(), SelectionReason.RETURN_IN_SEQUENCE);
-        }else{
+
+        if(!this.isAdventurer()){
           recorder.select(this, from.reverse(), position.connectsTo(), SelectionReason.RETURN_FOOD);
         }
 
@@ -203,7 +202,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         }
         break;
       }
-
 
       if (searchFood.checkTrail(position)) {
         Trail target = searchFood.getTargetTrail(position);
@@ -229,12 +227,12 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         //from = target;
 
       } else {
-       Trail t = searchFood.getTrailToStepBack(position, trailFrom);
-       recorder.select(this, t, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
-       t.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
-       t.to().enterClearing(t, this, EntryReason.NO_FOOD_RETURN, false);
-       position = t.to();
-       trailFrom = t;
+        Trail t = searchFood.getTrailToStepBack(position, trailFrom);
+        recorder.select(this, t, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
+        t.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
+        t.to().enterClearing(t, this, EntryReason.NO_FOOD_RETURN, false);
+        position = t.to();
+        trailFrom = t;
       }
     }
   }
@@ -253,7 +251,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       position.enterClearing(target, this, EntryReason.FOOD_SEARCH, true);
       return target;
     } else {
-      recorder.leave(this,position);
+      recorder.leave(this, position);
       recorder.despawn(this, Recorder.DespawnReason.TERMINATED);
       throw new InterruptedException();
     }
@@ -292,9 +290,9 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     //TODO CHECK, Anthill should not be added to the Sequence
 
     recorder.enter(this, position);
-    if(world.isFoodLeft()){
-    recorder.startFoodSearch(this);
-    recorder.startExploration(this);
+    if (world.isFoodLeft()) {
+      recorder.startFoodSearch(this);
+      recorder.startExploration(this);
     }
     try {
 
