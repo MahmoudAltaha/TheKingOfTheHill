@@ -77,7 +77,6 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     }
 
 
-
     public ClearingEntry getClearingEntry() {
         return clearingEntry;
     }
@@ -129,6 +128,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     public boolean TakeOnPieceOfFood(Ant ant){
         return clearingEntry.pickUPFood(ant);
     }
+
 
     /**
      * drop the food in the Hill and remove it from the Ant (this methode should call the drop methode in EntryClearing).

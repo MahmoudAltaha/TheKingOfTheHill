@@ -1,7 +1,5 @@
 package com.pseuco.np21;
 
-import com.pseuco.np21.shared.Recorder;
-
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -15,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
     private Pheromone anthill;
     private Pheromone food;
-    private int ants;
+    private int ants;   
 
     /**
      * helps by the selection for the Recorder
@@ -26,10 +24,9 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
      * 5---> RETURN_FOOD,
      * 6---> RETURN_IN_SEQUENCE,
      */
-    private int selectionReason;
-    private TrailEntry trailEntry = new TrailEntry(this);
-    ;    // to handle the entering to this Trail in a concurrent way.
-    public Lock lock = new ReentrantLock();
+    private  int selectionReason ;
+    private TrailEntry trailEntry = new TrailEntry(this);;    // to handle the entering to this Trail in a concurrent way.
+    public Lock lock =  new ReentrantLock();
 
     private Trail(final Trail reverse) {
         super(reverse);
@@ -64,18 +61,10 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
         return selectionReason;
     }
 
-    public TrailEntry getTrailEntry() {
+    public TrailEntry getTrailEntry(){
         return this.trailEntry;
     }
 
-    /**
-     * setter
-     *
-     * @param selectionReason selectionReason in (int)
-     */
-    public void setSelectionReason(int selectionReason) {
-        this.selectionReason = selectionReason;
-    }
 
     /**
      * Get the anthill pheromone level.
@@ -97,40 +86,40 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
 
     /**
      * this methode is the only methode we should use to get/update the Food Pheromone otherwise we could have DataRace.
-     *
-     * @param write    true if you are about to update the Food-Pheromone, false otherwise.
-     * @param p        the new Food pheromone that we want to register. (null if we want to get the Food-Ph only)
-     * @param explorer state of the Ant (it doesn't matter which value if we want just to get the Food-ph)
-     * @return the Food-pheromone.(the old or the new one)
+     * @param write   true if you are about to update the Food-Pheromone, false otherwise.
+     * @param p       the new Food pheromone that we want to register. (null if we want to get the Food-Ph only)
+     * @param explorer  state of the Ant (it doesn't matter which value if we want just to get the Food-ph)
+     * @return          the Food-pheromone.(the old or the new one)
      */
-    public Pheromone getOrUpdateFood(boolean write, Pheromone p, boolean explorer) {
-        lock.lock();
-        try {
-            if (write) {
-                updateFood(p, explorer);
-            }
-        } finally {
-            lock.unlock();
-        }
+     public Pheromone getOrUpdateFood(boolean write,Pheromone p,boolean explorer){
+       lock.lock();
+       try {
+           if (write){
+               updateFood(p,explorer);
+           }
+       }
+       finally {
+           lock.unlock();
+       }
         return food();
     }
 
     /**
      * this methode is the only methode we should use to get/update the Hill Pheromone otherwise we could have DataRace.
-     *
-     * @param write true if you are about to update the Hill-Pheromone, false otherwise.
-     * @param p     the new Hill pheromone that we want to register. (null if we want to get the Hill-Ph only)
-     * @return the Hill-pheromone.(the old or the new one)
+     * @param write   true if you are about to update the Hill-Pheromone, false otherwise.
+     * @param p       the new Hill pheromone that we want to register. (null if we want to get the Hill-Ph only)
+     * @return          the Hill-pheromone.(the old or the new one)
      */
-    public Pheromone getOrUpdateHill(boolean write, Pheromone p) {
-        lock.lock();
-        try {
-            if (write) {
-                updateAnthill(p);
-            }
-        } finally {
-            lock.unlock();
-        }
+     public Pheromone getOrUpdateHill(boolean write,Pheromone p){
+      lock.lock();
+      try {
+          if (write){
+              updateAnthill(p);
+          }
+      }
+      finally {
+          lock.unlock();
+      }
         return this.anthill;
     }
 
@@ -183,17 +172,17 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
 
     /**
      * this methode will be used to enter this Trail in way that ensure concurrency.
-     *
-     * @param currentClearing the Current Clearing which the Ant should left,
-     * @param ant             the Ant
-     * @param entryReason     the reason you have to enter this Trail.
-     * @return true if the entry was completed successfully.
+     * @param currentClearing  the Current Clearing which the Ant should left,
+     * @param ant       the Ant
+     * @param entryReason   the reason you have to enter this Trail.
+     * @return      true if the entry was completed successfully.
      * @throws InterruptedException InterruptedException
      */
-    public boolean enterTrail(Clearing currentClearing, Ant ant, EntryReason entryReason) throws InterruptedException {
+    public boolean enterTrail(Clearing currentClearing,Ant ant,EntryReason entryReason) throws InterruptedException {
         //this assert make sure that we get the right Clearing and the right Trail from The Ant methodes(run for example)
         assert (currentClearing.id() == this.from.id());
-        return trailEntry.enter(currentClearing, ant, entryReason);
-
+        return trailEntry.enter(currentClearing,ant,entryReason);
     }
+
+
 }
