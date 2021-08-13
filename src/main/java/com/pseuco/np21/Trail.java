@@ -64,14 +64,7 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
     public TrailEntry getTrailEntry(){
         return this.trailEntry;
     }
-    /**
-     * setter
-     *
-     * @param selectionReason selectionReason in (int)
-     */
-    public void setSelectionReason(int selectionReason) {
-        this.selectionReason = selectionReason;
-    }
+
 
     /**
      * Get the anthill pheromone level.
