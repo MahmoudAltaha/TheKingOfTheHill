@@ -1,5 +1,6 @@
 package com.pseuco.np21;
 
+import com.pseuco.np21.shared.Recorder.SelectionReason;
 import java.util.*;
 
 public class HomeWardPathCheck {
@@ -34,7 +35,8 @@ public class HomeWardPathCheck {
             //now return the Trail which leads to the Clearing which is Ordered in the sequence -->
             for (Trail target : connectedTrails) {    //--> exactly one index behind the CurrentClearing
                 if (target.to().id() == sequence.get(currentClearingNumberFromTheSequence - 1).id()) {
-                    target.setSelectionReason(6);   // set the selectionReason
+                    //target.setSelectionReason(6);   // set the selectionReason
+                    ant.getRecorder().select(ant, target, currentClearing.connectsTo(), SelectionReason.RETURN_IN_SEQUENCE);
                     return target;
                 }
             }
