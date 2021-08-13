@@ -130,6 +130,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
         return clearingEntry.pickUPFood(ant);
     }
 
+
     /**
      * drop the food in the Hill and remove it from the Ant (this methode should call the drop methode in EntryClearing).
      *

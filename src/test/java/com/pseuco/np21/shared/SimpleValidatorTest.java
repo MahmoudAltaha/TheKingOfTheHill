@@ -36,6 +36,7 @@ public class SimpleValidatorTest {
                 new SpawnDespawnValidator()
         ));
 
+
         simulator = new Simulator(world, validator);
     }
 
