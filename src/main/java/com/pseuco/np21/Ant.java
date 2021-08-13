@@ -321,11 +321,11 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
         throw new InterruptedException();
       } catch (InterruptedException e) {
-        for (Thread t : Thread.getAllStackTraces().keySet())
+     /*   for (Thread t : Thread.getAllStackTraces().keySet())
         {  if (t.getState()==Thread.State.RUNNABLE)
           t.interrupt();
-        }
-        // Thread.currentThread().interrupt();
+        } */
+        Thread.currentThread().interrupt();
       }
 
       // TODO handle termination
