@@ -386,7 +386,7 @@ public class TerminationTests {
 
     verifyNoMoreInteractions(recorder);
   }
-/*
+
   @Test
   @Timeout(value = 1)
   void fasterAnts() {
@@ -444,5 +444,5 @@ public class TerminationTests {
     verifyNoMoreInteractions(recorder);
   }
 
- */
+
 }
