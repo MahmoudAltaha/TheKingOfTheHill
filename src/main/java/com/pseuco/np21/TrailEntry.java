@@ -1,6 +1,8 @@
 package com.pseuco.np21;
 
 
+import com.pseuco.np21.shared.Recorder;
+
 import java.util.NoSuchElementException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -87,7 +89,11 @@ public class TrailEntry {
             if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
                 ant.setAntTOAdventurer();
                 }
-            }
+            }catch(InterruptedException ex)
+        {
+            ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+            Thread.currentThread().interrupt();
+        }
         finally {
             lock.unlock();
         }
@@ -117,6 +123,10 @@ public class TrailEntry {
             // remove this wrong Clearing from the sequence.
             ant.removeClearingFromSequence(c);
             ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
+        }catch(InterruptedException ex)
+        {
+            ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+            Thread.currentThread().interrupt();
         }finally {
             lock.unlock();
         }
@@ -145,6 +155,10 @@ public class TrailEntry {
             // remove this Clearing from the sequence.there are no Food to find in this way.
             ant.removeClearingFromSequence(c);
             ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
+        }catch(InterruptedException ex)
+        {
+            ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+            Thread.currentThread().interrupt();
         }finally {
             lock.unlock();
         }
@@ -176,6 +190,10 @@ public class TrailEntry {
             c.leave();
             ant.getRecorder().leave(ant, c);
             sendSignalAll(c);
+        }catch(InterruptedException ex)
+        {
+            ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+            Thread.currentThread().interrupt();
         }finally {
             lock.unlock();
         }

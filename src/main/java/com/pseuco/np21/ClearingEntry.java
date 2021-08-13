@@ -98,7 +98,11 @@ public class ClearingEntry {
                 ant.getRecorder().updateAnthill(ant, t.reverse(), newPheromone); // recorder stuff.
              } else { // don't update the Pheromone.
                 ant.getRecorder().updateAnthill(ant, t.reverse(),hillPheromone ); }// recorder stuff.
-            }finally{
+            }catch(InterruptedException ex)
+             {
+                 ant.getRecorder().despawn(ant, DespawnReason.TERMINATED);
+                 Thread.currentThread().interrupt();
+        }finally{
                 lock.unlock();
             }
             return true;
@@ -134,7 +138,11 @@ public class ClearingEntry {
              ant.getRecorder().leave(ant, t); // recorder stuff
                // signal all to the threads which are waiting  to enter the Trail we left
             sendSignalAll(t);
-         } finally{
+         } catch(InterruptedException ex)
+         {
+             ant.getRecorder().despawn(ant, DespawnReason.TERMINATED);
+             Thread.currentThread().interrupt();
+         }finally{
              lock.unlock();
          }
          return true;
@@ -175,6 +183,10 @@ public class ClearingEntry {
              //update the Food-Pheromone of the Trail to Map.
              t.reverse().getOrUpdateFood(true,mapPheromone,ant.isAdventurer());
              ant.getRecorder().updateFood(ant,t.reverse(),mapPheromone); // recorder stuff.
+         }catch(InterruptedException ex)
+         {
+             ant.getRecorder().despawn(ant, DespawnReason.TERMINATED);
+             Thread.currentThread().interrupt();
          }finally{
              lock.unlock();
          }
@@ -260,6 +272,10 @@ public class ClearingEntry {
                  t.reverse().getOrUpdateFood(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
                  ant.getRecorder().updateFood(ant,t.reverse(),newPheromone); // recorder stuff
              }
+         }catch(InterruptedException ex)
+         {
+             ant.getRecorder().despawn(ant, DespawnReason.TERMINATED);
+             Thread.currentThread().interrupt();
          }finally {
              lock.unlock();
          }
