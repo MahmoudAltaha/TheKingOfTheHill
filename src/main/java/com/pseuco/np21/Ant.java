@@ -292,8 +292,10 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     //TODO CHECK, Anthill should not be added to the Sequence
 
     recorder.enter(this, position);
+    if(world.isFoodLeft()){
     recorder.startFoodSearch(this);
     recorder.startExploration(this);
+    }
     try {
 
       while (world.isFoodLeft()) {

@@ -191,6 +191,7 @@ public class ClearingEntry {
                 return false;
             }
             ant.setHoldFood(true);  // the Ant now has food
+
             clearing.getOrSetFood(FoodInClearing.PICKUP_FOOD); // remove the picked up food from this Clearing.
         } finally {
             lock.unlock();
