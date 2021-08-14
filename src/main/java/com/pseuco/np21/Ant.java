@@ -240,9 +240,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     }catch (InterruptedException e){
       trailFrom.from().leave();
       recorder.leave(this, trailFrom);
-      trailFrom.from().getClearingEntry().clearingLock.lock();
-      trailFrom.from().getClearingEntry().isSpaceLeft.signalAll();
-      trailFrom.from().getClearingEntry().clearingLock.unlock();
       recorder.despawn(this, DespawnReason.TERMINATED);
       Thread.currentThread().interrupt();
     }
