@@ -2,7 +2,7 @@ package com.pseuco.np21;
 
 
 import com.pseuco.np21.shared.Recorder.DespawnReason;
-import java.util.NoSuchElementException;
+
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -17,13 +17,12 @@ public class TrailEntry {
 
     private final Trail trail ;
 
+    public Lock TrailLock = new ReentrantLock();
 
+    public Condition isSpaceLeft= TrailLock.newCondition();
 
-    public Lock lock = new ReentrantLock();
+    private final TrailEntryHandler handler ;
 
-
-
-    public Condition isSpaceLeft= lock.newCondition();
 
     /**
      * construct a TrailEntry.
@@ -31,34 +30,15 @@ public class TrailEntry {
      */
     public TrailEntry(Trail trail) {
         this.trail = trail;
+       this.handler= new TrailEntryHandler();
     }
 
 
 
-    /**
-     *  getter
-     * @return the condition.
-     */
-    public Condition getIsSpaceLeft() {
-        return isSpaceLeft;
+    public Lock getTrailLook(){
+        return TrailLock;
     }
 
-    public Lock getLook(){
-        return lock;
-    }
-
-    /**
-     * this methode is used to send SignAll to the threads which are waiting for the Condition in the Monitor of the Clearing.
-     * @param c the Clearing where we want to wake up the threads.
-     */
-    private void sendSignalAll(Clearing c){
-        c.getClearingEntry().getLock().lock();
-        try {
-            c.getClearingEntry().getIsSpaceLeft().signalAll();
-        } finally {
-            c.getClearingEntry().getLock().unlock();
-        }
-    }
 
     /**
      * this methode will be used to handle the entering to a Trail according to the behavior of an Ant.
@@ -72,25 +52,37 @@ public class TrailEntry {
      */
     public boolean enterTrailFoodSearch(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
-        lock.lock();
+        TrailLock.lock();
         try{
             while (!trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
                 isSpaceLeft.await();
 
-            trail.enter();  // enter the Trail
-            ant.getRecorder().enter(ant,trail);  // recorder stuff.
-            c.leave(); // leave the Clearing
-            ant.getRecorder().leave(ant,c); // recorder stuff
-            if( c.id() != ant.getWorld().anthill().id()  ){ // if the left Clearing was not the hill->signalAll.
-                sendSignalAll(c);
+            c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
+            try {
+                if (!Thread.currentThread().isInterrupted()) {
+                    handler.EnterTheTrail(trail, ant);
+                    handler.LeaveTheClearing(c, ant);
+                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                        c.getClearingEntry().isSpaceLeft.signalAll();
+                    }
+                } else{
+                    handler.LeaveTheClearing(c,ant);
+                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                        c.getClearingEntry().isSpaceLeft.signalAll();
+                    }
+                    ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
+                    throw new InterruptedException();
+                }
+            } finally {
+                c.getClearingEntry().clearingLock.unlock();
             }
-            com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false,null,false);
+            com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFoodPheromone(false,null,false);
             if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
                 ant.setAntTOAdventurer();
             }
         }
         finally {
-            lock.unlock();
+            TrailLock.unlock();
         }
 
         return true;
@@ -106,20 +98,35 @@ public class TrailEntry {
      */
     public boolean immediateReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
-        lock.lock();
+        TrailLock.lock();
         try{
-            while (!trail.isSpaceLeft())// wait for a free space.
+            while (!trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
                 isSpaceLeft.await();
-            trail.enter();
-            ant.getRecorder().enter(ant,trail);
-            c.leave();  // leave the wrong Clearing
-            ant.getRecorder().leave(ant,c);
-            sendSignalAll(c); // signal all Ants that the Clearing has now a free space.
+
+            c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
+            try {
+                if (!Thread.currentThread().isInterrupted()) {
+                    handler.EnterTheTrail(trail, ant);
+                    handler.LeaveTheClearing(c, ant);
+                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                        c.getClearingEntry().isSpaceLeft.signalAll();
+                    }
+                } else{
+                    handler.LeaveTheClearing(c,ant);
+                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                        c.getClearingEntry().isSpaceLeft.signalAll();
+                    }
+                    ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
+                    throw new InterruptedException();
+                }
+            } finally {
+                c.getClearingEntry().clearingLock.unlock();
+            }
             // remove this wrong Clearing from the sequence.
             ant.removeClearingFromSequence(c);
             ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
         }finally {
-            lock.unlock();
+            TrailLock.unlock();
         }
         return true;
     }
@@ -134,22 +141,35 @@ public class TrailEntry {
      */
     public boolean noFoodReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
         assert trail  != null ;
-        lock.lock();
-        try {
-            while (!trail.isSpaceLeft())
+        TrailLock.lock();
+        try{
+            while (!trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
                 isSpaceLeft.await();
-            trail.enter();
-            ant.getRecorder().enter(ant,trail);
-            c.leave();  // leave the wrong Clearing
-            ant.getRecorder().leave(ant,c);
-            sendSignalAll(c);  // signalAll to  Ants that the Clearing has now a free space.
-            // remove this Clearing from the sequence.there are no Food to find in this way.
+
+            c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
+            try {
+                if (!Thread.currentThread().isInterrupted()) {
+                    handler.EnterTheTrail(trail, ant);
+                    handler.LeaveTheClearing(c, ant);
+                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                        c.getClearingEntry().isSpaceLeft.signalAll();
+                    }
+                } else{
+                    handler.LeaveTheClearing(c,ant);
+                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                        c.getClearingEntry().isSpaceLeft.signalAll();
+                    }
+                    ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
+                    throw new InterruptedException();
+                }
+            } finally {
+                c.getClearingEntry().clearingLock.unlock();
+            }
             ant.removeClearingFromSequence(c);
             ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
         }finally {
-            lock.unlock();
+            TrailLock.unlock();
         }
-
 
         //ToDO make this void.
         return true;
@@ -167,29 +187,37 @@ public class TrailEntry {
      */
 
     public  boolean homewardEnterTrail(Clearing c, Ant ant) throws InterruptedException {
-        while (!Thread.currentThread().isInterrupted()){
-            lock.lock();
-            try{
-                while (!trail.isSpaceLeft())
-                    isSpaceLeft.await();
+        assert trail  != null ;
+        TrailLock.lock();
+        try{
+            while (!trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
+                isSpaceLeft.await();
 
-                trail.enter();
-                ant.getRecorder().enter(ant, trail);
-                c.leave();
-                ant.getRecorder().leave(ant, c);
-                sendSignalAll(c);
+            c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
+            try {
+                if (!Thread.currentThread().isInterrupted()) {
+                    handler.EnterTheTrail(trail, ant);
+                    handler.LeaveTheClearing(c, ant);
+                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                        c.getClearingEntry().isSpaceLeft.signalAll();
+                    }
+                } else{
+                    handler.LeaveTheClearing(c,ant);
+                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                        c.getClearingEntry().isSpaceLeft.signalAll();
+                    }
+                    ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
+                    throw new InterruptedException();
+                }
+            } finally {
+                c.getClearingEntry().clearingLock.unlock();
             }
-            finally {
-                lock.unlock();
-            }
-            return true;
+        }  finally {
+            TrailLock.unlock();
         }
-        c.leave();
-        ant.getRecorder().leave(ant, c);
-        ant.getRecorder().despawn(ant, DespawnReason.TERMINATED);
-        return false;
-    }
+        return true;
 
+    }
 
     /*   (ignore this comment for now)!!!!!!
     if you are using this method to enter the Trail for FoodSearch you may get false as return.

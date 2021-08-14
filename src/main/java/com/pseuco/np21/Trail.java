@@ -25,7 +25,7 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
      * 6---> RETURN_IN_SEQUENCE,
      */
     private  int selectionReason ;
-    private TrailEntry trailEntry = new TrailEntry(this);;    // to handle the entering to this Trail in a concurrent way.
+    private final TrailEntry trailEntry = new TrailEntry(this);;    // to handle the entering to this Trail in a concurrent way.
     public Lock lock =  new ReentrantLock();
 
     private Trail(final Trail reverse) {
@@ -91,17 +91,17 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
      * @param explorer  state of the Ant (it doesn't matter which value if we want just to get the Food-ph)
      * @return          the Food-pheromone.(the old or the new one)
      */
-     public Pheromone getOrUpdateFood(boolean write,Pheromone p,boolean explorer){
+     public Pheromone getOrUpdateFoodPheromone(boolean write, Pheromone p, boolean explorer){
        lock.lock();
        try {
            if (write){
                updateFood(p,explorer);
            }
+           return food();
        }
        finally {
            lock.unlock();
        }
-        return food();
     }
 
     /**
@@ -110,17 +110,18 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
      * @param p       the new Hill pheromone that we want to register. (null if we want to get the Hill-Ph only)
      * @return          the Hill-pheromone.(the old or the new one)
      */
-     public Pheromone getOrUpdateHill(boolean write,Pheromone p){
+     public Pheromone getOrUpdateHillPheromone(boolean write, Pheromone p){
       lock.lock();
       try {
           if (write){
               updateAnthill(p);
           }
+          return anthill();
       }
       finally {
           lock.unlock();
       }
-        return this.anthill;
+
     }
 
     /**
