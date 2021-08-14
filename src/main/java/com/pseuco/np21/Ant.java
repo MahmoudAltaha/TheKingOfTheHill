@@ -235,8 +235,9 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
           recorder.despawn(this, DespawnReason.TERMINATED);
           throw new InterruptedException();
         }
+        Trail t = searchFood.getTrailByNofoodReturn(position,this);
        // Trail t = searchFood.getTrailToStepBack(position, trailFrom);
-        Trail t = homeward.getTargetTrail(position);
+       //  Trail t = homeward.getTargetTrail(position);
        recorder.select(this, t, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
        t.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
        t.to().enterClearing(t, this, EntryReason.NO_FOOD_RETURN, false);

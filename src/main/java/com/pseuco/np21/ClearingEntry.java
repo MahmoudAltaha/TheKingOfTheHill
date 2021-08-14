@@ -119,7 +119,6 @@ public class ClearingEntry {
                 } else {
                     handler.EnterTheClearing(clearing, ant);
                     handler.LeaveTheTrail(t, ant);
-                    ant.addClearingToSequence(clearing);
                     t.getTrailEntry().isSpaceLeft.signalAll(); // signal all to the threads which are waiting  to enter the Trail we left
                 }
             }
@@ -163,7 +162,6 @@ public class ClearingEntry {
                 } else {
                     handler.EnterTheClearing(clearing, ant);
                     handler.LeaveTheTrail(t, ant);
-                    ant.addClearingToSequence(clearing);
                     t.getTrailEntry().isSpaceLeft.signalAll(); // signal all to the threads which are waiting  to enter the Trail we left
                 }
             } finally {
