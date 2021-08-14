@@ -186,7 +186,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
   private void forwardMoving(Trail from) throws InterruptedException {
     Trail trailFrom = from;
-    try {
+
       while (!this.holdFood) {
         if (position.TakeOnPieceOfFood(this)) {
           recorder.pickupFood(this, position);
@@ -237,12 +237,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
           trailFrom = t;
         }
       }
-    }catch (InterruptedException e){
-      trailFrom.from().leave();
-      recorder.leave(this, trailFrom);
-      recorder.despawn(this, DespawnReason.TERMINATED);
-      Thread.currentThread().interrupt();
-    }
+
   }
 
   private Trail init() throws InterruptedException {
@@ -268,12 +263,11 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
 
   private void homewardMoving(boolean update) throws InterruptedException {
+
     HomeWardPathCheck homeward = new HomeWardPathCheck(this);
     //recorder.startFoodReturn(this);
     Trail target;
-    while (!Thread.currentThread().isInterrupted()){
       while (position.id() != this.getWorld().anthill().id()) {
-
         target = homeward.getTargetTrail(position);
         // is already in forward  added
         // recorder.select(this, target, position.connectsTo(), SelectionReason.RETURN_FOOD);
@@ -286,8 +280,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       TrailsToVisitedClearing.clear();
       this.setAntTONormalState();
       recorder.returnedFood(this);
-      break;
-    }
+
   }
 
 
