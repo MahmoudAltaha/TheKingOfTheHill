@@ -186,6 +186,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
   private void forwardMoving(Trail from) throws InterruptedException {
     Trail trailFrom = from;
+    try {
       while (!this.holdFood) {
         if (position.TakeOnPieceOfFood(this)) {
           recorder.pickupFood(this, position);
@@ -236,7 +237,12 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
           trailFrom = t;
         }
       }
-
+    }catch (InterruptedException e){
+      trailFrom.from().leave();
+      recorder.leave(this, trailFrom);
+      recorder.despawn(this, DespawnReason.TERMINATED);
+      Thread.currentThread().interrupt();
+    }
   }
 
   private Trail init() throws InterruptedException {
@@ -265,7 +271,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     HomeWardPathCheck homeward = new HomeWardPathCheck(this);
     //recorder.startFoodReturn(this);
     Trail target;
-    if (!Thread.currentThread().isInterrupted()){
+    while (!Thread.currentThread().isInterrupted()){
       while (position.id() != this.getWorld().anthill().id()) {
 
         target = homeward.getTargetTrail(position);
@@ -280,17 +286,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       TrailsToVisitedClearing.clear();
       this.setAntTONormalState();
       recorder.returnedFood(this);
-    } else{
-      position.leave();
-      this.getRecorder().leave(this,position);
-      position.getClearingEntry().clearingLock.lock();
-      try {
-        position.getClearingEntry().isSpaceLeft.signalAll();
-      }finally {
-        position.getClearingEntry().isSpaceLeft.signalAll();
-      }
-      this.getRecorder().despawn(this,DespawnReason.TERMINATED);
-      throw new InterruptedException();
+      break;
     }
   }
 
