@@ -213,9 +213,10 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
       ourNextClearing.enterClearing(targetTrail, this, EntryReason.FOOD_SEARCH, true); // enter the Clearing (trail.To)
       position = ourNextClearing; // update the Position
+
       // now check if the Clearing is in the sequence:
       if (!clearingAlreadyInSequence) {
-        if (!this.holdFood) {  // if the Ant does not have food already try to get some
+        if (!hasFood()) {  // if the Ant does not have food already try to get some
           if (position.TakeOnPieceOfFood(this)) { // if the Ant picked up some start homeward.
             recorder.pickupFood(this, position);
             recorder.startFoodReturn(this);
@@ -238,53 +239,39 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         ourNextClearing = ourTrail.to(); // get our next Clearing
         ourNextClearing.enterClearing(ourTrail, this, EntryReason.IMMEDIATE_RETURN, false); // enter the Clearing
         position = ourNextClearing; // update the Ant Position(current Clearing);
+
         // now we stepped back one step ,,,we should see if the clearing here has other choices
-        // as long as we don't find we go with no Food Return.
-        while (!searchFood.checkTrail(position) && getClearingSequence().size() > 1) {
-          targetTrail = searchFood.getTrailByNofoodReturn(position, this);
-          recorder.select(this, targetTrail, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
-          targetTrail.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
-          ourTrail = targetTrail;
-          ourNextClearing = ourTrail.to();
-          ourNextClearing.enterClearing(ourTrail, this, EntryReason.NO_FOOD_RETURN, false);
-          position = ourNextClearing;
-        }
-        // now we are out the while-Loop that means we found a Clearing with some Trail Or we went so many Trails back
-        // until we reached the Hill ,,so we need a check.
-        if (position.id() == world.anthill().id()) {  // if we are in the Hill and no more choices terminate
-          recorder.leave(this, position);
-          recorder.despawn(this, DespawnReason.TERMINATED);
-          throw new InterruptedException();
-        }// Or we are in a Trail which has some Other undiscovered Trails. so we need to continue FoodSearch --> recursion.
-        else {
-          forwardMoving(position);
-        }
+       keepGoingBackByNoFoodReturnUntilTheAntFindATrailThenContinueFoodSearch(searchFood,position);
       }
       // if you are here then the Ant has reached by normal FoodSearch a Trails with no more new Choices: so NO-Food- Return.
     } else {
-      while (!searchFood.checkTrail(position) && getClearingSequence().size() > 1) {
-        targetTrail = searchFood.getTrailByNofoodReturn(position, this);
-        recorder.select(this, targetTrail, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
-        targetTrail.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
-        Trail ourTrail = targetTrail;
-        Clearing ourNextClearing = ourTrail.to();
-        ourNextClearing.enterClearing(ourTrail, this, EntryReason.NO_FOOD_RETURN, false);
-        position = ourNextClearing;
-      }  // the same check above (read comment in line 329,330)
-
-      if (position.id() == world.anthill().id() && !searchFood.checkTrail(position)) {  // if we are in the Hill and no more choices terminate
-        recorder.leave(this, position);
-        recorder.despawn(this, DespawnReason.TERMINATED);
-        throw new InterruptedException();
-      }// Or we are in a Trail which has some Other undiscovered Trails. so we need to continue FoodSearch --> recursion.
-      else {
-        forwardMoving(position);
-      }
+      keepGoingBackByNoFoodReturnUntilTheAntFindATrailThenContinueFoodSearch(searchFood,position);
     }
-
 
   }
 
+  private void keepGoingBackByNoFoodReturnUntilTheAntFindATrailThenContinueFoodSearch(SearchFoodPathCheck searchFood, Clearing currentPosition) throws InterruptedException {
+    Clearing position = currentPosition;
+
+    // as long as we don't find a Clearing with undiscovered Trail we go with no Food Return.
+    while (!searchFood.checkTrail(position) && getClearingSequence().size() > 1) {
+      Trail targetTrail = searchFood.getTrailByNofoodReturn(position, this);
+      recorder.select(this, targetTrail, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
+      targetTrail.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
+      Clearing ourNextClearing = targetTrail.to();
+      ourNextClearing.enterClearing(targetTrail, this, EntryReason.NO_FOOD_RETURN, false);
+      position = ourNextClearing;
+    }
+    // if we are in the Hill and no more choices terminate
+    if (position.id() == world.anthill().id() && !searchFood.checkTrail(position)) {
+      recorder.leave(this, position);
+      recorder.despawn(this, DespawnReason.TERMINATED);
+      throw new InterruptedException();
+    }// Or we are in a Trail which has some Other undiscovered Trails. so we need to continue FoodSearch --> recursion.
+    else {
+      forwardMoving(position);
+    }
+  }
 
 
     private void homewardMoving ( boolean update, Clearing currentPosition) throws InterruptedException {
