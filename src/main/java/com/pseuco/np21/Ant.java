@@ -310,7 +310,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     recorder.startFoodSearch(this);
     recorder.startExploration(this);
 
-
       while (world.isFoodLeft()) {
         addClearingToSequence(position);  // adding the antHill to the sequence
         Trail from = init();
@@ -318,7 +317,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         if (world.isFoodLeft()) {
           recorder.startFoodSearch(this);
         }
-
       }
       recorder.leave(this, position);
       recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
