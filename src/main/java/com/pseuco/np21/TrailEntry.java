@@ -59,19 +59,19 @@ public class TrailEntry {
 
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if (!Thread.currentThread().isInterrupted()) {
-                    handler.EnterTheTrail(trail, ant);
-                    handler.LeaveTheClearing(c, ant);
-                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                        c.getClearingEntry().isSpaceLeft.signalAll();
-                    }
-                } else{
+                if (Thread.currentThread().isInterrupted() || !ant.getWorld().isFoodLeft()) {
                     handler.LeaveTheClearing(c,ant);
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
                     ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
                     throw new InterruptedException();
+                } else{
+                    handler.EnterTheTrail(trail, ant);
+                    handler.LeaveTheClearing(c, ant);
+                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                        c.getClearingEntry().isSpaceLeft.signalAll();
+                    }
                 }
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
@@ -105,19 +105,19 @@ public class TrailEntry {
 
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if (!Thread.currentThread().isInterrupted()) {
-                    handler.EnterTheTrail(trail, ant);
-                    handler.LeaveTheClearing(c, ant);
-                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                        c.getClearingEntry().isSpaceLeft.signalAll();
-                    }
-                } else{
+                if (Thread.currentThread().isInterrupted() || !ant.getWorld().isFoodLeft()) {
                     handler.LeaveTheClearing(c,ant);
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
                     ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
                     throw new InterruptedException();
+                } else{
+                    handler.EnterTheTrail(trail, ant);
+                    handler.LeaveTheClearing(c, ant);
+                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                        c.getClearingEntry().isSpaceLeft.signalAll();
+                    }
                 }
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
@@ -148,19 +148,19 @@ public class TrailEntry {
 
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if (!Thread.currentThread().isInterrupted()) {
-                    handler.EnterTheTrail(trail, ant);
-                    handler.LeaveTheClearing(c, ant);
-                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                        c.getClearingEntry().isSpaceLeft.signalAll();
-                    }
-                } else{
+                if (Thread.currentThread().isInterrupted() || !ant.getWorld().isFoodLeft()) {
                     handler.LeaveTheClearing(c,ant);
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
                     ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
                     throw new InterruptedException();
+                } else{
+                    handler.EnterTheTrail(trail, ant);
+                    handler.LeaveTheClearing(c, ant);
+                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                        c.getClearingEntry().isSpaceLeft.signalAll();
+                    }
                 }
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
@@ -195,19 +195,19 @@ public class TrailEntry {
 
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if (!Thread.currentThread().isInterrupted()) {
-                    handler.EnterTheTrail(trail, ant);
-                    handler.LeaveTheClearing(c, ant);
-                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                        c.getClearingEntry().isSpaceLeft.signalAll();
-                    }
-                } else{
+                if (Thread.currentThread().isInterrupted() || !ant.getWorld().isFoodLeft()) {
                     handler.LeaveTheClearing(c,ant);
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
                     ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
                     throw new InterruptedException();
+                } else{
+                    handler.EnterTheTrail(trail, ant);
+                    handler.LeaveTheClearing(c, ant);
+                    if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                        c.getClearingEntry().isSpaceLeft.signalAll();
+                    }
                 }
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
