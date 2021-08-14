@@ -59,7 +59,7 @@ public class TrailEntry {
 
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if (Thread.currentThread().isInterrupted() || !ant.getWorld().isFoodLeft()) {
+                if ( !ant.getWorld().isFoodLeft()) {
                     handler.LeaveTheClearing(c,ant);
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
@@ -105,7 +105,7 @@ public class TrailEntry {
 
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if (Thread.currentThread().isInterrupted() || !ant.getWorld().isFoodLeft()) {
+                if ( !ant.getWorld().isFoodLeft()) {
                     handler.LeaveTheClearing(c,ant);
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
@@ -148,7 +148,7 @@ public class TrailEntry {
 
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if (Thread.currentThread().isInterrupted() || !ant.getWorld().isFoodLeft()) {
+                if ( !ant.getWorld().isFoodLeft()) {
                     handler.LeaveTheClearing(c,ant);
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
@@ -195,7 +195,7 @@ public class TrailEntry {
 
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if (Thread.currentThread().isInterrupted() || !ant.getWorld().isFoodLeft()) {
+                if ( !ant.getWorld().isFoodLeft()) {
                     handler.LeaveTheClearing(c,ant);
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
