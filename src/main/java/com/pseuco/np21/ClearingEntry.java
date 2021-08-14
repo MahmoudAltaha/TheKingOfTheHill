@@ -258,7 +258,7 @@ public class ClearingEntry {
                 }
             } else { //if the thread noticed that he is interrupted then he wont drop the food and should be dspawned.
                 this.clearing.leave(); // if the thread noticed that he is interrupted then leave the Hill
-                ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
+                ant.getRecorder().despawn(ant,DespawnReason.ENOUGH_FOOD_COLLECTED);
                 throw new InterruptedException();
             }
         } finally {
