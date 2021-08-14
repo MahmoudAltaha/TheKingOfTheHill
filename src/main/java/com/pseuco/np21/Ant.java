@@ -326,6 +326,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
           t.interrupt();
         }
       }
+
       catch (InterruptedException e) {
         Thread.currentThread().interrupt();
       }
