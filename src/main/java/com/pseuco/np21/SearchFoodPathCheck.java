@@ -71,6 +71,7 @@ public class SearchFoodPathCheck {
 
     public Trail getTrailByNofoodReturn(Clearing currentClearing, Ant ant) {
         List<Clearing> sequence = ant.getClearingSequence();  // the sequence
+        assert (ant.getClearingSequence().size() > 1);
         List<Trail> connectedTrails = currentClearing.connectsTo(); // the out Trails from the Current Clearing
         Trail targetTrail = connectedTrails.get(0); // this ist just to initialize the Trail with some object, it will be changed later in for loop.
         int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.

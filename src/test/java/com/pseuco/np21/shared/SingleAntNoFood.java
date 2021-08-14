@@ -140,7 +140,7 @@ public class SingleAntNoFood {
             inOrder.verify(recorder).startExploration(eq(ant));
 
             ArgumentCaptor<Trail> tHill = ArgumentCaptor.forClass(Trail.class);
-            inOrder.verify(recorder).select(eq(ant), tHill.capture(),
+           inOrder.verify(recorder).select(eq(ant), tHill.capture(),
                     or(eq(List.of(getTrail("Hill", "C987"), getTrail("Hill", "C994"))),
                             eq(List.of(getTrail("Hill", "C994"), getTrail("Hill", "C987")))),
                     same(Recorder.SelectionReason.EXPLORATION));
