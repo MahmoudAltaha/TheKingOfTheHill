@@ -46,7 +46,7 @@ public class SearchFoodTrailHandler {
         assert (!trailList.isEmpty());  // check if the list are not Empty
         for (Trail t : trailList) {
             // remove all Trails which are already has Map Value Or the last one in Sequence.
-            com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFood(false, null, false);
+            com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFoodPheromone(false, null, false);
             if ( ant.getClearingSequence().size() >1) {
                if (! ant.isSecondLastVisitedInSequence(t.to()) ){
                     if (!p.isInfinite()){
@@ -69,7 +69,7 @@ public class SearchFoodTrailHandler {
     private boolean checkIfAllTrailsHasNaP(List<Trail> trailList){
         assert (!trailList.isEmpty());  // check if the list are not Empty
         for (Trail t : trailList) {
-            com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFood(false,null,false);
+            com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFoodPheromone(false,null,false);
             if ((p.isAPheromone())) {
                 return false;
             }
@@ -87,7 +87,7 @@ public class SearchFoodTrailHandler {
     private void separateNapTrailsFromNonNapTrails(List<Trail> trailList,List<Trail> napTrails,List<Trail> nonNapTrails){
         assert (!trailList.isEmpty());  // check if the list are not Empty
         for (Trail trail : trailList) {
-            com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false,null,false);
+            com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFoodPheromone(false,null,false);
            if (p.isAPheromone()){
                nonNapTrails.add(trail);
             }else{
@@ -111,14 +111,14 @@ public class SearchFoodTrailHandler {
             for (int i = 0; i < (trailsListNonNap.size() - 1); i++) {  // compare the NonNap-Pheromones and add the min-ones to the list.
                 Trail t1 = trailsListNonNap.get(i);  // Trail 1
                 Trail t2 = trailsListNonNap.get(i + 1); // Trail 2
-                com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateFood(false, null, false);// Phe. of t1
-                com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateFood(false, null, false);// Phe. of t2
+                com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateFoodPheromone(false, null, false);// Phe. of t1
+                com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateFoodPheromone(false, null, false);// Phe. of t2
                     if (p1.value() > p2.value()) {
                         minTrailsList.add(t2);
                         // remove t1 if it is present and all the Trails with the same food-Value, if not nothing is happening
                         for (int k = 0; k < minTrailsList.size(); k++) {
-                            if (minTrailsList.get(k).getOrUpdateHill(false, null).value() ==
-                                    t1.getOrUpdateFood(false, null, false).value()) {
+                            if (minTrailsList.get(k).getOrUpdateHillPheromone(false, null).value() ==
+                                    t1.getOrUpdateFoodPheromone(false, null, false).value()) {
                                 minTrailsList.remove(minTrailsList.get(k));
                             }
                         }
@@ -183,7 +183,7 @@ public class SearchFoodTrailHandler {
 
             // check if the impatience of the Ant are smaller than the min pheromone. if so get a random Nap-food-ph Trail.
 
-            com.pseuco.np21.shared.Trail.Pheromone p = suggestedTrail.getOrUpdateFood(false,null,false);
+            com.pseuco.np21.shared.Trail.Pheromone p = suggestedTrail.getOrUpdateFoodPheromone(false,null,false);
 
             if (ant.impatience() < p.value() && !trailsListWithJustNap.isEmpty()){
 
@@ -221,7 +221,7 @@ public class SearchFoodTrailHandler {
         }
         // if the Clearing is the Hill and has one single Trail which its Food not MaP return true
         if (listWithoutVisitedTrails.size() == 1 && c.id() == ant.getWorld().anthill().id() ) {
-            com.pseuco.np21.shared.Trail.Pheromone p = listWithoutVisitedTrails.get(0).getOrUpdateFood(false,null,false);
+            com.pseuco.np21.shared.Trail.Pheromone p = listWithoutVisitedTrails.get(0).getOrUpdateFoodPheromone(false,null,false);
             return !p.isInfinite();
         }  // Hill or normal Clearing with more than one Trail( the one from which the Ant has reached this Clearing)
             // list of non-Map-food-pheromone Trails

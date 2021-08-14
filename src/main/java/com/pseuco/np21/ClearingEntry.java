@@ -18,7 +18,7 @@ public class ClearingEntry {
 
 
     public Condition isSpaceLeft= clearingLock.newCondition();
-    private final ClearingEntryHandler handler = new ClearingEntryHandler();
+    private final ClearingEntryHandler handler;
 
     /**
      * construct a clearingEntry
@@ -26,6 +26,7 @@ public class ClearingEntry {
      */
     public ClearingEntry(Clearing clearing) {
         this.clearing = clearing;
+       this.handler= new ClearingEntryHandler();
     }
 
 

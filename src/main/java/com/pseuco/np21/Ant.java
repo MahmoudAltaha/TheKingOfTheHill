@@ -207,7 +207,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
         if (searchFood.checkTrail(position)) {
           Trail target = searchFood.getTargetTrail(position);
-          if (target.getOrUpdateFood(false, null, false).isAPheromone()) {
+          if (target.getOrUpdateFoodPheromone(false, null, false).isAPheromone()) {
             recorder.select(this, target, position.connectsTo(), SelectionReason.FOOD_SEARCH);
           } else {
             recorder.select(this, target, position.connectsTo(), SelectionReason.EXPLORATION);
@@ -244,7 +244,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
     if (searchFood.checkTrail(position)) {
       Trail target = searchFood.getTargetTrail(position);
-      if (target.getOrUpdateFood(false, null, false).isAPheromone()) {
+      if (target.getOrUpdateFoodPheromone(false, null, false).isAPheromone()) {
         recorder.select(this, target, position.connectsTo(), SelectionReason.FOOD_SEARCH);
       } else {
         recorder.select(this, target, position.connectsTo(), SelectionReason.EXPLORATION);

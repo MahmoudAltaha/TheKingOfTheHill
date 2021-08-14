@@ -21,7 +21,7 @@ public class TrailEntry {
 
     public Condition isSpaceLeft= TrailLock.newCondition();
 
-    private TrailEntryHandler handler = new TrailEntryHandler();
+    private final TrailEntryHandler handler ;
 
 
     /**
@@ -30,6 +30,7 @@ public class TrailEntry {
      */
     public TrailEntry(Trail trail) {
         this.trail = trail;
+       this.handler= new TrailEntryHandler();
     }
 
 
@@ -75,7 +76,7 @@ public class TrailEntry {
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
             }
-            com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFood(false,null,false);
+            com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFoodPheromone(false,null,false);
             if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
                 ant.setAntTOAdventurer();
             }

@@ -78,15 +78,15 @@ public class HomeWardPathCheck {
             for (int i = 0; i < (connectedTrails.size() - 1); i++) {  // compare the Pheromones and add the min-ones to the list.
                 Trail t1 = connectedTrails.get(i);
                 Trail t2 = connectedTrails.get(i + 1);
-                com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateHill(false, null);
-                com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateHill(false, null);
+                com.pseuco.np21.shared.Trail.Pheromone p1 = t1.getOrUpdateHillPheromone(false, null);
+                com.pseuco.np21.shared.Trail.Pheromone p2 = t2.getOrUpdateHillPheromone(false, null);
 
                     if (p1.value() > p2.value()) {
                         minTrailsList.add(t2);
                         // remove t1 if it is present and all the Trails with the same Hill-Value , if not nothing is happening(is written in javaDoc)
                         for (int k = 0; k < minTrailsList.size(); k++) {
-                            int hillValueOfTrailInList = minTrailsList.get(k).getOrUpdateHill(false, null).value();
-                            if (hillValueOfTrailInList == t1.getOrUpdateHill(false, null).value()) {
+                            int hillValueOfTrailInList = minTrailsList.get(k).getOrUpdateHillPheromone(false, null).value();
+                            if (hillValueOfTrailInList == t1.getOrUpdateHillPheromone(false, null).value()) {
                                 minTrailsList.remove(minTrailsList.get(k));
                             }
                         }
@@ -114,7 +114,7 @@ public class HomeWardPathCheck {
         assert (!trailList.isEmpty());  // check if the list are not Empty
         for (Trail t : trailList) {
             // remove all Trails which are already has Map Value Or the last one in Sequence.
-            com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateHill(false, null);
+            com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateHillPheromone(false, null);
             boolean b = trailToClearingAfterCurrentInSequence(currentClearing,t);
             if ( (!((ant.getClearingSequence().size() > 1) && !b) )) {
                 if (p.isAPheromone() && !p.isInfinite()) {

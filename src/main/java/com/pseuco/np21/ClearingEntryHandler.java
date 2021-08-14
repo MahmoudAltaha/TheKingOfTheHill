@@ -14,7 +14,7 @@ public class ClearingEntryHandler {
 
     public void pheromonesUpdatingFoodSearch(Trail t , Ant ant) throws InterruptedException {
 
-            com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.reverse().getOrUpdateHill(false, null);
+            com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.reverse().getOrUpdateHillPheromone(false, null);
             com.pseuco.np21.shared.Trail.Pheromone newPheromone;
             // if the  Clearing was not twice in the sequence then update Hill-Pheromone. (no special cases)
             if (!ant.TrailsToVisitedClearing.containsKey(t.id())) {
@@ -27,7 +27,7 @@ public class ClearingEntryHandler {
                     int w = ant.getClearingSequence().size() - 1;
                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(w);
                 }
-                t.reverse().getOrUpdateHill(true, newPheromone); // update the HIll-Pheromone.
+                t.reverse().getOrUpdateHillPheromone(true, newPheromone); // update the HIll-Pheromone.
                 ant.getRecorder().updateAnthill(ant, t.reverse(), newPheromone); // recorder stuff.
             } else { // don't update the Pheromone.
                 ant.getRecorder().updateAnthill(ant, t.reverse(), hillPheromone);
@@ -39,14 +39,14 @@ public class ClearingEntryHandler {
                 //create a Map food-Pheromone .
                 com.pseuco.np21.shared.Trail.Pheromone mapPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(-1);
                 //update the Food-Pheromone of the Trail to Map.
-                t.reverse().getOrUpdateFood(true, mapPheromone, ant.isAdventurer());
+                t.reverse().getOrUpdateFoodPheromone(true, mapPheromone, ant.isAdventurer());
                 ant.getRecorder().updateFood(ant, t.reverse(), mapPheromone); // recorder stuff.
             }
 
 
 
     public void pheromonesUpdatingHomeward  (Trail t,Clearing clearing, Ant ant, boolean update) throws InterruptedException {
-            com.pseuco.np21.shared.Trail.Pheromone currentPheromone = t.reverse().getOrUpdateFood(false, null, false);
+            com.pseuco.np21.shared.Trail.Pheromone currentPheromone = t.reverse().getOrUpdateFoodPheromone(false, null, false);
             com.pseuco.np21.shared.Trail.Pheromone newPheromone;
             if (update) {
                 int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
@@ -74,7 +74,7 @@ public class ClearingEntryHandler {
                         newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(r);
                     }
                 }
-                t.reverse().getOrUpdateFood(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
+                t.reverse().getOrUpdateFoodPheromone(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
                 ant.getRecorder().updateFood(ant, t.reverse(), newPheromone); // recorder stuff
             }
     }
