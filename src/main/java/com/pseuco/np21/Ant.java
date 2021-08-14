@@ -295,14 +295,20 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
    * Primary ant behavior.
    */
   public void run() {
+    try {
     position = world.anthill();
     recorder.spawn(this);
     //TODO CHECK, Anthill should not be added to the Sequence
 
     recorder.enter(this, position);
+    if (!world.isFoodLeft()){
+      recorder.leave(this,position);
+      recorder.despawn(this,DespawnReason.ENOUGH_FOOD_COLLECTED);
+      throw new InterruptedException();
+    }
     recorder.startFoodSearch(this);
     recorder.startExploration(this);
-    try {
+
 
       while (world.isFoodLeft()) {
         addClearingToSequence(position);  // adding the antHill to the sequence
@@ -316,8 +322,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       recorder.leave(this, position);
       recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
 
-      throw new InterruptedException();
-    } catch (InterruptedException e) {
+     throw new InterruptedException();
+      } catch (InterruptedException e) {
 
       Thread.currentThread().interrupt();
     }
