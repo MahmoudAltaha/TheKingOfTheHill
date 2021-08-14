@@ -288,7 +288,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
    * Primary ant behavior.
    */
   public void run() {
-    while(!Thread.currentThread().isInterrupted()){
       position = world.anthill();
       recorder.spawn(this);
       //TODO CHECK, Anthill should not be added to the Sequence
@@ -322,7 +321,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
     }
 
-  }
 
 }
 

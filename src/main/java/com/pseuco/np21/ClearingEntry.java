@@ -65,7 +65,7 @@ public class ClearingEntry {
                         ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
                         throw new InterruptedException();
                     }
-                if (!Thread.currentThread().isInterrupted()) {
+                if (! Thread.currentThread().isInterrupted()) {
                     handler.EnterTheClearing(clearing, ant);
                     handler.LeaveTheTrail(t,ant);
                     ant.addClearingToSequence(clearing);
