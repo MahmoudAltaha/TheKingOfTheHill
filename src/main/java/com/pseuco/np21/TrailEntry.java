@@ -72,6 +72,7 @@ public class TrailEntry {
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
+                    ant.TrailSequence.add(trail);
                 }
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
@@ -123,7 +124,10 @@ public class TrailEntry {
                 c.getClearingEntry().clearingLock.unlock();
             }
             // remove this wrong Clearing from the sequence.
-            ant.removeClearingFromSequence(c);
+            boolean removed = ant.getClearingSequence().remove(c);
+            assert removed;
+            removed =ant.TrailSequence.remove(trail.reverse());
+            assert removed;
             ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
         }finally {
             TrailLock.unlock();
@@ -161,12 +165,13 @@ public class TrailEntry {
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
+                    boolean removed = ant.getClearingSequence().remove(c);
+                    boolean removedTrail = ant.TrailSequence.remove(trail.reverse());
                 }
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
             }
-            ant.removeClearingFromSequence(c);
-            ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
+
         }finally {
             TrailLock.unlock();
         }
@@ -208,6 +213,7 @@ public class TrailEntry {
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
+
                 }
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
@@ -219,11 +225,7 @@ public class TrailEntry {
 
     }
 
-    /*   (ignore this comment for now)!!!!!!
-    if you are using this method to enter the Trail for FoodSearch you may get false as return.
-     * that means that the Trail which the Ant is trying to enter is no more the best Trail. so by return false
-     * you should get new Trail and try to enter again.
-    * */
+
     /**
      * this methode will be used to enter this Trail in way that ensure concurrency.
      *

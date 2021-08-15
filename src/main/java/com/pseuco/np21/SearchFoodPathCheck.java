@@ -18,18 +18,6 @@ public class SearchFoodPathCheck {
         this.ant =ant;
     }
 
-    /** (ignore this methode for now)
-     * this methode is used to check whether the chosen Trail still the right one .
-     *
-     * @param  currentClearing the current Clearing
-     * @param  targetTrail  the TargetTrail
-     * @return true if the targetTrail still valid.
-     */
-    private boolean checkIfTheTrailStillValidNormalCase(Clearing currentClearing , Trail targetTrail){
-        return searchFoodTrailHandler.checkTrail(currentClearing,targetTrail,ant);
-    }
-
-
 
     /**
      * this methode is used to choose the right Trail according to the project description.
@@ -37,7 +25,8 @@ public class SearchFoodPathCheck {
      * @param  currentClearing the currentClearing
      * @return the targetTrail.
      */
-     public Trail getTargetTrail(Clearing currentClearing){
+     public Trail getTargetTrail(Clearing currentClearing) throws InterruptedException {
+         assert checkTrail(currentClearing);
         List<Trail> trailList = currentClearing.connectsTo();
         return searchFoodTrailHandler.getTargetTrail(trailList,ant);
     }
@@ -70,29 +59,7 @@ public class SearchFoodPathCheck {
 
 
     public Trail getTrailByNofoodReturn(Clearing currentClearing, Ant ant) {
-        List<Clearing> sequence = ant.getClearingSequence();  // the sequence
-        assert (ant.getClearingSequence().size() > 1);
-        List<Trail> connectedTrails = currentClearing.connectsTo(); // the out Trails from the Current Clearing
-        Trail targetTrail = connectedTrails.get(0); // this ist just to initialize the Trail with some object, it will be changed later in for loop.
-        int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
-        for (Clearing clearing : sequence) {     // by looping the sequence
-            if (clearing.id() != currentClearing.id()) {
-                currentClearingNumberFromTheSequence++;
-            } else {
-                break;
-            }
-        }
-        //{AntHill, currentClearing, .. ...}
-        //now return the Trail which leads to the Clearing which is Ordered in the sequence -->
-        for (Trail target : connectedTrails) {    //--> exactly one index behind the CurrentClearing
-            assert (sequence.size() > 2);
-            if (target.to().id() == sequence.get(currentClearingNumberFromTheSequence - 1).id()) {
-                targetTrail = target;
-                break;
-            }
-        }
-            return targetTrail;
-
+        return searchFoodTrailHandler.getTrailByNofoodReturn(currentClearing,ant);
     }
 
 }

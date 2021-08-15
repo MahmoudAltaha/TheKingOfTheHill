@@ -29,10 +29,10 @@ public class SearchFoodTrailHandler {
      */
     private void removeTrailsThatConnectsToVisitedClearing(List<Trail> trailsList,List<Trail> listWithoutConnectedTrails, Ant ant){
         Map<Integer, Trail > trailsToVisitedClearings = ant.TrailsToVisitedClearing;
-        for (int i = 0 ; i< trailsList.size() ; i++){
-            int trailsID = trailsList.get(i).id();
+        for (Trail t : trailsList){
+            int trailsID = t.id();
                 if(! trailsToVisitedClearings.containsKey(trailsID) ){
-                listWithoutConnectedTrails.add(trailsList.get(i));
+                listWithoutConnectedTrails.add(t);
             }
         }
     }
@@ -212,48 +212,43 @@ public class SearchFoodTrailHandler {
             return false;
         }
         // make new list object which has the same TrailsObject in the trailsList
-        List<Trail> trailsListToBeClearedAndChosenFrom = new ArrayList<>(connectedTrails);
-        /* remove the Trails That Connect To Visited clearing in the new objectList
-         (but do not touch the real ConnectedTrails to the Clearing). */
-        List<Trail> listWithoutVisitedTrails = new ArrayList<>();
-        removeTrailsThatConnectsToVisitedClearing(trailsListToBeClearedAndChosenFrom,listWithoutVisitedTrails,ant);
-        if(listWithoutVisitedTrails.isEmpty()){
-            return false;
-        }
-        // if the Clearing is the Hill and has one single Trail which its Food not MaP return true
-        if (listWithoutVisitedTrails.size() == 1 && c.id() == ant.getWorld().anthill().id() ) {
-            com.pseuco.np21.shared.Trail.Pheromone p = listWithoutVisitedTrails.get(0).getOrUpdateFoodPheromone(false,null,false);
-            return !p.isInfinite();
-        }  // Hill or normal Clearing with more than one Trail( the one from which the Ant has reached this Clearing)
-            // list of non-Map-food-pheromone Trails
-            List<Trail> listWithoutVisitedOrMapTrailsOrTheTrailsWeComeFrome = new ArrayList<>();
-        removeMapTrailsAndTheTrailWeComeFrom(listWithoutVisitedTrails,listWithoutVisitedOrMapTrailsOrTheTrailsWeComeFrome,ant);
-
-            // if the number of Trails with (non-Map-Food-ph.)
-            // bigger than 1( cause there is always the one from which we come) return true
-            return !listWithoutVisitedOrMapTrailsOrTheTrailsWeComeFrome.isEmpty();
-        }
-
-
-    public Trail getTrailByNofoodReturn(Clearing currentClearing, Ant ant) {
-        List<Clearing> sequence = ant.getClearingSequence();  // the sequence
-        assert (ant.getClearingSequence().size() > 1);
-        List<Trail> connectedTrails = currentClearing.connectsTo(); // the out Trails from the Current Clearing
-        Trail targetTrail = connectedTrails.get(0); // this ist just to initialize the Trail with some object, it will be changed later in for loop.
-        int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
-        for (Clearing clearing : sequence) {     // by looping the sequence
-            if (clearing.id() != currentClearing.id()) {
-                currentClearingNumberFromTheSequence++;
-            } else {
-                break;
+        List<Trail> trailsListToBeClearedAndChosenFrom = new LinkedList<>();
+        for(Trail t : connectedTrails){
+            // if the Trail not Map
+            if(!t.getOrUpdateFoodPheromone(false,null,ant.isAdventurer()).isInfinite()) {
+                // if the Trail does not lead to Visited Clearing
+                if(! ant.TrailsToVisitedClearing.containsKey(t.id())){
+                    // if the TrailSequence empty return true
+                    if(ant.TrailSequence.isEmpty()){
+                        return true;
+                        // else if the Trail does not lead to last clearing return True;
+                    }else if(! (ant.TrailSequence.get(ant.TrailSequence.size()- 1).reverse().id() == t.id() )){
+                        return true;
+                    }
+                }
             }
         }
-        //{AntHill, currentClearing, .. ...}
-        //now return the Trail which leads to the Clearing which is Ordered in the sequence -->
-        for (Trail target : connectedTrails) {    //--> exactly one index behind the CurrentClearing
-            if (target.to().id() == sequence.get(currentClearingNumberFromTheSequence - 1).id()) {
-                targetTrail =target;
-                break;
+        return false; // otherwise return false
+    }
+
+
+
+
+    /**
+     * this methode used to get the Trail that leads to the previous clearing (used by No-Food-Return)
+     * @param currentClearing current Clearing
+     * @param ant Ant
+     * @return the Trail
+     */
+    public Trail getTrailByNofoodReturn(Clearing currentClearing, Ant ant) {
+        List<Trail> connectedTrails = currentClearing.connectsTo();
+        assert !connectedTrails.isEmpty();
+        Trail targetTrail = connectedTrails.get(0);
+        for(Trail t : connectedTrails){
+            assert !ant.TrailSequence.isEmpty();
+            int size = ant.TrailSequence.size();
+            if(ant.TrailSequence.get(size-1).reverse().id() == t.id() ){
+                targetTrail = t;
             }
         }
         return targetTrail;
