@@ -49,6 +49,7 @@ public class SearchFoodTrailHandler {
             com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFoodPheromone(false, null, false);
             if ( ant.getClearingSequence().size() >1) {
                 Clearing c = t.to();
+
                if (! ant.isSecondLastVisitedInSequence(c) && !p.isInfinite()){
                    listWithoutMapAndTrailWeComeFrom.add(t);
                     }
@@ -232,6 +233,32 @@ public class SearchFoodTrailHandler {
             // bigger than 1( cause there is always the one from which we come) return true
             return !listWithoutVisitedOrMapTrailsOrTheTrailsWeComeFrome.isEmpty();
         }
+
+
+    public Trail getTrailByNofoodReturn(Clearing currentClearing, Ant ant) {
+        List<Clearing> sequence = ant.getClearingSequence();  // the sequence
+        assert (ant.getClearingSequence().size() > 1);
+        List<Trail> connectedTrails = currentClearing.connectsTo(); // the out Trails from the Current Clearing
+        Trail targetTrail = connectedTrails.get(0); // this ist just to initialize the Trail with some object, it will be changed later in for loop.
+        int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
+        for (Clearing clearing : sequence) {     // by looping the sequence
+            if (clearing.id() != currentClearing.id()) {
+                currentClearingNumberFromTheSequence++;
+            } else {
+                break;
+            }
+        }
+        //{AntHill, currentClearing, .. ...}
+        //now return the Trail which leads to the Clearing which is Ordered in the sequence -->
+        for (Trail target : connectedTrails) {    //--> exactly one index behind the CurrentClearing
+            if (target.to().id() == sequence.get(currentClearingNumberFromTheSequence - 1).id()) {
+                targetTrail =target;
+                break;
+            }
+        }
+        return targetTrail;
+    }
+
 
 
 }
