@@ -22,6 +22,7 @@ public class HomeWardPathCheck {
     public Trail getTargetTrail(Clearing currentClearing){
 
         List<Clearing> sequence =ant.getClearingSequence();  // the sequence
+        assert (sequence.size() > 1);
         List<Trail> connectedTrails = currentClearing.connectsTo(); // the out Trails from the Current Clearing
         if (ant.isAdventurer()){ // check if the Ant is an Adventurer.
             int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
@@ -36,8 +37,6 @@ public class HomeWardPathCheck {
             //now return the Trail which leads to the Clearing which is Ordered in the sequence -->
             for (Trail target : connectedTrails) {    //--> exactly one index behind the CurrentClearing
                 if (target.to().id() == sequence.get(currentClearingNumberFromTheSequence - 1).id()) {
-
-                        ant.getRecorder().select(ant, target, currentClearing.connectsTo(), SelectionReason.RETURN_IN_SEQUENCE);
                     return target;
                 }
             }
@@ -119,34 +118,34 @@ public class HomeWardPathCheck {
             boolean b = trailToClearingAfterCurrentInSequence(currentClearing, t);
             if (!b) {
                 assert (ant.getClearingSequence().size() > 1);
-                if (p.isAPheromone() && !p.isInfinite()) {
-                    listWithoutMapOrNapTrailsAndTheTrailWeComeFrom.add(t);
-                }
+                    if (p.isAPheromone() && !p.isInfinite()) {
+                        listWithoutMapOrNapTrailsAndTheTrailWeComeFrom.add(t);
+                    }
             }
         }
     }
     /**
      * this methode used to check if the given Trail leads to a Clearing which index in sequence bigger than the current Clearing
-     * @param current Current Clearing
+      * @param current Current Clearing
      * @param trailToBeChecked  the Trail to be checked
      * @return  true if the Trail Leads to a Clearing that is ordered after the Current Clearing in the Sequence
      */
-    public boolean trailToClearingAfterCurrentInSequence(Clearing current , Trail trailToBeChecked){
-        int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
-        List<Clearing> sequence = ant.getClearingSequence();
-        for (Clearing clearing : sequence) {     // by looping the sequence
-            if (clearing.id() != current.id()) {
-                currentClearingNumberFromTheSequence++;
-            } else {
-                break;
+        public boolean trailToClearingAfterCurrentInSequence(Clearing current , Trail trailToBeChecked){
+            int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
+            List<Clearing> sequence = ant.getClearingSequence();
+            for (Clearing clearing : sequence) {     // by looping the sequence
+                if (clearing.id() != current.id()) {
+                    currentClearingNumberFromTheSequence++;
+                } else {
+                    break;
+                }
             }
+            if (currentClearingNumberFromTheSequence == sequence.size() -1){
+                return  false;
+            }
+            assert (sequence.size() > 1);
+            return trailToBeChecked.to().id() == sequence.get(currentClearingNumberFromTheSequence + 1).id();
         }
-        if (currentClearingNumberFromTheSequence == sequence.size() -1){
-            return  false;
-        }
-        assert (sequence.size() > 1);
-        return trailToBeChecked.to().id() == sequence.get(currentClearingNumberFromTheSequence + 1).id();
-    }
 
 
 }
