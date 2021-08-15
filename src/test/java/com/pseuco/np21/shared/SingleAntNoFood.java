@@ -125,7 +125,7 @@ public class SingleAntNoFood {
             setFoodPheromone("C991", "C990", Pheromone.INFINITE);
         }
 
-       // @RepeatedTest(5)
+    //    @RepeatedTest(5)
     @Test
     void run() {
             simulator.run();
@@ -142,6 +142,8 @@ public class SingleAntNoFood {
             inOrder.verify(recorder).startExploration(eq(ant));
 
             ArgumentCaptor<Trail> tHill = ArgumentCaptor.forClass(Trail.class);
+
+
            inOrder.verify(recorder).select(eq(ant), tHill.capture(),
                     or(eq(List.of(getTrail("Hill", "C987"), getTrail("Hill", "C994"))),
                             eq(List.of(getTrail("Hill", "C994"), getTrail("Hill", "C987")))),
