@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 /**
  * Representation of an ant with behavior.
  * <p>
@@ -191,7 +192,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
 
 
-
   private void forwardMoving(Clearing currentPosition) throws InterruptedException {
     Clearing position = currentPosition;
     boolean foundATrail = searchFood.checkTrail(position);
@@ -212,9 +212,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       targetTrail.enterTrail(position, this, EntryReason.FOOD_SEARCH);  // enter the Trail
       Trail ourTrail = targetTrail;
       Clearing ourNextClearing = targetTrail.to();
-
       boolean clearingAlreadyInSequence = isInSequence(ourNextClearing);
-
       ourNextClearing.enterClearing(targetTrail, this, EntryReason.FOOD_SEARCH, true); // enter the Clearing (trail.To)
       position = ourNextClearing; // update the Position
       // now check if the Clearing is in the sequence:
@@ -235,24 +233,12 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
           }
         } // the Clearing is already in The sequence so we go one step by Immediate-return the keep going back if we don't find way.
       } else {
-        targetTrail = searchFood.getTrailToStepBack(position, ourTrail); // get the reverse of ourTrail
-        recorder.select(this, targetTrail, position.connectsTo(), SelectionReason.IMMEDIATE_RETURN);
-        targetTrail.enterTrail(position, this, EntryReason.IMMEDIATE_RETURN); // enter the trail
-        ourTrail = targetTrail; // update our Trail
-        ourNextClearing = ourTrail.to(); // get our next Clearing
-        ourNextClearing.enterClearing(ourTrail, this, EntryReason.IMMEDIATE_RETURN, false); // enter the Clearing
-        position = ourNextClearing; // update the Ant Position(current Clearing);
+        goOneStepBackWithImmediatReturn(ourTrail,position);
 
         // now we stepped back one step ,,,we should see if the clearing here has other choices
         // as long as we don't find a Clearing with undiscovered Trail we go with no Food Return.
         while (!searchFood.checkTrail(position) && getClearingSequence().size() > 1) {
-          targetTrail = searchFood.getTrailByNofoodReturn(position, this);
-          recorder.select(this, targetTrail, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
-          targetTrail.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
-          ourTrail = targetTrail;
-          ourNextClearing = ourTrail.to();
-          ourNextClearing.enterClearing(ourTrail, this, EntryReason.NO_FOOD_RETURN, false);
-          position = ourNextClearing;
+        goOneStepWithNoFoodReturn(position);
         }
         // now we are out the while-Loop that means we found a Clearing with some Trail Or we went so many Trails back
         // until we reached the Hill ,,so we need a check.
@@ -270,12 +256,31 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     } else {
       keepGoingBackByNoFoodReturnUntilTheAntFindATrailThenContinueFoodSearch(searchFood,position);
     }
+  }
 
+
+  private void goOneStepBackWithImmediatReturn(Trail ourTrail,Clearing position) throws InterruptedException {
+    Trail targetTrail = searchFood.getTrailToStepBack(position, ourTrail); // get the reverse of ourTrail
+    recorder.select(this, targetTrail, position.connectsTo(), SelectionReason.IMMEDIATE_RETURN);
+    targetTrail.enterTrail(position, this, EntryReason.IMMEDIATE_RETURN); // enter the trail
+    ourTrail = targetTrail; // update our Trail
+    Clearing ourNextClearing = ourTrail.to(); // get our next Clearing
+    ourNextClearing.enterClearing(ourTrail, this, EntryReason.IMMEDIATE_RETURN, false); // enter the Clearing
+    position = ourNextClearing; // update the Ant Position(current Clearing);
+
+  }
+  private void goOneStepWithNoFoodReturn(Clearing Position) throws InterruptedException {
+    Trail targetTrail = searchFood.getTrailByNofoodReturn(position, this);
+    recorder.select(this, targetTrail, position.connectsTo(), SelectionReason.NO_FOOD_RETURN);
+    targetTrail.enterTrail(position, this, EntryReason.NO_FOOD_RETURN);
+    Trail ourTrail = targetTrail;
+    Clearing ourNextClearing = ourTrail.to();
+    ourNextClearing.enterClearing(ourTrail, this, EntryReason.NO_FOOD_RETURN, false);
+    position = ourNextClearing;
   }
 
   private void keepGoingBackByNoFoodReturnUntilTheAntFindATrailThenContinueFoodSearch(SearchFoodPathCheck searchFood, Clearing currentPosition) throws InterruptedException {
     Clearing position = currentPosition;
-
     // as long as we don't find a Clearing with undiscovered Trail we go with no Food Return.
     while (!searchFood.checkTrail(position) && getClearingSequence().size() > 1) {
       Trail targetTrail = searchFood.getTrailByNofoodReturn(position, this);
@@ -295,6 +300,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       forwardMoving(position);
     }
   }
+
 
 
     private void homewardMoving ( boolean update, Clearing currentPosition) throws InterruptedException {

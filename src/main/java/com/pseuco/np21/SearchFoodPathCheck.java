@@ -85,14 +85,14 @@ public class SearchFoodPathCheck {
         //{AntHill, currentClearing, .. ...}
         //now return the Trail which leads to the Clearing which is Ordered in the sequence -->
         for (Trail target : connectedTrails) {    //--> exactly one index behind the CurrentClearing
+            assert (sequence.size() > 2);
             if (target.to().id() == sequence.get(currentClearingNumberFromTheSequence - 1).id()) {
-               targetTrail =target;
-               break;
+                targetTrail = target;
+                break;
             }
         }
-        return targetTrail;
+            return targetTrail;
+
     }
-
-
 
 }
