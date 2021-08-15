@@ -187,8 +187,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
 
 
-  private void forwardMoving(Clearing position) throws InterruptedException {
-    Trail targetTrail;
+  private void forwardMoving(Clearing currentPosition) throws InterruptedException {
+    Clearing position = currentPosition;
     boolean foundATrail = searchFood.checkTrail(position);
     // if the Clearing was the Hill and has no Trails terminate. (we need this just for the first round )
     if (position.id() == world.anthill().id() && !foundATrail) {
@@ -198,8 +198,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     }
     // now the Clearing is not the Hill(when this is recursion round 2 or more) or maybe hill(first round or more) but has (for sure)some Trails.
     if (foundATrail) {
-
-      targetTrail = searchFood.getTargetTrail(position); // get The Trail
+      Trail targetTrail = searchFood.getTargetTrail(position); // get The Trail
       if (targetTrail.getOrUpdateFoodPheromone(false, null, false).isAPheromone()) { // select one reason
         recorder.select(this, targetTrail, position.connectsTo(), SelectionReason.FOOD_SEARCH);
       } else {
@@ -213,10 +212,9 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
       ourNextClearing.enterClearing(targetTrail, this, EntryReason.FOOD_SEARCH, true); // enter the Clearing (trail.To)
       position = ourNextClearing; // update the Position
-
       // now check if the Clearing is in the sequence:
       if (!clearingAlreadyInSequence) {
-        if (!hasFood()) {  // if the Ant does not have food already try to get some
+        if (!this.holdFood) {  // if the Ant does not have food already try to get some
           if (position.TakeOnPieceOfFood(this)) { // if the Ant picked up some start homeward.
             recorder.pickupFood(this, position);
             recorder.startFoodReturn(this);

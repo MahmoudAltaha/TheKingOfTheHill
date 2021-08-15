@@ -25,6 +25,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
@@ -124,8 +125,9 @@ public class SingleAntNoFood {
             setFoodPheromone("C991", "C990", Pheromone.INFINITE);
         }
 
-        @RepeatedTest(5)
-        void run() {
+       // @RepeatedTest(5)
+    @Test
+    void run() {
             simulator.run();
 
             inOrder = inOrder(recorder);
