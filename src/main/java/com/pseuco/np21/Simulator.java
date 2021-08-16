@@ -49,6 +49,7 @@ public class Simulator {
        for(Ant a: ants){
            a.run();
        }
+
        this.recorder.stop();
 
 

@@ -115,7 +115,7 @@ public class SearchFoodTrailHandler {
                         minTrailsList.add(t2);
                         // remove t1 if it is present and all the Trails with the same food-Value, if not nothing is happening
                         for (int k = 0; k < minTrailsList.size(); k++) {
-                            if (minTrailsList.get(k).getOrUpdateHillPheromone(false, null).value() ==
+                            if (minTrailsList.get(k).getOrUpdateFoodPheromone(false, null,false).value() ==
                                     t1.getOrUpdateFoodPheromone(false, null, false).value()) {
                                 minTrailsList.remove(minTrailsList.get(k));
                             }
