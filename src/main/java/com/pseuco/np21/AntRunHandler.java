@@ -190,6 +190,7 @@ public class AntRunHandler {
         ant.setAntTONormalState();
         ant.alreadyEnteredTrails.clear();
         ant.getRecorder().returnedFood(ant);
+        ant.addClearingToSequence(position);  // adding the antHill to the sequence
     }
 
 }

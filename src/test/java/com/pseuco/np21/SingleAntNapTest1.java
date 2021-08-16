@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 class SimpleNaPTest1 {
     private World<Clearing, Trail> world;
     private Clearing anthill, food, clearing;
-    private Trail anthill_food, anthill_food_reverse, trail, trailReverse;
+    private Trail anthill_food, anthill_food_reverse, anthill_clearing, anthill_clearing_reverse;
     private Ant ant;
 
     private Simulator simulator;
@@ -44,8 +44,8 @@ class SimpleNaPTest1 {
         anthill_food = factory.createTrail(anthill, food);
         anthill_food_reverse = anthill_food.reverse();
 
-        trail = factory.createTrail(anthill, clearing);
-        trailReverse = trail.reverse();
+        anthill_clearing = factory.createTrail(anthill, clearing);
+        anthill_clearing_reverse = anthill_clearing.reverse();
 
         ant = factory.createAnt("Anthony", 1, 1000);
 
@@ -71,20 +71,20 @@ class SimpleNaPTest1 {
 
         inOrder.verify(recorder).startFoodSearch(eq(ant));
         inOrder.verify(recorder).startExploration(eq(ant));
-        inOrder.verify(recorder).select(eq(ant), same(trail), eq(List.of(trail)), same(Recorder.SelectionReason.EXPLORATION));
-        //inOrder.verify(recorder).select(eq(ant), same(anthill_clearing), eq(List.of(anthill_clearing)), same(Recorder.SelectionReason.EXPLORATION));
-        inOrder.verify(recorder).enter(eq(ant), same(trail));
+
+        inOrder.verify(recorder).select(eq(ant), same(anthill_clearing), eq(List.of(anthill_clearing)), same(Recorder.SelectionReason.EXPLORATION));
+        inOrder.verify(recorder).enter(eq(ant), same(anthill_clearing));
         inOrder.verify(recorder).leave(eq(ant), same(anthill));
         inOrder.verify(recorder).enter(eq(ant), same(clearing));
-        inOrder.verify(recorder).leave(eq(ant), same(trail));
-        inOrder.verify(recorder).updateAnthill(eq(ant), same(trail.reverse()), eq(Pheromone.get(1)));
+        inOrder.verify(recorder).leave(eq(ant), same(anthill_clearing));
+        inOrder.verify(recorder).updateAnthill(eq(ant), same(anthill_clearing.reverse()), eq(Pheromone.get(1)));
 
-        inOrder.verify(recorder).select(eq(ant), same(trailReverse), any(), same(Recorder.SelectionReason.NO_FOOD_RETURN));
-        inOrder.verify(recorder).enter(eq(ant), same(trailReverse));
+        inOrder.verify(recorder).select(eq(ant), same(anthill_clearing_reverse), any(), same(Recorder.SelectionReason.NO_FOOD_RETURN));
+        inOrder.verify(recorder).enter(eq(ant), same(anthill_clearing_reverse));
         inOrder.verify(recorder).leave(eq(ant), same(clearing));
         inOrder.verify(recorder).enter(eq(ant), same(anthill));
-        inOrder.verify(recorder).leave(eq(ant), same(trailReverse));
-        inOrder.verify(recorder).updateFood(eq(ant), same(trail), eq(Pheromone.INFINITE));
+        inOrder.verify(recorder).leave(eq(ant), same(anthill_clearing_reverse));
+        inOrder.verify(recorder).updateFood(eq(ant), same(anthill_clearing), eq(Pheromone.INFINITE));
 
         inOrder.verify(recorder).select(eq(ant), same(anthill_food), eq(List.of(anthill_food)), same(Recorder.SelectionReason.EXPLORATION));
         inOrder.verify(recorder).enter(eq(ant), same(anthill_food));

@@ -112,7 +112,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   /**
    * change the current state of the Ant to Adventurer
    */
-  public void setAntTOAdventurer() {
+  public void setAntTOAdventure() {
     adventurer = true;
   }
 
@@ -217,6 +217,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       if (targetTrail.getOrUpdateFoodPheromone(false, null, false).isAPheromone()) { // select one reason
         recorder.select(this, targetTrail, position.connectsTo(), SelectionReason.FOOD_SEARCH);
       } else {
+        this.setAntTOAdventure();
         recorder.select(this,targetTrail,position.connectsTo(),SelectionReason.EXPLORATION);
       }
       boolean success = targetTrail.enterTrail(position, this, EntryReason.FOOD_SEARCH);  // enter the Trail
@@ -286,6 +287,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         //TODO CHECK, Anthill should not be added to the Sequence
 
         recorder.enter(this, position);
+        this.addClearingToSequence(position);  // adding the antHill to the sequence
         if (!world.isFoodLeft()) {
           recorder.leave(this, position);
           recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
@@ -294,7 +296,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         recorder.startFoodSearch(this);
         recorder.startExploration(this);
         while (world.isFoodLeft()) {
-          this.addClearingToSequence(position);  // adding the antHill to the sequence
 
           forwardMoving(position);
           if (world.isFoodLeft()) {

@@ -73,9 +73,9 @@ public class TrailEntry {
                 c.getClearingEntry().clearingLock.unlock();
             }
             com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFoodPheromone(false,null,false);
-            if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
+           /* if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
                 ant.setAntTOAdventurer();
-            }
+            } */
         }
         finally {
             TrailLock.unlock();
