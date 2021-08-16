@@ -1,6 +1,5 @@
 package com.pseuco.np21;
 
-import com.pseuco.np21.shared.Recorder.SelectionReason;
 import java.util.*;
 
 public class HomeWardPathCheck {
@@ -18,7 +17,11 @@ public class HomeWardPathCheck {
     }
 
 
-
+    /**
+     * this methode used to get the right Trail on the way Home.
+     * @param currentClearing the current Clearing where the Ant is now.
+     * @return the Trail to take.
+     */
     public Trail getTargetTrail(Clearing currentClearing){
 
         List<Clearing> sequence =ant.getClearingSequence();  // the sequence

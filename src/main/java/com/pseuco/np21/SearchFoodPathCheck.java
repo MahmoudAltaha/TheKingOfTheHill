@@ -57,7 +57,12 @@ public class SearchFoodPathCheck {
     }
 
 
-
+    /**
+     * this methode gives us the Trail which the Ant should take by No_FOOD_Return.
+     * @param currentClearing the current Clearing where the Ant is now
+     * @param ant the ant
+     * @return The Trail to take.
+     */
     public Trail getTrailByNofoodReturn(Clearing currentClearing, Ant ant) {
         return searchFoodTrailHandler.getTrailByNofoodReturn(currentClearing,ant);
     }

@@ -208,9 +208,16 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
    *
    * @return world.
    */
+
   public World<Clearing, Trail> getWorld() {
     return world;
   }
+
+  /**
+   * this methode is the Brain of the Ants Simulation , it controls all classes and methods.
+   * @param currentPosition the Current Clearing where the Ant is now.
+   * @throws InterruptedException  InterruptedException  to terminate.
+   */
 
   public void forwardMoving(Clearing currentPosition) throws InterruptedException {
 

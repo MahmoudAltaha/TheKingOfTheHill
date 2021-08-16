@@ -223,7 +223,8 @@ public class ClearingEntry {
                     t.getTrailEntry().isSpaceLeft.signalAll(); // signal all to the threads which are waiting  to enter the Trail we left
                 }
             } finally{ t.getTrailEntry().getTrailLook().unlock();}// take the lock of the Trail you want to leave.
-               handler.pheromonesUpdatingHomeward(t,clearing,ant,update);
+            if (update)
+            handler.pheromonesUpdatingHomeward(t,clearing,ant);
         } finally {
                 clearingLock.unlock();
             }
