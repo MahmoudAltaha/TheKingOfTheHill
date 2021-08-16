@@ -84,10 +84,11 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
 
     /**
      * this methode is the Only methode you should use to call hasFood/pickUpFood/placeFood.Otherwise we could have data race
+     *
      * @param foodInClearing select the order you want to call.
      * @return always return how much food are left there.
      */
-     public boolean getOrSetFood(FoodInClearing foodInClearing){
+    public boolean getOrSetFood(FoodInClearing foodInClearing) {
         lock.lock();
         try {
             switch (foodInClearing) {
@@ -100,29 +101,30 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
                 default:
                     return hasFood();
             }
-        }
-        finally {
+        } finally {
             lock.unlock();
         }
     }
 
     /**
      * this methode will be used to enter this Clearing in a way that ensure concurrency.
-     * @param currentTrail  the Current Trail which the Ant should left,
-     * @param ant       the Ant
-     * @param entryReason   the reason you have to enter this Clearing.
-     * @return      true if the entry was completed successfully.
+     *
+     * @param currentTrail the Current Trail which the Ant should left,
+     * @param ant          the Ant
+     * @param entryReason  the reason you have to enter this Clearing.
+     * @return true if the entry was completed successfully.
      * @throws InterruptedException InterruptedException
      */
-    public boolean enterClearing(Trail currentTrail,Ant ant,EntryReason entryReason,boolean updateFood) throws InterruptedException {
+    public boolean enterClearing(Trail currentTrail, Ant ant, EntryReason entryReason, boolean updateFood) throws InterruptedException {
         //this assert make sure that we get the right Clearing and the right Trail from The Ant methodes(run for example)
-       assert (currentTrail.to().id == this.id);
-        return clearingEntry.enter(currentTrail,ant,entryReason,updateFood);
+        assert (currentTrail.to().id == this.id);
+        return clearingEntry.enter(currentTrail, ant, entryReason, updateFood);
     }
 
     /**
      * this methode used to pickUp one piece of Food from this Clearing.
-     * @param ant  The Ant
+     *
+     * @param ant The Ant
      * @return true if the Ant has pickedUp the food.
      */
     public boolean TakeOnPieceOfFood(Ant ant) throws InterruptedException {
@@ -139,6 +141,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     public boolean dropFood(Clearing c, Ant ant) throws InterruptedException {
         return clearingEntry.dropFood(c, ant);
     }
+
 
 
 }

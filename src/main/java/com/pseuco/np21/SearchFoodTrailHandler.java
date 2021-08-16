@@ -27,12 +27,11 @@ public class SearchFoodTrailHandler {
      * @param trailsList the Trails which are connected to the Current Clearing
      * @param ant the Ant
      */
-    private void removeTrailsThatConnectsToVisitedClearing(List<Trail> trailsList,List<Trail> listWithoutConnectedTrails, Ant ant){
-        Map<Integer, Trail > trailsToVisitedClearings = ant.TrailsToVisitedClearing;
-        for (int i = 0 ; i< trailsList.size() ; i++){
-            int trailsID = trailsList.get(i).id();
-                if(! trailsToVisitedClearings.containsKey(trailsID) ){
-                listWithoutConnectedTrails.add(trailsList.get(i));
+    private void getListWithoutAlreadyEnteredTrails(List<Trail> trailsList, List<Trail> listWithoutAlreadyEnteredTrails, Ant ant){
+       assert !(trailsList.isEmpty());
+        for (Trail t : trailsList){
+                if(! ant.alreadyEnteredTrails.containsKey(t.id()) ){
+                    listWithoutAlreadyEnteredTrails.add(t);
             }
         }
     }
@@ -46,15 +45,14 @@ public class SearchFoodTrailHandler {
         assert (!trailList.isEmpty());  // check if the list are not Empty
         for (Trail t : trailList) {
             // remove all Trails which are already has Map Value Or the last one in Sequence.
-            com.pseuco.np21.shared.Trail.Pheromone p = t.getOrUpdateFoodPheromone(false, null, false);
-            if ( ant.getClearingSequence().size() >1) {
-                Clearing c = t.to();
-               if (! ant.isSecondLastVisitedInSequence(c) && !p.isInfinite()){
-                   listWithoutMapAndTrailWeComeFrom.add(t);
+            if (!t.getOrUpdateFoodPheromone(false, null, false).isInfinite()) {
+                if (ant.TrailSequence.isEmpty()) {
+                    listWithoutMapAndTrailWeComeFrom.add(t);
+                } else {
+                    if (!(ant.TrailSequence.get(ant.TrailSequence.size() - 1).reverse().id() == t.id())) {
+                        listWithoutMapAndTrailWeComeFrom.add(t);
                     }
-
-            } else if (!p.isInfinite()) {
-                listWithoutMapAndTrailWeComeFrom.add(t);
+                }
             }
         }
     }
@@ -147,31 +145,34 @@ public class SearchFoodTrailHandler {
     public Trail getTargetTrail(List<Trail> trailList,Ant ant){
         assert (!trailList.isEmpty());  // check if the list are not Empty
         // make new list object which has the same TrailsObject in the trailsList
-        List<Trail> trailsListToBeClearedAndChosenFrom = new ArrayList<>(trailList);
-        assert(!trailsListToBeClearedAndChosenFrom.isEmpty());
-       //remove the Trails That Connect To Visited clearing in the new objectList (but do not touch the real ConnectedTrails to the Clearing).
-         List<Trail> listWithoutVisitedTrails = new ArrayList<>();
-        removeTrailsThatConnectsToVisitedClearing(trailsListToBeClearedAndChosenFrom,listWithoutVisitedTrails,ant);
-        assert(!listWithoutVisitedTrails.isEmpty());
-        List<Trail> listWithoutMapORVisitedTrailOrTheTrailWeComeFrom = new ArrayList<>();
-        removeMapTrailsAndTheTrailWeComeFrom(listWithoutVisitedTrails,listWithoutMapORVisitedTrailOrTheTrailWeComeFrom,ant); // the same like above, remove Map Trails From The List.
-        assert(!listWithoutMapORVisitedTrailOrTheTrailWeComeFrom.isEmpty());
-        Trail targetTrail;
+        List<Trail> trailsListToBeClearedAndChosenFrom = new LinkedList<>(trailList);
+        assert(trailsListToBeClearedAndChosenFrom.size() == trailList.size());
+       //add the Trails That we haven't entered before to this list.
+         List<Trail> listWithoutEnteredTrails = new LinkedList<>();
 
+         getListWithoutAlreadyEnteredTrails(trailsListToBeClearedAndChosenFrom,listWithoutEnteredTrails,ant);
+        assert(!listWithoutEnteredTrails.isEmpty());
+
+        // add the Trails that we haven't entered and has non_Map pheromone and are not the trail we just come From.
+        List<Trail> listWithoutMapAndTheTrailWeComeFromORAlreadyVisited = new ArrayList<>();
+        removeMapTrailsAndTheTrailWeComeFrom(listWithoutEnteredTrails,listWithoutMapAndTheTrailWeComeFromORAlreadyVisited,ant); // the same like above, remove Map Trails From The List.
+        assert(!listWithoutMapAndTheTrailWeComeFromORAlreadyVisited.isEmpty());
+
+        Trail targetTrail;
         boolean allNaP;  // check if all Trails has FoodPheromone = Nap
-        allNaP = checkIfAllTrailsHasNaP(listWithoutMapORVisitedTrailOrTheTrailWeComeFrom);
+        allNaP = checkIfAllTrailsHasNaP(listWithoutMapAndTheTrailWeComeFromORAlreadyVisited);
 
         Random random = new Random();
         if (allNaP){  // if so then pick a NaP Trail randomly .
-            int index = random.nextInt(listWithoutMapORVisitedTrailOrTheTrailWeComeFrom.size());
-            targetTrail = listWithoutMapORVisitedTrailOrTheTrailWeComeFrom.get(index);
+            int index = random.nextInt(listWithoutMapAndTheTrailWeComeFromORAlreadyVisited.size());
+            targetTrail = listWithoutMapAndTheTrailWeComeFromORAlreadyVisited.get(index);
         }
         else {  // the trailList has Trails with non Nap-foodPheromone. it may also have Trails with Nap-ph tho.
             List<Trail> trailsListNonNap = new ArrayList<>(); // list with Trails which has non Nap-Food-ph.
 
             List<Trail> trailsListWithJustNap = new ArrayList<>();// list with Trails which has Nap-food-ph.
 
-            separateNapTrailsFromNonNapTrails(listWithoutMapORVisitedTrailOrTheTrailWeComeFrom,trailsListWithJustNap,trailsListNonNap);
+            separateNapTrailsFromNonNapTrails(listWithoutMapAndTheTrailWeComeFromORAlreadyVisited,trailsListWithJustNap,trailsListNonNap);
 
             List<Trail> minTrails = new ArrayList<>(); // list which should contains the min-NonNap Pheromones.
 
@@ -206,32 +207,58 @@ public class SearchFoodTrailHandler {
      * @param connectedTrails the Trails that are connected to the currentClearing c.
      * @return   return true if you found a Trail.
      */
-    public boolean checkTrail(Clearing c,List<Trail> connectedTrails,Ant ant){
-        if(connectedTrails.isEmpty()){
+    public boolean checkTrail(Clearing c,List<Trail> connectedTrails,Ant ant) {
+        if (connectedTrails.isEmpty()) {
             return false;
         }
-        // make new list object which has the same TrailsObject in the trailsList
-        List<Trail> trailsListToBeClearedAndChosenFrom = new ArrayList<>(connectedTrails);
-        /* remove the Trails That Connect To Visited clearing in the new objectList
-         (but do not touch the real ConnectedTrails to the Clearing). */
-        List<Trail> listWithoutVisitedTrails = new ArrayList<>();
-        removeTrailsThatConnectsToVisitedClearing(trailsListToBeClearedAndChosenFrom,listWithoutVisitedTrails,ant);
-        if(listWithoutVisitedTrails.isEmpty()){
-            return false;
+        for (Trail t : connectedTrails) {
+            // if the Trail not Map
+            if (!t.getOrUpdateFoodPheromone(false, null, ant.isAdventurer()).isInfinite()) {
+                // if the TrailSequence empty return true
+                if (ant.TrailSequence.isEmpty() && ant.alreadyEnteredTrails.isEmpty()) {
+                    return true;
+                }
+                // if the TrailSequence not empty then the list of AlreadyEnteredTrail is for sure not empty.
+                assert (!ant.alreadyEnteredTrails.isEmpty());
+                // if the Trail has been entered Already then return false
+                if (!ant.alreadyEnteredTrails.containsKey(t.id())) {
+                    // else if the Trail does not lead to last clearing return True;
+                    if (ant.getClearingSequence().size() == 1) {
+                        return true;
+                    } else {
+                        if (!(ant.TrailSequence.get(ant.TrailSequence.size() - 1).reverse().id() == t.id())) {
+                            return true;
+                        }
+                    }
+                }
+            }
         }
-        // if the Clearing is the Hill and has one single Trail which its Food not MaP return true
-        if (listWithoutVisitedTrails.size() == 1 && c.id() == ant.getWorld().anthill().id() ) {
-            com.pseuco.np21.shared.Trail.Pheromone p = listWithoutVisitedTrails.get(0).getOrUpdateFoodPheromone(false,null,false);
-            return !p.isInfinite();
-        }  // Hill or normal Clearing with more than one Trail( the one from which the Ant has reached this Clearing)
-            // list of non-Map-food-pheromone Trails
-            List<Trail> listWithoutVisitedOrMapTrailsOrTheTrailsWeComeFrome = new ArrayList<>();
-        removeMapTrailsAndTheTrailWeComeFrom(listWithoutVisitedTrails,listWithoutVisitedOrMapTrailsOrTheTrailsWeComeFrome,ant);
+        return false; // otherwise return false
+    }
 
-            // if the number of Trails with (non-Map-Food-ph.)
-            // bigger than 1( cause there is always the one from which we come) return true
-            return !listWithoutVisitedOrMapTrailsOrTheTrailsWeComeFrome.isEmpty();
+
+
+
+    /**
+     * this methode used to get the Trail that leads to the previous clearing (used by No-Food-Return)
+     * @param currentClearing current Clearing
+     * @param ant Ant
+     * @return the Trail
+     */
+    public Trail getTrailByNofoodReturn(Clearing currentClearing, Ant ant) {
+        List<Trail> connectedTrails = currentClearing.connectsTo();
+        assert !connectedTrails.isEmpty();
+        Trail targetTrail = connectedTrails.get(0);
+        for(Trail t : connectedTrails){
+            assert !ant.TrailSequence.isEmpty();
+            int size = ant.TrailSequence.size();
+            if(ant.TrailSequence.get(size-1).reverse().id() == t.id() ){
+                targetTrail = t;
+            }
         }
+        return targetTrail;
+    }
+
 
 
 }

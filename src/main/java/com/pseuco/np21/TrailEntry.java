@@ -72,6 +72,8 @@ public class TrailEntry {
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
+                    ant.TrailSequence.add(trail); // the TrailsPath with FoodSearch Entering
+                    ant.alreadyEnteredTrails.put(trail.id(),trail);
                 }
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
@@ -105,7 +107,7 @@ public class TrailEntry {
 
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if ( !ant.getWorld().isFoodLeft()) {
+                if ( !ant.getWorld().isFoodLeft() ) {
                     handler.LeaveTheClearing(c,ant);
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
@@ -123,8 +125,15 @@ public class TrailEntry {
                 c.getClearingEntry().clearingLock.unlock();
             }
             // remove this wrong Clearing from the sequence.
-            ant.removeClearingFromSequence(c);
-            ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
+            int sizeClearingSequence = ant.getClearingSequence().size();
+            Clearing removedClearing = ant.getClearingSequence().remove(sizeClearingSequence-1);
+            assert ant.getClearingSequence().size()< sizeClearingSequence;
+
+            int sizeTrailSequence = ant.TrailSequence.size();
+            Trail removedTrail = ant.TrailSequence.remove(sizeTrailSequence-1);
+            assert ant.TrailSequence.size()<sizeTrailSequence;
+
+            ant.alreadyEnteredTrails.put(trail.id(),trail);
         }finally {
             TrailLock.unlock();
         }
@@ -148,7 +157,7 @@ public class TrailEntry {
 
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if ( !ant.getWorld().isFoodLeft()) {
+                if ( !ant.getWorld().isFoodLeft() ) {
                     handler.LeaveTheClearing(c,ant);
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
@@ -161,12 +170,20 @@ public class TrailEntry {
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
+                    int sizeClearingSequence = ant.getClearingSequence().size();
+                    Clearing removedClearing = ant.getClearingSequence().remove(sizeClearingSequence-1);
+                    assert ant.getClearingSequence().size()< sizeClearingSequence;
+
+                    int sizeTrailSequence = ant.TrailSequence.size();
+                    Trail removedTrail = ant.TrailSequence.remove(sizeTrailSequence-1);
+                    assert ant.TrailSequence.size()<sizeTrailSequence;
+
+                    ant.alreadyEnteredTrails.put(trail.id(),trail);
                 }
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
             }
-            ant.removeClearingFromSequence(c);
-            ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
+
         }finally {
             TrailLock.unlock();
         }
@@ -219,11 +236,7 @@ public class TrailEntry {
 
     }
 
-    /*   (ignore this comment for now)!!!!!!
-    if you are using this method to enter the Trail for FoodSearch you may get false as return.
-     * that means that the Trail which the Ant is trying to enter is no more the best Trail. so by return false
-     * you should get new Trail and try to enter again.
-    * */
+
     /**
      * this methode will be used to enter this Trail in way that ensure concurrency.
      *

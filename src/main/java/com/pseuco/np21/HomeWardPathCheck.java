@@ -42,8 +42,8 @@ public class HomeWardPathCheck {
                 }
             }
         }
-        List<Trail>  listToBeCleared = new ArrayList<>(connectedTrails);
-
+        List<Trail> listToBeCleared = new ArrayList<>(connectedTrails);
+        assert ( listToBeCleared.size() == connectedTrails.size());
         List<Trail> listWithoutMapOrNapTrailsAndTheTrailWeComeFrom = new ArrayList<>();
 
         removeMapOrNapTrailsAndTheTrailWeComeFrom(listToBeCleared,listWithoutMapOrNapTrailsAndTheTrailWeComeFrom,

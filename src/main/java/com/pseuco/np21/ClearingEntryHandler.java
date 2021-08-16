@@ -13,11 +13,10 @@ public class ClearingEntryHandler {
     }
 
     public void pheromonesUpdatingFoodSearch(Trail t , Ant ant) throws InterruptedException {
-
             com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.reverse().getOrUpdateHillPheromone(false, null);
             com.pseuco.np21.shared.Trail.Pheromone newPheromone;
             // if the  Clearing was not twice in the sequence then update Hill-Pheromone. (no special cases)
-            if (!ant.TrailsToVisitedClearing.containsKey(t.id())) {
+            if (!ant.TrailsToVisitedClearings.containsKey(t.id())) {
                 // get the new Hill_Pheromone value
                 if (hillPheromone.isAPheromone()) {
                     int w = ant.getClearingSequence().size() - 1;
@@ -37,8 +36,9 @@ public class ClearingEntryHandler {
 
         public void pheromonesUpdatingNoFoodReturn  (Trail t, Ant ant) throws InterruptedException {
                 //create a Map food-Pheromone .
-                com.pseuco.np21.shared.Trail.Pheromone mapPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(-1);
+                com.pseuco.np21.shared.Trail.Pheromone mapPheromone = com.pseuco.np21.shared.Trail.Pheromone.get((-1));
                 //update the Food-Pheromone of the Trail to Map.
+                assert mapPheromone.isInfinite();
                 t.reverse().getOrUpdateFoodPheromone(true, mapPheromone, ant.isAdventurer());
                 ant.getRecorder().updateFood(ant, t.reverse(), mapPheromone); // recorder stuff.
             }

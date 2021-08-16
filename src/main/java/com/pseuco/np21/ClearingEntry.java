@@ -73,9 +73,11 @@ public class ClearingEntry {
                 } else {
                     handler.EnterTheClearing(clearing, ant);
                     handler.LeaveTheTrail(t,ant);
+                    if (ant.getClearingSequence().contains(clearing)){
+                        ant.TrailsToVisitedClearings.put(t.id(),t);
+                    }
                     ant.addClearingToSequence(clearing);
                     t.getTrailEntry().isSpaceLeft.signalAll(); // signal all to the threads which are waiting  to enter the Trail we left
-
                 }
             }
             finally{   t.getTrailEntry().getTrailLook().unlock();} // release the lock of the Trail we left.
@@ -154,7 +156,7 @@ public class ClearingEntry {
                         ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
                         throw new InterruptedException();
                     }
-                if ( !ant.getWorld().isFoodLeft()) {
+                if ( !ant.getWorld().isFoodLeft() ) {
                     handler.LeaveTheTrail(t, ant);
                     t.getTrailEntry().isSpaceLeft.signalAll(); // signal all to the threads which are waiting  to enter the Trail we left
                     ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
@@ -163,11 +165,11 @@ public class ClearingEntry {
                     handler.EnterTheClearing(clearing, ant);
                     handler.LeaveTheTrail(t, ant);
                     t.getTrailEntry().isSpaceLeft.signalAll(); // signal all to the threads which are waiting  to enter the Trail we left
+                    handler.pheromonesUpdatingNoFoodReturn(t, ant);
                 }
             } finally {
                 t.getTrailEntry().getTrailLook().unlock();// release the lock of the Trail we left.
             }
-            handler.pheromonesUpdatingNoFoodReturn(t, ant);
         }finally{
             clearingLock.unlock();
         }
@@ -222,7 +224,7 @@ public class ClearingEntry {
                         ant.getRecorder().despawn(ant, DespawnReason.DISCOVERED_AND_EATEN);
                         throw new InterruptedException();
                     }
-                if ( ! ant.getWorld().isFoodLeft()) {
+                if ( ! ant.getWorld().isFoodLeft() ) {
                     handler.LeaveTheTrail(t, ant);
                     t.getTrailEntry().isSpaceLeft.signalAll(); // signal all to the threads which are waiting  to enter the Trail we left
                     ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
