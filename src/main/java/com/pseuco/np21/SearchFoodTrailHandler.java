@@ -178,9 +178,9 @@ public class SearchFoodTrailHandler {
 
             makeListWithJustMin(minTrails,trailsListNonNap); // make List with just min Food-Pheromone Value.
 
-            int randomIndex = random.nextInt(trailsListNonNap.size());//get random number
+            int randomIndex = random.nextInt(minTrails.size());//get random number
 
-            Trail suggestedTrail = trailsListNonNap.get(randomIndex);// the randomly picked Trail which has the min Ph.
+            Trail suggestedTrail = minTrails.get(randomIndex );// the randomly picked Trail which has the min Ph.
 
             // check if the impatience of the Ant are smaller than the min pheromone. if so get a random Nap-food-ph Trail.
 

@@ -214,7 +214,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     }// now the Clearing is not the Hill(when this is recursion round 2 or more) or maybe hill(first round or more) but has (for sure)some Trails.
     if (foundATrail) {
       Trail targetTrail = searchFood.getTargetTrail(position); // get The Trail
-      if (targetTrail.getOrUpdateFoodPheromone(false, null, false).isAPheromone()) { // select one reason
+      if (targetTrail.getOrUpdateFoodPheromone(false, null, false).isAPheromone()) {// select one reason
+        this.setAntTONormalState();
         recorder.select(this, targetTrail, position.connectsTo(), SelectionReason.FOOD_SEARCH);
       } else {
         this.setAntTOAdventure();
