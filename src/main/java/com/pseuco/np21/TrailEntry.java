@@ -21,16 +21,12 @@ public class TrailEntry {
 
     public Condition isSpaceLeft= TrailLock.newCondition();
 
-    private final TrailEntryHandler handler ;
-
-
     /**
      * construct a TrailEntry.
      * @param trail trail.
      */
     public TrailEntry(Trail trail) {
         this.trail = trail;
-       this.handler= new TrailEntryHandler();
     }
 
 
@@ -56,19 +52,17 @@ public class TrailEntry {
         try{
             while (!trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
                 isSpaceLeft.await();
-
-            c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
+                c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
                 if ( !ant.getWorld().isFoodLeft()) {
-                    handler.LeaveTheClearing(c,ant);
+                    c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
-                    ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
-                    throw new InterruptedException();
+                   return false;
                 } else{
-                    handler.EnterTheTrail(trail, ant);
-                    handler.LeaveTheClearing(c, ant);
+                    trail.enter();
+                    c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
@@ -86,7 +80,6 @@ public class TrailEntry {
         finally {
             TrailLock.unlock();
         }
-
         return true;
     }
     /**
@@ -108,15 +101,14 @@ public class TrailEntry {
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
                 if ( !ant.getWorld().isFoodLeft() ) {
-                    handler.LeaveTheClearing(c,ant);
+                    c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
-                    ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
-                    throw new InterruptedException();
+                    return false;
                 } else{
-                    handler.EnterTheTrail(trail, ant);
-                    handler.LeaveTheClearing(c, ant);
+                    trail.enter();
+                    c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
@@ -158,15 +150,14 @@ public class TrailEntry {
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
                 if ( !ant.getWorld().isFoodLeft() ) {
-                    handler.LeaveTheClearing(c,ant);
+                    c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
-                    ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
-                    throw new InterruptedException();
+                    return false;
                 } else{
-                    handler.EnterTheTrail(trail, ant);
-                    handler.LeaveTheClearing(c, ant);
+                    trail.enter();;
+                    c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
@@ -187,8 +178,6 @@ public class TrailEntry {
         }finally {
             TrailLock.unlock();
         }
-
-        //ToDO make this void.
         return true;
     }
 
@@ -213,15 +202,14 @@ public class TrailEntry {
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
                 if ( !ant.getWorld().isFoodLeft()) {
-                    handler.LeaveTheClearing(c,ant);
+                    c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
-                    ant.getRecorder().despawn(ant,DespawnReason.TERMINATED);
-                    throw new InterruptedException();
+                    return false;
                 } else{
-                    handler.EnterTheTrail(trail, ant);
-                    handler.LeaveTheClearing(c, ant);
+                   trail.enter();
+                    c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
@@ -252,7 +240,7 @@ public class TrailEntry {
             case FOOD_SEARCH -> this.enterTrailFoodSearch(currentClearing,ant);
             case IMMEDIATE_RETURN -> this.immediateReturnToTrail(currentClearing,ant);
             case NO_FOOD_RETURN -> this.noFoodReturnToTrail(currentClearing,ant);
-            case HEADING_BACK_HOME -> this.homewardEnterTrail(currentClearing , ant);
+            case HEADING_BACK_HOME_WITH_UPDATING, HEADING_BACK_HOME_WITHOUT_UPDATING -> this.homewardEnterTrail(currentClearing , ant);
         };
     }
 

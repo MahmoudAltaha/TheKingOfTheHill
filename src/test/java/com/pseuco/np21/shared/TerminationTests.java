@@ -266,7 +266,6 @@ public class TerminationTests {
     verify(recorder, atMost(7)).leave(eq(ant), any(Clearing.class));
 
     verify(recorder, atMostOnce()).returnedFood(eq(ant)); // atMost() does not work with inOrder
-
     inOrder.verify(recorder).despawn(eq(ant),
             or(same(DespawnReason.ENOUGH_FOOD_COLLECTED), same(DespawnReason.TERMINATED)));
 
