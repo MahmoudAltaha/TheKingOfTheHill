@@ -237,7 +237,7 @@ public class ClearingEntry {
      * @param c the Hill
      * @return true by successfully dropping food
      */
-    public boolean dropFood(Clearing c, Ant ant) throws InterruptedException{
+    public boolean dropFood(Clearing c, Ant ant) {
         clearingLock.lock();
         try {
             if (!ant.getWorld().isFoodLeft()) {

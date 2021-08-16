@@ -62,6 +62,7 @@ public class AntRunHandler {
         }else {
             ant.getRecorder().leave(ant,currentClearing);
             ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+            Thread.currentThread().interrupt();/////////////////////////////
             throw new InterruptedException();
         }
     }
@@ -85,6 +86,7 @@ public class AntRunHandler {
             } else {
                 recorderStuffTerminateNowOnLastTrail(ourLastTrail);
             }
+            Thread.currentThread().interrupt();/////////////////////////////
             throw new InterruptedException();
         }
     }
@@ -115,7 +117,9 @@ public class AntRunHandler {
             } else {
                 recorderStuffTerminateNowOnLastTrail(ourTrail);
             }
+            Thread.currentThread().interrupt();/////////////////////////////
             throw new InterruptedException();
+
         }
         position = ourNextClearing; // update the Ant Position(current Clearing);
         return position;
@@ -153,6 +157,7 @@ public class AntRunHandler {
             } else {
                 recorderStuffTerminateNowOnLastTrail(ourTrail);
             }
+            Thread.currentThread().interrupt();/////////////////////////////
             throw new InterruptedException();
         }
         position = ourNextClearing;
@@ -169,6 +174,7 @@ public class AntRunHandler {
         position.leave();
         ant.getRecorder().leave(ant, position);
         ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+        Thread.currentThread().interrupt();/////////////////////////////
         throw new InterruptedException();
     }
 
@@ -208,6 +214,7 @@ public class AntRunHandler {
                     } else {
                         recorderStuffTerminateNowOnLastTrail(ourLastTrail);
                     }
+                    Thread.currentThread().interrupt();/////////////////////////////
                     throw new InterruptedException();
                 }
             }else {
@@ -223,6 +230,7 @@ public class AntRunHandler {
                     } else {
                         recorderStuffTerminateNowOnLastTrail(ourLastTrail);
                     }
+                    Thread.currentThread().interrupt();/////////////////////////////
                     throw new InterruptedException();
                 }
             }
@@ -232,6 +240,7 @@ public class AntRunHandler {
         if (!droppedSuccess){
             ant.getRecorder().leave(ant,position);
             ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+            Thread.currentThread().interrupt();/////////////////////////////
             throw new InterruptedException();
         }
         sequence.clear();

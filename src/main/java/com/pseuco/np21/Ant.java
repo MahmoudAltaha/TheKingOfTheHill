@@ -260,6 +260,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
             if (!world.isFoodLeft()){
               recorder.leave(this,position);
               recorder.despawn(this,DespawnReason.TERMINATED);
+              Thread.currentThread().interrupt();/////////////////////////////
               throw new InterruptedException();
             }
             forwardMoving(position);
@@ -307,6 +308,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         if (!world.isFoodLeft()) {
           recorder.leave(this, position);
           recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
+          Thread.currentThread().interrupt();/////////////////////////////
           throw new InterruptedException();
         }
 
@@ -324,14 +326,14 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         }
         recorder.leave(this, position);
         recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
+        Thread.currentThread().interrupt();/////////////////////////////
         throw new InterruptedException();
 
       } catch (InterruptedException e) {
-
-        Thread.currentThread().interrupt();
+       // e.printStackTrace();
       }
 
-      // TODO handle termination
+
 
     }
 
