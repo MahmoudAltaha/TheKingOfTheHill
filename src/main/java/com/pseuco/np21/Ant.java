@@ -58,14 +58,14 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   private boolean died = false;
 
 
-  private final List<Clearing> clearingSequence = new LinkedList<>();
-  public List<Trail> TrailSequence = new LinkedList<>();
-  private boolean adventurer = false;
-  private boolean holdFood = false;
-  public HashMap<Integer, Trail> TrailsToVisitedClearings = new HashMap<>();
-  public HashMap<Integer, Trail> alreadyEnteredTrails = new HashMap<>();
-  SearchFoodPathCheck searchFood = new SearchFoodPathCheck(this);
-
+  private final List<Clearing> clearingSequence ;
+  public final List<Trail> TrailSequence ;  // here we add the Trails Just by FoodSearch/Exploration Move
+  private boolean adventurer ;
+  private boolean holdFood ;
+  public final HashMap<Integer, Trail> TrailsToVisitedClearings; // here we mark the Trail which leads to already visited clearings
+  public final HashMap<Integer, Trail> alreadyEnteredTrails ; // here we add all trails we have taken.
+  public final SearchFoodPathCheck searchFood ;
+  public final AntRunHandler handler ;
 
   /**
    * Constructs an ant given a basic ant, the world and a recorder.
@@ -79,6 +79,14 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     super(ant);
     this.world = world;
     this.recorder = recorder;
+    this.handler = new AntRunHandler(this);
+    this.searchFood= new SearchFoodPathCheck(this);
+    this.alreadyEnteredTrails = new HashMap<>();
+    this.TrailsToVisitedClearings = new HashMap<>();
+    this.clearingSequence = new LinkedList<>();
+    this.holdFood = false;
+    this.adventurer = false;
+    this.TrailSequence = new LinkedList<>();
   }
 
   /**
@@ -205,12 +213,12 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   }
 
   public void forwardMoving(Clearing currentPosition) throws InterruptedException {
-    AntRunHandler handler = new AntRunHandler(this);
+
     Clearing position = currentPosition;
     boolean foundATrail = searchFood.checkTrail(position);
     // if the Clearing was the Hill and has no Trails terminate. (we need this just for the first round )
     if (position.id() == world.anthill().id() && !foundATrail) {
-     handler.leaveAndInterruptAtHill(this,position);
+     handler.leaveAndInterruptAtHill(position);
     }// now the Clearing is not the Hill(when this is recursion round 2 or more) or maybe hill(first round or more) but has (for sure)some Trails.
     if (foundATrail) {
       Trail targetTrail = searchFood.getTargetTrail(position); // get The Trail
@@ -259,7 +267,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         }// now we are out the while-Loop that means we found a Clearing with some Trail Or we went so many Trails back
         // until we reached the Hill ,,so we need a check.
         if ( (position.id() == world.anthill().id()) && !searchFood.checkTrail(position) )  {  // if we are in the Hill and no more choices terminate) leaveAndInterrupt(this,position);
-            handler.leaveAndInterruptAtHill(this,position);
+            handler.leaveAndInterruptAtHill(position);
         }// Or we are in a Trail which has some Other undiscovered Trails. so we need to continue FoodSearch --> recursion.
         else {
           forwardMoving(position);
@@ -270,7 +278,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         position = handler.GoBackByNoFoodReturn(searchFood,position);
       }
       if ( (position.id() == world.anthill().id() && ! searchFood.checkTrail(position)) ) {  // if we are in the Hill and no more choices terminate) leaveAndInterrupt(this,position);
-        handler.leaveAndInterruptAtHill(this,position);
+        handler.leaveAndInterruptAtHill(position);
       }
       else { // Or we are in a Trail which has some Other undiscovered Trails. so we need to continue FoodSearch --> recursion.
         forwardMoving(position);
@@ -285,28 +293,32 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       try {
         position = world.anthill();
         recorder.spawn(this);
-        //TODO CHECK, Anthill should not be added to the Sequence
-
         recorder.enter(this, position);
+
         this.addClearingToSequence(position);  // adding the antHill to the sequence
+
         if (!world.isFoodLeft()) {
           recorder.leave(this, position);
           recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
           throw new InterruptedException();
         }
+
         recorder.startFoodSearch(this);
         recorder.startExploration(this);
+
         while (world.isFoodLeft()) {
 
           forwardMoving(position);
+
           if (world.isFoodLeft()) {
             recorder.startFoodSearch(this);
           }
+
         }
         recorder.leave(this, position);
         recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
-
         throw new InterruptedException();
+
       } catch (InterruptedException e) {
 
         Thread.currentThread().interrupt();
