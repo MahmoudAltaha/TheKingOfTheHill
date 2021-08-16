@@ -2,15 +2,6 @@ package com.pseuco.np21;
 
 public class ClearingEntryHandler {
 
-    public void EnterTheClearing(Clearing clearing,Ant ant)  {
-            clearing.enter(); // enter the Clearing
-            ant.getRecorder().enter(ant, clearing); // recorder stuff.
-    }
-
-    public void LeaveTheTrail(Trail trail, Ant ant)  {
-            trail.leave(); // leave the Trail.
-            ant.getRecorder().leave(ant, trail); // recorder stuff
-    }
 
     public void pheromonesUpdatingFoodSearch(Trail t , Ant ant) throws InterruptedException {
             com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.reverse().getOrUpdateHillPheromone(false, null);
@@ -27,10 +18,7 @@ public class ClearingEntryHandler {
                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(w);
                 }
                 t.reverse().getOrUpdateHillPheromone(true, newPheromone); // update the HIll-Pheromone.
-                ant.getRecorder().updateAnthill(ant, t.reverse(), newPheromone); // recorder stuff.
-            } else { // don't update the Pheromone.
-                ant.getRecorder().updateAnthill(ant, t.reverse(), hillPheromone);
-            }// recorder stuff.
+            }
         }
 
 
@@ -40,7 +28,6 @@ public class ClearingEntryHandler {
                 //update the Food-Pheromone of the Trail to Map.
                 assert mapPheromone.isInfinite();
                 t.reverse().getOrUpdateFoodPheromone(true, mapPheromone, ant.isAdventurer());
-                ant.getRecorder().updateFood(ant, t.reverse(), mapPheromone); // recorder stuff.
             }
 
 
@@ -75,7 +62,7 @@ public class ClearingEntryHandler {
                     }
                 }
                 t.reverse().getOrUpdateFoodPheromone(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
-                ant.getRecorder().updateFood(ant, t.reverse(), newPheromone); // recorder stuff
+
             }
     }
 
