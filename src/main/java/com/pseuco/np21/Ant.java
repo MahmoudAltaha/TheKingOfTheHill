@@ -47,11 +47,12 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
   private Clearing position;
 
-  private final List<Clearing> clearingSequence = new ArrayList<>();
+  private final List<Clearing> clearingSequence = new LinkedList<>();
   public List<Trail> TrailSequence = new LinkedList<>();
   private boolean adventurer = false;
   private boolean holdFood = false;
-  public HashMap<Integer, Trail> TrailsToVisitedClearing = new HashMap<>();
+  public HashMap<Integer, Trail> TrailsToVisitedClearings = new HashMap<>();
+  public HashMap<Integer, Trail> alreadyEnteredTrails = new HashMap<>();
   SearchFoodPathCheck searchFood = new SearchFoodPathCheck(this);
 
 

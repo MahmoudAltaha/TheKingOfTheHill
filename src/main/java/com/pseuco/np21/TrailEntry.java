@@ -72,7 +72,8 @@ public class TrailEntry {
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
-                    ant.TrailSequence.add(trail);
+                    ant.TrailSequence.add(trail); // the TrailsPath with FoodSearch Entering
+                    ant.alreadyEnteredTrails.put(trail.id(),trail);
                 }
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
@@ -124,11 +125,15 @@ public class TrailEntry {
                 c.getClearingEntry().clearingLock.unlock();
             }
             // remove this wrong Clearing from the sequence.
-            boolean removed = ant.getClearingSequence().remove(c);
-            assert removed;
-            removed =ant.TrailSequence.remove(trail.reverse());
-            assert removed;
-            ant.TrailsToVisitedClearing.put(trail.reverse().id(),trail.reverse());
+            int sizeClearingSequence = ant.getClearingSequence().size();
+            Clearing removedClearing = ant.getClearingSequence().remove(sizeClearingSequence-1);
+            assert ant.getClearingSequence().size()< sizeClearingSequence;
+
+            int sizeTrailSequence = ant.TrailSequence.size();
+            Trail removedTrail = ant.TrailSequence.remove(sizeTrailSequence-1);
+            assert ant.TrailSequence.size()<sizeTrailSequence;
+
+            ant.alreadyEnteredTrails.put(trail.id(),trail);
         }finally {
             TrailLock.unlock();
         }
@@ -165,8 +170,15 @@ public class TrailEntry {
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
-                    boolean removed = ant.getClearingSequence().remove(c);
-                    boolean removedTrail = ant.TrailSequence.remove(trail.reverse());
+                    int sizeClearingSequence = ant.getClearingSequence().size();
+                    Clearing removedClearing = ant.getClearingSequence().remove(sizeClearingSequence-1);
+                    assert ant.getClearingSequence().size()< sizeClearingSequence;
+
+                    int sizeTrailSequence = ant.TrailSequence.size();
+                    Trail removedTrail = ant.TrailSequence.remove(sizeTrailSequence-1);
+                    assert ant.TrailSequence.size()<sizeTrailSequence;
+
+                    ant.alreadyEnteredTrails.put(trail.id(),trail);
                 }
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
@@ -213,7 +225,6 @@ public class TrailEntry {
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
                     }
-
                 }
             } finally {
                 c.getClearingEntry().clearingLock.unlock();

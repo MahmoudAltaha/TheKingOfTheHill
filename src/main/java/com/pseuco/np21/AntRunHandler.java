@@ -43,6 +43,7 @@ public class AntRunHandler {
     }
 
     public void leaveAndInterrupt(Ant ant,Clearing position) throws InterruptedException {
+        position.leave();
         ant.getRecorder().leave(ant, position);
         ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
         throw new InterruptedException();
@@ -68,9 +69,10 @@ public class AntRunHandler {
         }
         position.dropFood(position, ant);
         sequence.clear();
-        ant.TrailsToVisitedClearing.clear();
+        ant.TrailsToVisitedClearings.clear();
         ant.TrailSequence.clear();
         ant.setAntTONormalState();
+        ant.alreadyEnteredTrails.clear();
         ant.getRecorder().returnedFood(ant);
     }
 
