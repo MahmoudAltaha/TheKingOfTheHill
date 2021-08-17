@@ -79,7 +79,13 @@ public class ClearingEntry {
             }
             finally{   t.getTrailEntry().getTrailLook().unlock();} // release the lock of the Trail we left.
            handler.pheromonesUpdatingFoodSearch(t,ant);
-        }finally{
+        }
+        catch (InterruptedException e){
+            t.leave();
+            t.getTrailEntry().isSpaceLeft.signalAll();// signalAll that you left the Trail .
+            return false;
+        }
+        finally{
             clearingLock.unlock();
         }
         return true;
@@ -120,7 +126,13 @@ public class ClearingEntry {
                 }
             }
                 finally{   t.getTrailEntry().getTrailLook().unlock();} // release the lock of the Trail we left.
-        }finally{
+        }
+        catch (InterruptedException e){
+            t.leave();
+            t.getTrailEntry().isSpaceLeft.signalAll();// signalAll that you left the Trail .
+            return false;
+        }
+        finally{
             clearingLock.unlock();
         }
         return true;
@@ -150,7 +162,7 @@ public class ClearingEntry {
                         ant.setDied(true);
                         return false;
                     }
-                if ( !ant.getWorld().isFoodLeft() ) {
+                if ( !ant.getWorld().isFoodLeft() || Thread.currentThread().isInterrupted() ) {
                     t.leave();
                     t.getTrailEntry().isSpaceLeft.signalAll(); // signal all to the threads which are waiting  to enter the Trail we left
                     return false;
@@ -163,7 +175,13 @@ public class ClearingEntry {
             } finally {
                 t.getTrailEntry().getTrailLook().unlock();// release the lock of the Trail we left.
             }
-        }finally{
+        }
+        catch (InterruptedException e){
+            t.leave();
+            t.getTrailEntry().isSpaceLeft.signalAll();// signalAll that you left the Trail .
+            return false;
+        }
+        finally{
             clearingLock.unlock();
         }
         return true;
@@ -175,7 +193,7 @@ public class ClearingEntry {
      * @param ant    The Ant which want to enter to this clearing .
      * @return      true if the food was collected successfully. if so you can start the homeward.
      */
-    public boolean pickUPFood(Ant ant) throws InterruptedException {
+    public boolean pickUPFood(Ant ant)  {
         clearingLock.lock();
         try {
             if (! ant.getWorld().isFoodLeft()) {
@@ -226,7 +244,12 @@ public class ClearingEntry {
             if (update) {
                 handler.pheromonesUpdatingHomeward(t, clearing, ant);
             }
-        } finally {
+        } catch (InterruptedException e){
+            t.leave();
+            t.getTrailEntry().isSpaceLeft.signalAll();// signalAll that you left the Trail .
+            return false;
+        }
+        finally {
                 clearingLock.unlock();
             }
             return true;

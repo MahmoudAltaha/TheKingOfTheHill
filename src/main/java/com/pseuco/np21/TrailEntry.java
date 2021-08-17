@@ -73,9 +73,12 @@ public class TrailEntry {
                 c.getClearingEntry().clearingLock.unlock();
             }
             com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFoodPheromone(false,null,false);
-           /* if ( ! p.isAPheromone()){  // if the Trail has Nap-Food-Pheromone then the ant is an Adventurer.
-                ant.setAntTOAdventurer();
-            } */
+        }
+        catch (InterruptedException e){
+            c.leave();
+            if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                c.getClearingEntry().isSpaceLeft.signalAll();
+            } return false;
         }
         finally {
             TrailLock.unlock();
@@ -126,7 +129,14 @@ public class TrailEntry {
             assert ant.TrailSequence.size()<sizeTrailSequence;
 
             ant.alreadyEnteredTrails.put(trail.id(),trail);
-        }finally {
+        } catch (InterruptedException e){
+            c.leave();
+            if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                c.getClearingEntry().isSpaceLeft.signalAll();
+            }
+            return  false;
+        }
+        finally {
             TrailLock.unlock();
         }
         return true;
@@ -174,8 +184,13 @@ public class TrailEntry {
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
             }
-
-        }finally {
+         } catch (InterruptedException e){
+            c.leave();
+            if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                c.getClearingEntry().isSpaceLeft.signalAll();
+            } return false;
+        }
+        finally {
             TrailLock.unlock();
         }
         return true;
@@ -217,6 +232,11 @@ public class TrailEntry {
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
             }
+        } catch (InterruptedException e){
+            c.leave();
+            if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
+                c.getClearingEntry().isSpaceLeft.signalAll();
+            } return false;
         }  finally {
             TrailLock.unlock();
         }
