@@ -85,7 +85,7 @@ class ForumTest8 {
         inOrder.verify(recorder).leave(eq(ant), same(anthill_clearing.reverse()));
         inOrder.verify(recorder).updateFood(eq(ant), same(anthill_clearing), eq(Pheromone.INFINITE));
 
-        inOrder.verify(recorder).select(eq(ant), same(anthill_intermediate), eq(List.of(anthill_intermediate)), same(Recorder.SelectionReason.EXPLORATION));
+        inOrder.verify(recorder).select(eq(ant), same(anthill_intermediate), eq(List.of(anthill_intermediate)), same(Recorder.SelectionReason.FOOD_SEARCH));
         inOrder.verify(recorder).enter(eq(ant), same(anthill_intermediate));
         inOrder.verify(recorder).leave(eq(ant), same(anthill));
         inOrder.verify(recorder).enter(eq(ant), same(intermediate));
@@ -119,7 +119,7 @@ class ForumTest8 {
         inOrder.verify(recorder).returnedFood(eq(ant));
         inOrder.verify(recorder).startFoodSearch(eq(ant));
 
-        inOrder.verify(recorder).select(eq(ant), same(anthill_intermediate), eq(List.of(anthill_intermediate)), same(Recorder.SelectionReason.EXPLORATION));
+        inOrder.verify(recorder).select(eq(ant), same(anthill_intermediate), eq(List.of(anthill_intermediate)), same(Recorder.SelectionReason.FOOD_SEARCH));
         inOrder.verify(recorder).enter(eq(ant), same(anthill_intermediate));
         inOrder.verify(recorder).leave(eq(ant), same(anthill));
         inOrder.verify(recorder).enter(eq(ant), same(intermediate));

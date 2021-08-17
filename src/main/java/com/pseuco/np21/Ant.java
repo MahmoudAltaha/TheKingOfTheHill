@@ -226,18 +226,16 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     }// now the Clearing is not the Hill(when this is recursion round 2 or more) or maybe hill(first round or more) but has (for sure)some Trails.
     if (foundATrail) {
       Trail targetTrail = searchFood.getTargetTrail(position); // get The Trail
-      if (targetTrail.getOrUpdateFoodPheromone(false, null, false)
-          .isAPheromone()) {// select one reason
-
+      if (targetTrail.getOrUpdateFoodPheromone(false, null, false).isAPheromone()) {// select one reason
         recorder.select(this, targetTrail, this.candidatesList, SelectionReason.FOOD_SEARCH);
       } else {
-        if (this.startExplore == 0) {
+        if (!this.isAdventurer()) {
+          this.setAntTOAdventure();
           recorder.startExploration(this);
-          this.startExplore = 1;
-          this.startFoodSearch= true;
+          recorder.select(this, targetTrail, this.candidatesList, SelectionReason.EXPLORATION);
+        } else {
+          recorder.select(this, targetTrail, this.candidatesList, SelectionReason.EXPLORATION);
         }
-        this.setAntTOAdventure();
-        recorder.select(this, targetTrail, this.candidatesList, SelectionReason.EXPLORATION);
       }
       boolean success = targetTrail.enterTrail(position, this,
           EntryReason.FOOD_SEARCH);  // enter the Trail
@@ -320,15 +318,15 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       }
 
       recorder.startFoodSearch(this);
-      recorder.startExploration(this);
-      this.startExplore = 1;
+     // recorder.startExploration(this);
+     // this.startExplore = 1;
 
       while (world.isFoodLeft()) {
         forwardMoving(position);
-        this.startExplore = 0;
-        if (startFoodSearch) {
+
+        if (world.isFoodLeft()) {
           recorder.startFoodSearch(this);
-          startFoodSearch = false;
+
         }
 
       }

@@ -86,7 +86,7 @@ class SimpleNaPTest1 {
         inOrder.verify(recorder).leave(eq(ant), same(anthill_clearing_reverse));
         inOrder.verify(recorder).updateFood(eq(ant), same(anthill_clearing), eq(Pheromone.INFINITE));
 
-        inOrder.verify(recorder).select(eq(ant), same(anthill_food), eq(List.of(anthill_food)), same(Recorder.SelectionReason.EXPLORATION));
+        inOrder.verify(recorder).select(eq(ant), same(anthill_food), eq(List.of(anthill_food)), same(Recorder.SelectionReason.FOOD_SEARCH));
         inOrder.verify(recorder).enter(eq(ant), same(anthill_food));
         inOrder.verify(recorder).leave(eq(ant), same(anthill));
         inOrder.verify(recorder).enter(eq(ant), same(food));

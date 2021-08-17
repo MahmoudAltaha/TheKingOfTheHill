@@ -87,7 +87,7 @@ public class SingleAntFuzzingDies {
     inOrder.verify(recorder).spawn(eq(ant));
     inOrder.verify(recorder).enter(eq(ant), same(anthill));
     inOrder.verify(recorder).startFoodSearch(eq(ant));
-    inOrder.verify(recorder).startExploration(eq(ant));
+
 
     //Sets out into the world full of hopes and dreams
     inOrder.verify(recorder).select(eq(ant), same(deathTrap), eq(List.of(deathTrap)), same(SelectionReason.FOOD_SEARCH));

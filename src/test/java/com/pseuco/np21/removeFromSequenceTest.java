@@ -3,9 +3,7 @@ package com.pseuco.np21;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.withSettings;
-import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.*;
 
 import com.pseuco.np21.shared.Parser;
 import com.pseuco.np21.shared.Recorder;
@@ -228,6 +226,8 @@ class RemoveFromSequenceTest {
         inOrder.verify(recorder).stop();
 
         inOrder.verifyNoMoreInteractions();
+
+       // verifyNoMoreInteractions(recorder);
     }
 
     private void returnToSpawnFromThree(SelectionReason selectionReason, Boolean lastOne) {
