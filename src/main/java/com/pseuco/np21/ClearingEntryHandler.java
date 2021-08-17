@@ -17,11 +17,17 @@ public class ClearingEntryHandler {
                     int w = ant.getClearingSequence().size() - 1;
                     int value = Math.min(hillPheromone.value(), w);
                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
+                    t.reverse().getOrUpdateHillPheromone(true, newPheromone); // update the HIll-Pheromone.
+                    t.setShouldBeUpdated(true);
                 } else {
                     int w = ant.getClearingSequence().size() - 1;
                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(w);
+                    t.reverse().getOrUpdateHillPheromone(true, newPheromone); // update the HIll-Pheromone.
+                    t.setShouldBeUpdated(true);
                 }
-                t.reverse().getOrUpdateHillPheromone(true, newPheromone); // update the HIll-Pheromone.
+
+            } else {
+                t.setShouldBeUpdated(false);
             }
         }
 

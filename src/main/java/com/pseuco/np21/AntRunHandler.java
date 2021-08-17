@@ -79,7 +79,9 @@ public class AntRunHandler {
         if (enteredSuccess) {
             recorderStuffEnterClearingLeaveTrail(ourNextClearing,ourLastTrail);
             com.pseuco.np21.shared.Trail.Pheromone hillPheromone = ourLastTrail.reverse().getOrUpdateHillPheromone(false, null);
-            ant.getRecorder().updateAnthill(ant, ourLastTrail.reverse(), hillPheromone);
+            if(ourLastTrail.isShouldBeUpdated()) {
+                ant.getRecorder().updateAnthill(ant, ourLastTrail.reverse(), hillPheromone);
+            }
         } else {
             if (ant.isDied()) {
                 recorderStuffDeadDespawn(ourLastTrail);

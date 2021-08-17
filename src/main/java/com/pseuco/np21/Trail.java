@@ -28,12 +28,23 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
     private final TrailEntry trailEntry = new TrailEntry(this);;    // to handle the entering to this Trail in a concurrent way.
     public Lock lock =  new ReentrantLock();
 
+    public boolean isShouldBeUpdated() {
+        return shouldBeUpdated;
+    }
+
+    public void setShouldBeUpdated(boolean shouldBeUpdated) {
+        this.shouldBeUpdated = shouldBeUpdated;
+    }
+
+    private boolean shouldBeUpdated;
+
     private Trail(final Trail reverse) {
         super(reverse);
         this.selectionReason = 0;
         this.anthill = Pheromone.NOT_A_PHEROMONE;
         this.food = Pheromone.NOT_A_PHEROMONE;
         this.ants = 0;
+        this.shouldBeUpdated = false;
 
 
     }
