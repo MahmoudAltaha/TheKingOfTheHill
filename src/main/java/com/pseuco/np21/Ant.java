@@ -67,6 +67,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   public final SearchFoodPathCheck searchFood;
   public final AntRunHandler handler;
   private int startExplore;
+  private boolean startFoodSearch;
 
   public void setCandidatesList(List<Trail> candidatesList) {
     this.candidatesList = candidatesList;
@@ -100,6 +101,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     this.TrailSequence = new LinkedList<>();
     this.candidatesList = new LinkedList<>();
     this.startExplore = 0;
+    this.startFoodSearch= false;
   }
 
   /**
@@ -232,6 +234,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         if (this.startExplore == 0) {
           recorder.startExploration(this);
           this.startExplore = 1;
+          this.startFoodSearch= true;
         }
         this.setAntTOAdventure();
         recorder.select(this, targetTrail, this.candidatesList, SelectionReason.EXPLORATION);
@@ -323,8 +326,9 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       while (world.isFoodLeft()) {
         forwardMoving(position);
         this.startExplore = 0;
-        if (world.isFoodLeft()) {
+        if (startFoodSearch) {
           recorder.startFoodSearch(this);
+          startFoodSearch = false;
         }
 
       }
