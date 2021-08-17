@@ -44,9 +44,8 @@ public class TrailEntry {
      * @param c    The Clearing from which the Ant comes.
      * @param ant   the ant who want to enter this trail.
      * @return     true when the Ant has entered the Trail successfully.
-     * @throws InterruptedException InterruptedException
      */
-    public boolean enterTrailFoodSearch(Clearing c,Ant ant)throws InterruptedException {
+    public boolean enterTrailFoodSearch(Clearing c,Ant ant) {
         assert trail  != null ;
         TrailLock.lock();
         try{
@@ -54,7 +53,7 @@ public class TrailEntry {
                 isSpaceLeft.await();
                 c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if ( !ant.getWorld().isFoodLeft()) {
+                if ( !ant.getWorld().isFoodLeft() || Thread.currentThread().isInterrupted()) {
                     c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
@@ -92,9 +91,8 @@ public class TrailEntry {
      * @param c     The Clearing from which the Ant comes.
      * @param ant   the ant who want to enter this trail.
      * @return      true if the Ant has entered the Trail successfully
-     * @throws InterruptedException InterruptedException
      */
-    public boolean immediateReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
+    public boolean immediateReturnToTrail(Clearing c,Ant ant) {
         assert trail  != null ;
         TrailLock.lock();
         try{
@@ -103,7 +101,7 @@ public class TrailEntry {
 
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if ( !ant.getWorld().isFoodLeft() ) {
+                if ( !ant.getWorld().isFoodLeft()  || Thread.currentThread().isInterrupted()) {
                     c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
@@ -148,9 +146,8 @@ public class TrailEntry {
      * @param c     The Clearing from which the Ant comes.
      * @param ant   the ant who want to enter this trail.
      * @return      true if the Ant has entered the Trail successfully
-     * @throws InterruptedException InterruptedException
      */
-    public boolean noFoodReturnToTrail(Clearing c,Ant ant)throws InterruptedException {
+    public boolean noFoodReturnToTrail(Clearing c,Ant ant){
         assert trail  != null ;
         TrailLock.lock();
         try{
@@ -159,7 +156,7 @@ public class TrailEntry {
 
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if ( !ant.getWorld().isFoodLeft() ) {
+                if ( !ant.getWorld().isFoodLeft()  || Thread.currentThread().isInterrupted() ) {
                     c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
@@ -204,10 +201,9 @@ public class TrailEntry {
      * @param c The current Clearing
      * @param ant the ant who want to enter this Trail to go back Home.
      * @return true by successfully entering the trail.
-     * @throws InterruptedException InterruptedException
      */
 
-    public  boolean homewardEnterTrail(Clearing c, Ant ant) throws InterruptedException {
+    public  boolean homewardEnterTrail(Clearing c, Ant ant) {
         assert trail  != null ;
         TrailLock.lock();
         try{
@@ -216,7 +212,7 @@ public class TrailEntry {
 
             c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
             try {
-                if ( !ant.getWorld().isFoodLeft()) {
+                if ( !ant.getWorld().isFoodLeft()  || Thread.currentThread().isInterrupted()) {
                     c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                         c.getClearingEntry().isSpaceLeft.signalAll();
@@ -253,9 +249,8 @@ public class TrailEntry {
      * @param ant       the Ant
      * @param entryReason   the reason you have to enter this Trail.
      * @return      true if the entry was completed successfully.
-     * @throws InterruptedException InterruptedException
      */
-    public boolean enter (Clearing currentClearing,Ant ant,EntryReason entryReason) throws InterruptedException {
+    public boolean enter (Clearing currentClearing,Ant ant,EntryReason entryReason) {
         return switch (entryReason) {
             case FOOD_SEARCH -> this.enterTrailFoodSearch(currentClearing,ant);
             case IMMEDIATE_RETURN -> this.immediateReturnToTrail(currentClearing,ant);

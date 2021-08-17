@@ -49,9 +49,8 @@ public class ClearingEntry {
      * @param t   The Trail from which the Ant comes.
      * @param ant   The ant which want to enter this clearing .
      * @return    true if the Ant has entered the Clearing successfully, false when the ant died you
-     * @throws InterruptedException InterruptedException
      */
-    public boolean enterClearingFoodSearch(Trail t,Ant ant)throws InterruptedException {
+    public boolean enterClearingFoodSearch(Trail t,Ant ant){
         clearingLock.lock();  // take the Lock of this Clearing
         try {
             t.getTrailEntry().getTrailLook().lock();  // take the lock of the Trail you want to leave.
@@ -63,7 +62,7 @@ public class ClearingEntry {
                         ant.setDied(true);
                         return false;
                     }
-                if (!ant.getWorld().isFoodLeft()) {
+                if (!ant.getWorld().isFoodLeft() || Thread.currentThread().isInterrupted()) {
                     t.leave(); // leave the Trail.
                     t.getTrailEntry().isSpaceLeft.signalAll(); // signal all to the threads which are waiting  to enter the Trail we left
                     return false;
@@ -100,9 +99,8 @@ public class ClearingEntry {
      * @param t    The Trail from which the Ant comes.
      * @param ant    The Ant which want to enter to this clearing .
      * @return     true if the Ant has entered the Clearing successfully.
-     * @throws InterruptedException InterruptedException
      */
-    public boolean immediateReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
+    public boolean immediateReturnTOClearing(Trail t,Ant ant){
         clearingLock.lock();  // take the Lock of this Clearing
         try {
             t.getTrailEntry().getTrailLook().lock();  // take the lock of the Trail you want to leave.
@@ -115,7 +113,7 @@ public class ClearingEntry {
                         ant.setDied(true);
                         return false;
                     }
-                if ( ! ant.getWorld().isFoodLeft()) {
+                if ( ! ant.getWorld().isFoodLeft() || Thread.currentThread().isInterrupted()) {
                     t.leave();
                     t.getTrailEntry().isSpaceLeft.signalAll(); // signal all to the threads which are waiting  to enter the Trail we left
                    return false;
@@ -147,9 +145,8 @@ public class ClearingEntry {
      * @param t    The Trail from which the Ant comes.
      * @param ant    The Ant which want to enter to this clearing .
      * @return     true if the Ant has entered the Clearing successfully.
-     * @throws InterruptedException InterruptedException
      */
-    public boolean noFoodReturnTOClearing(Trail t,Ant ant)throws InterruptedException {
+    public boolean noFoodReturnTOClearing(Trail t,Ant ant) {
         clearingLock.lock();  // take the Lock of this Clearing
         try {
             t.getTrailEntry().getTrailLook().lock();  // take the lock of the Trail you want to leave.
@@ -196,7 +193,7 @@ public class ClearingEntry {
     public boolean pickUPFood(Ant ant)  {
         clearingLock.lock();
         try {
-            if (! ant.getWorld().isFoodLeft()) {
+            if (! ant.getWorld().isFoodLeft()  || Thread.currentThread().isInterrupted()) {
                 this.clearing.leave(); // if the thread noticed that he is interrupted then leave the clearing
                 isSpaceLeft.signalAll();
                return false;
@@ -219,7 +216,7 @@ public class ClearingEntry {
      * @param ant  the Ant
      * @return true if the Ant has entered the Clearing successfully.
      */
-    public boolean homewardEnterClearing(Trail t, Ant ant, boolean update) throws InterruptedException{
+    public boolean homewardEnterClearing(Trail t, Ant ant, boolean update) {
         clearingLock.lock();  // take the Lock of this Clearing
         try {
             t.getTrailEntry().getTrailLook().lock();  // take the lock of the Trail you want to leave.
@@ -231,7 +228,7 @@ public class ClearingEntry {
                         ant.setDied(true);
                         return false;
                     }
-                if ( ! ant.getWorld().isFoodLeft() ) {
+                if ( ! ant.getWorld().isFoodLeft()  || Thread.currentThread().isInterrupted()) {
                     t.leave();
                     t.getTrailEntry().isSpaceLeft.signalAll(); // signal all to the threads which are waiting  to enter the Trail we left
                     return false;
@@ -264,7 +261,7 @@ public class ClearingEntry {
     public boolean dropFood(Clearing c, Ant ant) {
         clearingLock.lock();
         try {
-            if (!ant.getWorld().isFoodLeft()) {
+            if (!ant.getWorld().isFoodLeft()  || Thread.currentThread().isInterrupted()) {
                 this.clearing.leave(); // if the thread noticed that he is interrupted then leave the Hill
                 return false;
             } else { //if the thread noticed that he is interrupted then he wont drop the food and should be dspawned.
@@ -287,9 +284,8 @@ public class ClearingEntry {
      * @param ant       the Ant
      * @param entryReason   the reason you have to enter this Clearing.
      * @return      true if the entry was completed successfully.
-     * @throws InterruptedException InterruptedException
      */
-    public boolean enter(Trail currentTrail,Ant ant,EntryReason entryReason) throws InterruptedException {
+    public boolean enter(Trail currentTrail,Ant ant,EntryReason entryReason) {
         return switch (entryReason) {
             case FOOD_SEARCH -> this.enterClearingFoodSearch(currentTrail, ant);
             case IMMEDIATE_RETURN -> this.immediateReturnTOClearing(currentTrail, ant);

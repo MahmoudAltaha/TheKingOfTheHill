@@ -113,9 +113,8 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
      * @param ant          the Ant
      * @param entryReason  the reason you have to enter this Clearing.
      * @return true if the entry was completed successfully.
-     * @throws InterruptedException InterruptedException
      */
-    public boolean enterClearing(Trail currentTrail, Ant ant, EntryReason entryReason) throws InterruptedException {
+    public boolean enterClearing(Trail currentTrail, Ant ant, EntryReason entryReason)  {
         //this assert make sure that we get the right Clearing and the right Trail from The Ant methodes(run for example)
         assert (currentTrail.to().id == this.id);
         return clearingEntry.enter(currentTrail, ant, entryReason);
