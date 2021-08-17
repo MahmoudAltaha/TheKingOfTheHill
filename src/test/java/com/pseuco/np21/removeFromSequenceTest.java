@@ -3,15 +3,18 @@ package com.pseuco.np21;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.withSettings;
 
+import com.pseuco.np21.shared.Ant;
 import com.pseuco.np21.shared.Parser;
 import com.pseuco.np21.shared.Recorder;
 import com.pseuco.np21.shared.Recorder.DespawnReason;
 import com.pseuco.np21.shared.Recorder.SelectionReason;
 import com.pseuco.np21.shared.Trail.Pheromone;
 import com.pseuco.np21.shared.World;
-import com.pseuco.np21.shared.Ant;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -125,6 +128,10 @@ class RemoveFromSequenceTest {
         // Erster Rückweg
         returnToSpawnFromThree(SelectionReason.RETURN_IN_SEQUENCE, false);
 
+        inOrder.verify(recorder).returnedFood(ant);
+        inOrder.verify(recorder).startFoodSearch(ant);
+
+
         // Hole letztes Futter von three
         inOrder.verify(recorder).select(ant, SpawnOne, List.of(SpawnOne), SelectionReason.FOOD_SEARCH);
         takeSingleTrail(SpawnOne);
@@ -147,6 +154,7 @@ class RemoveFromSequenceTest {
         returnToSpawnFromThree(SelectionReason.RETURN_FOOD, true);
 
         inOrder.verify(recorder).returnedFood(ant);
+        inOrder.verify(recorder).startFoodSearch(ant);
 
         // Suche erneut nach Futter
         inOrder.verify(recorder).select(ant, SpawnOne, List.of(SpawnOne), SelectionReason.FOOD_SEARCH);
@@ -195,16 +203,18 @@ class RemoveFromSequenceTest {
         inOrder.verify(recorder).updateFood(ant, SpawnOne, Pheromone.get(2));
 
         inOrder.verify(recorder).returnedFood(eq(ant));
+        inOrder.verify(recorder).startFoodSearch(eq(ant));
 
         // Gehe erneut zu four
 
-        inOrder.verify(recorder).startFoodSearch(eq(ant));
 
         inOrder.verify(recorder).select(eq(ant), same(SpawnOne), any(), eq(SelectionReason.FOOD_SEARCH));
         takeSingleTrail(SpawnOne);
+        inOrder.verify(recorder).updateAnthill(ant, SpawnOne.reverse(), Pheromone.get(1));
 
         inOrder.verify(recorder).select(eq(ant), same(OneFour), any(), eq(SelectionReason.FOOD_SEARCH));
         takeSingleTrail(OneFour);
+        inOrder.verify(recorder).updateAnthill(ant, OneFour.reverse(), Pheromone.get(2));
 
         // Hebe Futter auf
         inOrder.verify(recorder).pickupFood(ant, clearings.get("four"));
@@ -219,15 +229,12 @@ class RemoveFromSequenceTest {
 
         inOrder.verify(recorder).returnedFood(eq(ant));
 
-
         inOrder.verify(recorder).leave(ant, anthill);
         inOrder.verify(recorder).despawn(ant, DespawnReason.ENOUGH_FOOD_COLLECTED);
 
         inOrder.verify(recorder).stop();
 
-        inOrder.verifyNoMoreInteractions();
-
-       // verifyNoMoreInteractions(recorder);
+        verifyNoMoreInteractions(recorder);
     }
 
     private void returnToSpawnFromThree(SelectionReason selectionReason, Boolean lastOne) {
@@ -248,8 +255,6 @@ class RemoveFromSequenceTest {
         if (!lastOne) {
             inOrder.verify(recorder).updateFood(ant, SpawnOne, Pheromone.get(3));
         }
-        //new added
-        //inOrder.verify(recorder).returnedFood(eq(ant));
     }
 
     private void takeSingleTrail(Trail trail) {
