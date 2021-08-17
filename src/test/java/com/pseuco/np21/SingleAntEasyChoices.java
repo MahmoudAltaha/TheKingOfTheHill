@@ -94,8 +94,8 @@ public class SingleAntEasyChoices {
 
     }
 
-   // @RepeatedTest(5)
-    @Test
+    @RepeatedTest(5)
+  //  @Test
     void run() {
         simulator.run();
 

@@ -66,18 +66,13 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   public final HashMap<Integer, Trail> alreadyEnteredTrails; // here we add all trails we have taken.
   public final SearchFoodPathCheck searchFood;
   public final AntRunHandler handler;
-  private int startExplore;
-  private boolean startFoodSearch;
-
-  public void setCandidatesList(List<Trail> candidatesList) {
-    this.candidatesList = candidatesList;
-  }
-
-  public List<Trail> getCandidatesList() {
-    return candidatesList;
-  }
-
   private List<Trail> candidatesList;
+
+
+
+
+
+
 
   /**
    * Constructs an ant given a basic ant, the world and a recorder.
@@ -100,9 +95,17 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     this.adventurer = false;
     this.TrailSequence = new LinkedList<>();
     this.candidatesList = new LinkedList<>();
-    this.startExplore = 0;
-    this.startFoodSearch= false;
   }
+
+
+  public void setCandidatesList(List<Trail> candidatesList) {
+    this.candidatesList = candidatesList;
+  }
+
+  public List<Trail> getCandidatesList() {
+    return candidatesList;
+  }
+
 
   /**
    * check if the Ant holds food.
@@ -165,14 +168,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     clearingSequence.add(c);
   }
 
-  /**
-   * this methode is used to remove a Clearing from the sequence.
-   *
-   * @param c the Clearing to be removed.
-   */
-  public void removeClearingFromSequence(Clearing c) {
-    clearingSequence.remove(c);
-  }
 
   /**
    * this methode is used to check if the Clearing is already in the sequence.
@@ -325,7 +320,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       throw new InterruptedException();
 
     } catch (InterruptedException e) {
-      // e.printStackTrace();
+       e.printStackTrace();
     }
 
 

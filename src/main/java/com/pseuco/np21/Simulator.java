@@ -44,8 +44,10 @@ public class Simulator {
         final var ants = world.ants().stream()
                 .map(a -> new Ant(a, world, recorder))
                 .collect(Collectors.toList());
+
+
         this.recorder.start();
-        // TODO implement this
+
        for(Ant a: ants){
            a.run();
        }

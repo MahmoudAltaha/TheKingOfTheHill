@@ -116,8 +116,8 @@ class SingleAntNoFood {
         setFoodPheromone("C991", "C990", Pheromone.INFINITE);
     }
 
-    //@RepeatedTest(5)
-    @Test
+    @RepeatedTest(5)
+    //@Test
     void run() {
         simulator.run();
 
