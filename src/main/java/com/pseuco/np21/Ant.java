@@ -259,7 +259,8 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
             if (!world.isFoodLeft()) {
               recorder.leave(this, position);
               recorder.despawn(this, DespawnReason.TERMINATED);
-              Thread.currentThread().interrupt();/////////////////////////////
+              if(!Thread.currentThread().isInterrupted() ){
+                Thread.currentThread().interrupt();}///////////////////////////
               throw new InterruptedException();
             }
             forwardMoving(position);

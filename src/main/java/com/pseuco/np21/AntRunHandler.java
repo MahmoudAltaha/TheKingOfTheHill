@@ -248,7 +248,8 @@ public class AntRunHandler {
         if (!droppedSuccess){
             ant.getRecorder().leave(ant,position);
             ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
-            Thread.currentThread().interrupt();/////////////////////////////
+            if(!Thread.currentThread().isInterrupted() ){
+                Thread.currentThread().interrupt();}///////////////////////////
             throw new InterruptedException();
         }
         sequence.clear();
