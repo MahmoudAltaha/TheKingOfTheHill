@@ -248,6 +248,8 @@ class RemoveFromSequenceTest {
         if (!lastOne) {
             inOrder.verify(recorder).updateFood(ant, SpawnOne, Pheromone.get(3));
         }
+        //new added
+        //inOrder.verify(recorder).returnedFood(eq(ant));
     }
 
     private void takeSingleTrail(Trail trail) {
