@@ -241,7 +241,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     if (foundATrail) {
       Trail targetTrail = searchFood.getTargetTrail(position); // get The Trail
       if (targetTrail.getOrUpdateFoodPheromone(false, null, false).isAPheromone()) {// select one reason
-        this.setAntTONormalState();
+
         recorder.select(this, targetTrail, this.candidatesList, SelectionReason.FOOD_SEARCH);
       } else {
         this.setAntTOAdventure();
