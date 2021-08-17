@@ -103,7 +103,7 @@ public class AntRunHandler {
         SearchFoodPathCheck searchFood = ant.searchFood;
         Recorder recorder = ant.getRecorder();
         Trail targetTrail = searchFood.getTrailToStepBack(position, ourTrail); // get the reverse of ourTrail
-        recorder.select(ant, targetTrail, position.connectsTo(), Recorder.SelectionReason.IMMEDIATE_RETURN);
+        recorder.select(ant, targetTrail, ant.getCandidatesList(), Recorder.SelectionReason.IMMEDIATE_RETURN);
         boolean success =targetTrail.enterTrail(position, ant, EntryReason.IMMEDIATE_RETURN); // enter the trail
         EnterTrailRecorderStuff(position,targetTrail,success); // do the recorder stuff
         ourTrail = targetTrail; // update our Trail
@@ -140,7 +140,7 @@ public class AntRunHandler {
         List<Clearing> sequence = ant.getClearingSequence();
         // as long as we don't find a Clearing with undiscovered Trail we go with no Food Return.
         Trail targetTrail = searchFood.getTrailByNofoodReturn(position, ant);
-        recorder.select(ant, targetTrail, position.connectsTo(), Recorder.SelectionReason.NO_FOOD_RETURN);
+        recorder.select(ant, targetTrail, ant.getCandidatesList(), Recorder.SelectionReason.NO_FOOD_RETURN);
         boolean success = targetTrail.enterTrail(position, ant, EntryReason.NO_FOOD_RETURN);
         EnterTrailRecorderStuff(position,targetTrail,success); // do the recorder stuff
 
@@ -194,9 +194,9 @@ public class AntRunHandler {
             assert (sequence.size()>1);
             target = homeward.getTargetTrail(position);
             if(ant.isAdventurer() ){
-                ant.getRecorder().select(ant, target, position.connectsTo(), Recorder.SelectionReason.RETURN_IN_SEQUENCE);
+                ant.getRecorder().select(ant, target, ant.getCandidatesList(), Recorder.SelectionReason.RETURN_IN_SEQUENCE);
             } else {
-                ant.getRecorder().select(ant, target, position.connectsTo(), Recorder.SelectionReason.RETURN_FOOD);
+                ant.getRecorder().select(ant, target, ant.getCandidatesList(), Recorder.SelectionReason.RETURN_FOOD);
             }
             Clearing ourNextClearing = target.to();
             if (update){

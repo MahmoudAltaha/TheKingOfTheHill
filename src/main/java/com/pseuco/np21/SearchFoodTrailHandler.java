@@ -166,6 +166,7 @@ public class SearchFoodTrailHandler {
         if (allNaP){  // if so then pick a NaP Trail randomly .
             int index = random.nextInt(listWithoutMapAndTheTrailWeComeFromORAlreadyVisited.size());
             targetTrail = listWithoutMapAndTheTrailWeComeFromORAlreadyVisited.get(index);
+            ant.setCandidatesList(listWithoutMapAndTheTrailWeComeFromORAlreadyVisited);/////////////////////////
         }
         else {  // the trailList has Trails with non Nap-foodPheromone. it may also have Trails with Nap-ph tho.
             List<Trail> trailsListNonNap = new ArrayList<>(); // list with Trails which has non Nap-Food-ph.
@@ -191,10 +192,11 @@ public class SearchFoodTrailHandler {
                 int randomNapIndex = random.nextInt(trailsListWithJustNap.size());
 
                 targetTrail = trailsListWithJustNap.get(randomNapIndex);
-
+                ant.setCandidatesList(trailsListWithJustNap);
             } else{
                 targetTrail = suggestedTrail; /* otherwise take that randomly picked Trail with NonNap-food-pheromone
                 as a target Trail */
+                ant.setCandidatesList(minTrails);
             }
         }
         return targetTrail;

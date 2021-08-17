@@ -27,6 +27,7 @@ public class HomeWardPathCheck {
         List<Clearing> sequence =ant.getClearingSequence();  // the sequence
         assert (sequence.size() > 1);
         List<Trail> connectedTrails = currentClearing.connectsTo(); // the out Trails from the Current Clearing
+        List<Trail> candidates = new ArrayList<>();
         if (ant.isAdventurer()){ // check if the Ant is an Adventurer.
             int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
             for (Clearing clearing : sequence) {     // by looping the sequence
@@ -40,6 +41,8 @@ public class HomeWardPathCheck {
             //now return the Trail which leads to the Clearing which is Ordered in the sequence -->
             for (Trail target : connectedTrails) {    //--> exactly one index behind the CurrentClearing
                 if (target.to().id() == sequence.get(currentClearingNumberFromTheSequence - 1).id()) {
+                    candidates.add(target);
+                    ant.setCandidatesList(candidates);
                     return target;
                 }
             }
@@ -61,7 +64,7 @@ public class HomeWardPathCheck {
 
         int randomIndex = random.nextInt(minTrails.size());//get random number
         Trail targetTrail =  minTrails.get(randomIndex);
-
+        ant.setCandidatesList(minTrails);
         return  targetTrail  ;// now return a random Trails which has min-antHill-Pheromone.
 
     }

@@ -67,6 +67,16 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   public final SearchFoodPathCheck searchFood ;
   public final AntRunHandler handler ;
 
+  public void setCandidatesList(List<Trail> candidatesList) {
+    this.candidatesList = candidatesList;
+  }
+
+  public List<Trail> getCandidatesList() {
+    return candidatesList;
+  }
+
+  private List<Trail> candidatesList;
+
   /**
    * Constructs an ant given a basic ant, the world and a recorder.
    *
@@ -87,6 +97,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     this.holdFood = false;
     this.adventurer = false;
     this.TrailSequence = new LinkedList<>();
+    this.candidatesList = new LinkedList<>();
   }
 
   /**
@@ -231,10 +242,10 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       Trail targetTrail = searchFood.getTargetTrail(position); // get The Trail
       if (targetTrail.getOrUpdateFoodPheromone(false, null, false).isAPheromone()) {// select one reason
         this.setAntTONormalState();
-        recorder.select(this, targetTrail, position.connectsTo(), SelectionReason.FOOD_SEARCH);
+        recorder.select(this, targetTrail, this.candidatesList, SelectionReason.FOOD_SEARCH);
       } else {
         this.setAntTOAdventure();
-        recorder.select(this,targetTrail,position.connectsTo(),SelectionReason.EXPLORATION);
+        recorder.select(this,targetTrail,this.candidatesList,SelectionReason.EXPLORATION);
       }
       boolean success = targetTrail.enterTrail(position, this, EntryReason.FOOD_SEARCH);  // enter the Trail
       handler.EnterTrailRecorderStuff(position,targetTrail,success);
