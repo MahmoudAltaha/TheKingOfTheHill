@@ -80,7 +80,6 @@ public class ClearingEntry {
         }
         catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             t.leave();
-            t.getTrailEntry().getIsSpaceLeft().signalAll();// signalAll that you left the Trail .
             return false;
         }
         finally{
@@ -125,7 +124,6 @@ public class ClearingEntry {
         }
         catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             t.leave();
-            t.getTrailEntry().getIsSpaceLeft().signalAll();// signalAll that you left the Trail .
             return false;
         }
         finally{
@@ -172,7 +170,6 @@ public class ClearingEntry {
         }
         catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             t.leave();
-            t.getTrailEntry().getIsSpaceLeft().signalAll();// signalAll that you left the Trail .
             return false;
         }
         finally{
@@ -240,7 +237,6 @@ public class ClearingEntry {
             }
         } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             t.leave();
-            t.getTrailEntry().getIsSpaceLeft().signalAll();// signalAll that you left the Trail .
             return false;
         }
         finally {

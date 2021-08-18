@@ -70,9 +70,7 @@ public class TrailEntry {
         }
         catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
-            if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                c.getClearingEntry().getIsSpaceLeft().signalAll();
-            } return false;
+             return false;
         }
         finally {
             this.TrailLock.unlock();
@@ -124,9 +122,6 @@ public class TrailEntry {
             ant.getAlreadyEnteredTrails().put(this.trail.id(),this.trail);
         } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
-            if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                c.getClearingEntry().getIsSpaceLeft().signalAll();
-            }
             return  false;
         }
         finally {
@@ -178,9 +173,7 @@ public class TrailEntry {
             }
          } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
-            if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                c.getClearingEntry().getIsSpaceLeft().signalAll();
-            } return false;
+             return false;
         }
         finally {
             this.TrailLock.unlock();
@@ -225,10 +218,9 @@ public class TrailEntry {
             }
         } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
-            if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                c.getClearingEntry().getIsSpaceLeft().signalAll();
-            } return false;
-        }  finally {
+             return false;
+        }
+        finally {
             this.TrailLock.unlock();
         }
         return true;

@@ -40,21 +40,37 @@ public class Simulator {
      * <p>
      * You may change this except for the signature.
      */
-    public void run() {
+    public void run()  {
         final var ants = world.ants().stream()
                 .map(a -> new Ant(a, world, recorder))
                 .collect(Collectors.toList());
+ /*for(Ant a: ants){
+            a.run();
+        }*/
 
 
-        this.recorder.start();
+            Thread[] all = new Thread[ants.size()];
 
-       for(Ant a: ants){
-           a.run();
-       }
+            for (int i = 0; i < ants.size(); i++) {
+                all[i] = new Thread(ants.get(i));
+            }
+                this.recorder.start();
 
+            for (int i = 0; i < ants.size(); i++) {
+                all[i].start();
+            }
 
-       this.recorder.stop();
-
+            for (int i = 0; i < ants.size(); i++) {
+                try {
+                all[i].join();
+            }
+                catch (InterruptedException e) {
+                    for (int k = 0; k < ants.size(); k++) {
+                        all[k].interrupt();
+                    }
+            }
+        }
+            recorder.stop();
 
     }
 
