@@ -211,6 +211,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
               throw new InterruptedException();
             } if(Thread.currentThread().isInterrupted()) {
               recorder.despawn(this, Recorder.DespawnReason.TERMINATED);
+              Thread.currentThread().interrupt();
               throw new InterruptedException();
             }
             forwardMoving(position);
@@ -253,16 +254,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       position = world.anthill();
 
       recorder.spawn(this);
-      /*
-     if (!world.isFoodLeft()){
-        recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
-        throw new InterruptedException();
-      }
-      if (Thread.currentThread().isInterrupted()){
-        recorder.despawn(this, DespawnReason.TERMINATED);
-        throw new InterruptedException();
-      }*/
-
 
       recorder.enter(this, position);
 

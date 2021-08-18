@@ -68,6 +68,7 @@ public class AntRunHandler {
             } else {
                 ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
             }
+            Thread.currentThread().interrupt();
             throw new InterruptedException();
         }
     }
@@ -93,6 +94,7 @@ public class AntRunHandler {
             } else {
                 recorderStuffTerminateNowOnLastTrail(ourLastTrail);
             }
+            Thread.currentThread().interrupt();
             throw new InterruptedException();
         }
     }
@@ -123,6 +125,7 @@ public class AntRunHandler {
             } else {
                 recorderStuffTerminateNowOnLastTrail(ourTrail);
             }
+            Thread.currentThread().interrupt();
             throw new InterruptedException();
         }
         position = ourNextClearing; // update the Ant Position(current Clearing);
@@ -157,6 +160,7 @@ public class AntRunHandler {
             } else {
                 recorderStuffTerminateNowOnLastTrail(ourTrail);
             }
+            Thread.currentThread().interrupt();
             throw new InterruptedException();
         }
         position = ourNextClearing;
@@ -177,6 +181,7 @@ public class AntRunHandler {
         } else {
             ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
         }
+        Thread.currentThread().interrupt();
         throw new InterruptedException();
     }
 
@@ -216,6 +221,7 @@ public class AntRunHandler {
                     } else {
                         recorderStuffTerminateNowOnLastTrail(ourLastTrail);
                     }
+                    Thread.currentThread().interrupt();
                     throw new InterruptedException();
                 }
             }else {  // Update == False --> no Food any more on that Clearing so don't update.
@@ -231,6 +237,7 @@ public class AntRunHandler {
                     } else {
                         recorderStuffTerminateNowOnLastTrail(ourLastTrail);
                     }
+                    Thread.currentThread().interrupt();
                     throw new InterruptedException();
                 }
             }
@@ -244,6 +251,7 @@ public class AntRunHandler {
             } else {
                 ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
             }
+            Thread.currentThread().interrupt();
             throw new InterruptedException();
         }
         // clear all information

@@ -70,7 +70,7 @@ public class Simulator {
                     }
             }
         }
-            recorder.stop();
+        recorder.stop();
 
     }
 
