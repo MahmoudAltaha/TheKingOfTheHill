@@ -42,7 +42,11 @@ public class AntRunHandler {
      */
     private void recorderStuffTerminateNowOnLastTrail(Trail trail){
         ant.getRecorder().leave(ant, trail);
-        ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+        if(! ant.getWorld().isFoodLeft()) {
+            ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
+        } else {
+            ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+        }
     }
 
     /**
@@ -59,7 +63,11 @@ public class AntRunHandler {
             ant.getRecorder().leave(ant,currentClearing);
         }else {
             ant.getRecorder().leave(ant,currentClearing);
-            ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+            if(! ant.getWorld().isFoodLeft()) {
+                ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
+            } else {
+                ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+            }
             throw new InterruptedException();
         }
     }
@@ -164,7 +172,11 @@ public class AntRunHandler {
     public void leaveAndInterruptAtHill( Clearing position) throws InterruptedException {
         position.leave();
         ant.getRecorder().leave(ant, position);
-        ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+        if(! ant.getWorld().isFoodLeft()) {
+            ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
+        } else {
+            ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+        }
         throw new InterruptedException();
     }
 
@@ -227,7 +239,11 @@ public class AntRunHandler {
         boolean droppedSuccess =position.dropFood(position, ant); // try to drop the food in the Hill
         if (!droppedSuccess){
             ant.getRecorder().leave(ant,position);
-            ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+            if(! ant.getWorld().isFoodLeft()) {
+                ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
+            } else {
+                ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+            }
             throw new InterruptedException();
         }
         // clear all information

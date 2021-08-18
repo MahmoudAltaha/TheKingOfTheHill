@@ -205,7 +205,14 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
               handler.homewardMoving(false, position, getClearingSequence()); // start homeward and update Food pheromone.
               return;
             }
-          } else { // the Clearing has no food  so continue try to get new Trail and search for Food (do the same above --> recursion)
+          }else{// the Clearing has no food  so continue try to get new Trail and search for Food (do the same above --> recursion)
+            if(! world.isFoodLeft()) {
+              recorder.despawn(this, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
+              throw new InterruptedException();
+            } if(Thread.currentThread().isInterrupted()) {
+              recorder.despawn(this, Recorder.DespawnReason.TERMINATED);
+              throw new InterruptedException();
+            }
             forwardMoving(position);
           }
         }

@@ -52,6 +52,7 @@ public class Simulator {
            a.run();
        }
 
+
        this.recorder.stop();
 
 
