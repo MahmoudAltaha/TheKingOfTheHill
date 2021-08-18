@@ -16,7 +16,6 @@ public class AntRunHandler {
         this.ant = ant;
     }
 
-
     /**
      * this methode used (in this Class) to send the EnterClearing/LeaveTrail  Recorder Signals by all kind of Moves.
      * @param ourNextClearing  the Clearing we want to enter.
@@ -32,7 +31,7 @@ public class AntRunHandler {
      * @param ourLastTrail the Trail where the Ant died.
      */
     private  void recorderStuffDeadDespawn(Trail ourLastTrail){
-        ant.getRecorder().attractAttention(ant); // added new
+        ant.getRecorder().attractAttention(ant);
         ant.getRecorder().leave(ant, ourLastTrail);
         ant.getRecorder().despawn(ant, Recorder.DespawnReason.DISCOVERED_AND_EATEN);
     }
@@ -45,7 +44,6 @@ public class AntRunHandler {
         ant.getRecorder().leave(ant, trail);
         ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
     }
-
 
     /**
      * this methode sends recorder signals when the ant want to enter a Trail
@@ -62,7 +60,6 @@ public class AntRunHandler {
         }else {
             ant.getRecorder().leave(ant,currentClearing);
             ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
-
             throw new InterruptedException();
         }
     }
@@ -137,17 +134,13 @@ public class AntRunHandler {
     public Clearing GoBackByNoFoodReturn(SearchFoodPathCheck searchFood, Clearing currentPosition) throws InterruptedException {
         Clearing position = currentPosition;
         Recorder recorder = ant.getRecorder();
-        World<Clearing, Trail> world = ant.getWorld();
-        List<Clearing> sequence = ant.getClearingSequence();
-        // as long as we don't find a Clearing with undiscovered Trail we go with no Food Return.
-        Trail targetTrail = searchFood.getTrailByNofoodReturn(position, ant);
+        Trail targetTrail = searchFood.getTrailByNofoodReturn(position, ant); // get the target Trail
         recorder.select(ant, targetTrail, ant.getCandidatesList(), Recorder.SelectionReason.NO_FOOD_RETURN);
-        boolean success = targetTrail.enterTrail(position, ant, EntryReason.NO_FOOD_RETURN);
-        EnterTrailRecorderStuff(position,targetTrail,success); // do the recorder stuff
-
+        boolean success = targetTrail.enterTrail(position, ant, EntryReason.NO_FOOD_RETURN); // enter the Trail
+        EnterTrailRecorderStuff(position,targetTrail,success); // do the recorder stuff Or terminate if success = false.
         Trail ourTrail = targetTrail;
         Clearing ourNextClearing = targetTrail.to();
-        boolean enterSuccess = ourNextClearing.enterClearing(ourTrail, ant, EntryReason.NO_FOOD_RETURN);
+        boolean enterSuccess = ourNextClearing.enterClearing(ourTrail, ant, EntryReason.NO_FOOD_RETURN);// enter Clearing
         if (enterSuccess) {
             recorderStuffEnterClearingLeaveTrail(ourNextClearing,ourTrail);
             com.pseuco.np21.shared.Trail.Pheromone foodPheromone = ourTrail.reverse().getOrUpdateFoodPheromone(false, null, false);
@@ -158,7 +151,6 @@ public class AntRunHandler {
             } else {
                 recorderStuffTerminateNowOnLastTrail(ourTrail);
             }
-
             throw new InterruptedException();
         }
         position = ourNextClearing;
@@ -175,35 +167,34 @@ public class AntRunHandler {
         position.leave();
         ant.getRecorder().leave(ant, position);
         ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
-
         throw new InterruptedException();
     }
 
     /**
      *  this methode handle the way home including recorder stuff.
-     * @param update
-     * @param currentPosition
-     * @param sequence
-     * @throws InterruptedException
+     * @param update false if the Ant took the last piece of Food from the Clearing
+     * @param currentPosition the Clearing where the Ant has picked up the food
+     * @param sequence the Clearing Sequence
+     * @throws InterruptedException when the Ant should terminate.
      */
     public void homewardMoving ( boolean update, Clearing currentPosition,List<Clearing> sequence) throws InterruptedException {
         World<Clearing, Trail> world = ant.getWorld();
         Clearing position = currentPosition;
         HomeWardPathCheck homeward = new HomeWardPathCheck(ant);
         Trail target;
-        while (position.id() != world.anthill().id()) {
+        while (position.id() != world.anthill().id()) { // do the Following till the Ant reaches the Hill.
             assert (sequence.size()>1);
-            target = homeward.getTargetTrail(position);
+            target = homeward.getTargetTrail(position); // get the Trail to take.
             if(ant.isAdventurer() ){
                 ant.getRecorder().select(ant, target, ant.getCandidatesList(), Recorder.SelectionReason.RETURN_IN_SEQUENCE);
             } else {
                 ant.getRecorder().select(ant, target, ant.getCandidatesList(), Recorder.SelectionReason.RETURN_FOOD);
             }
             Clearing ourNextClearing = target.to();
-            if (update){
-                boolean success = target.enterTrail(position, ant, EntryReason.HEADING_BACK_HOME_WITH_UPDATING);
-                EnterTrailRecorderStuff(position,target,success); // do the recorder stuff
-                Trail ourLastTrail = target;
+            boolean success = target.enterTrail(position, ant, EntryReason.HEADING_BACK_HOME_WITH_UPDATING);// enter the Trail
+            EnterTrailRecorderStuff(position,target,success); // do the recorder stuff
+            Trail ourLastTrail = target;
+            if (update){  // update == true --> we update pheromones because there still some food on the Clearing.
                 boolean enterSuccess = ourNextClearing.enterClearing(target, ant, EntryReason.HEADING_BACK_HOME_WITH_UPDATING);
                 if (enterSuccess) {
                     recorderStuffEnterClearingLeaveTrail(ourNextClearing,target);
@@ -215,13 +206,9 @@ public class AntRunHandler {
                     } else {
                         recorderStuffTerminateNowOnLastTrail(ourLastTrail);
                     }
-
                     throw new InterruptedException();
                 }
-            }else {
-                boolean success =target.enterTrail(position, ant, EntryReason.HEADING_BACK_HOME_WITHOUT_UPDATING);
-                EnterTrailRecorderStuff(position,target,success); // do the recorder stuff
-                Trail ourLastTrail = target;
+            }else {  // Update == False --> no Food any more on that Clearing so don't update.
                 boolean enterSuccess =ourNextClearing.enterClearing(target, ant, EntryReason.HEADING_BACK_HOME_WITHOUT_UPDATING);
                 if (enterSuccess) {
                     recorderStuffEnterClearingLeaveTrail(ourNextClearing,target);
@@ -231,19 +218,18 @@ public class AntRunHandler {
                     } else {
                         recorderStuffTerminateNowOnLastTrail(ourLastTrail);
                     }
-
                     throw new InterruptedException();
                 }
             }
             position = target.to();
         }
-        boolean droppedSuccess =position.dropFood(position, ant);
+        boolean droppedSuccess =position.dropFood(position, ant); // try to drop the food in the Hill
         if (!droppedSuccess){
             ant.getRecorder().leave(ant,position);
             ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
-
             throw new InterruptedException();
         }
+        // clear all information
         sequence.clear();
         ant.TrailsToVisitedClearings.clear();
         ant.TrailSequence.clear();
@@ -252,5 +238,4 @@ public class AntRunHandler {
         ant.getRecorder().returnedFood(ant);
         ant.addClearingToSequence(position);  // adding the antHill to the sequence
     }
-
 }
