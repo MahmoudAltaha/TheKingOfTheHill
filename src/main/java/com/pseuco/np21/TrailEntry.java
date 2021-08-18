@@ -16,10 +16,8 @@ public class TrailEntry {
 
 
     private final Trail trail ;
-
-    public Lock TrailLock = new ReentrantLock();
-
-    public Condition isSpaceLeft= TrailLock.newCondition();
+    private Lock TrailLock = new ReentrantLock();
+    private Condition isSpaceLeft= TrailLock.newCondition();
 
     /**
      * construct a TrailEntry.
@@ -29,11 +27,10 @@ public class TrailEntry {
         this.trail = trail;
     }
 
-
-
     public Lock getTrailLook(){
         return TrailLock;
     }
+    public Condition getIsSpaceLeft() { return isSpaceLeft; }
 
 
     /**
@@ -73,7 +70,7 @@ public class TrailEntry {
             }
             com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFoodPheromone(false,null,false);
         }
-        catch (InterruptedException e){
+        catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
             if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                 c.getClearingEntry().isSpaceLeft.signalAll();
@@ -127,7 +124,7 @@ public class TrailEntry {
             assert ant.TrailSequence.size()<sizeTrailSequence;
 
             ant.alreadyEnteredTrails.put(trail.id(),trail);
-        } catch (InterruptedException e){
+        } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
             if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                 c.getClearingEntry().isSpaceLeft.signalAll();
@@ -181,7 +178,7 @@ public class TrailEntry {
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
             }
-         } catch (InterruptedException e){
+         } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
             if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                 c.getClearingEntry().isSpaceLeft.signalAll();
@@ -228,7 +225,7 @@ public class TrailEntry {
             } finally {
                 c.getClearingEntry().clearingLock.unlock();
             }
-        } catch (InterruptedException e){
+        } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
             if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
                 c.getClearingEntry().isSpaceLeft.signalAll();
