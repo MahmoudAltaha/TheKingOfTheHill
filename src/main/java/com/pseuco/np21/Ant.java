@@ -245,6 +245,12 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     try {
       position = world.anthill();
       recorder.spawn(this);
+
+    /*  if (!world.isFoodLeft()){
+        recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
+        throw new InterruptedException();
+      } */
+
       recorder.enter(this, position);
 
       this.addClearingToSequence(position);  // adding the antHill to the sequence
