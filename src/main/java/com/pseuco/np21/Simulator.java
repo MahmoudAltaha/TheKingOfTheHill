@@ -40,7 +40,7 @@ public class Simulator {
      * <p>
      * You may change this except for the signature.
      */
-    public void run()  {
+    public void run() {
         final var ants = world.ants().stream()
                 .map(a -> new Ant(a, world, recorder))
                 .collect(Collectors.toList());
@@ -61,17 +61,15 @@ public class Simulator {
             }
 
             for (int i = 0; i < ants.size(); i++) {
+
                 try {
-                all[i].join();
+                    all[i].join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-                catch (InterruptedException e) {
-                    for (int k = 0; k < ants.size(); k++) {
-                        all[k].interrupt();
-                    }
-            }
-        }
-            Thread.currentThread().interrupt();
         recorder.stop();
+        Thread.currentThread().interrupt();
 
     }
 
