@@ -71,7 +71,7 @@ public class ClearingEntry {
                     t.leave();
                     t.getTrailEntry().getIsSpaceLeft().signalAll(); // signal all to the threads which are waiting  to enter the Trail we left
                     if (ant.getClearingSequence().contains(this.clearing)){
-                        ant.TrailsToVisitedClearings.put(t.id(),t);
+                        ant.getTrailsToVisitedClearings().put(t.id(),t);
                     }
                     ant.addClearingToSequence(this.clearing);
                 }

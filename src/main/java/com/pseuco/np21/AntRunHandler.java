@@ -231,10 +231,10 @@ public class AntRunHandler {
         }
         // clear all information
         sequence.clear();
-        ant.TrailsToVisitedClearings.clear();
-        ant.TrailSequence.clear();
+        ant.getTrailsToVisitedClearings().clear();
+        ant.getTrailSequence().clear();
         ant.setAntTONormalState();
-        ant.alreadyEnteredTrails.clear();
+        ant.getAlreadyEnteredTrails().clear();
         ant.getRecorder().returnedFood(ant);
         ant.addClearingToSequence(position);  // adding the antHill to the sequence
     }

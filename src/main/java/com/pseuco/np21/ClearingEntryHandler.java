@@ -11,7 +11,7 @@ public class ClearingEntryHandler {
             com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.reverse().getOrUpdateHillPheromone(false, null);
             com.pseuco.np21.shared.Trail.Pheromone newPheromone;
             // if the  Clearing was not twice in the sequence then update Hill-Pheromone. (no special cases)
-            if (!ant.TrailsToVisitedClearings.containsKey(t.id())) { // if this Trail took the Ant to an Already visited Trail , don't update
+            if (!ant.getTrailsToVisitedClearings().containsKey(t.id())) { // if this Trail took the Ant to an Already visited Trail , don't update
                 // get the new Hill_Pheromone value
                 if (hillPheromone.isAPheromone()) {
                     int w = ant.getClearingSequence().size() - 1;
