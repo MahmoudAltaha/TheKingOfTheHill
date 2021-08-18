@@ -1,8 +1,6 @@
 package com.pseuco.np21;
 
 
-import com.pseuco.np21.shared.Recorder.DespawnReason;
-
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -16,8 +14,8 @@ public class TrailEntry {
 
 
     private final Trail trail ;
-    private Lock TrailLock = new ReentrantLock();
-    private Condition isSpaceLeft= TrailLock.newCondition();
+    private final Lock TrailLock = new ReentrantLock();
+    private final Condition isSpaceLeft= TrailLock.newCondition();
 
     /**
      * construct a TrailEntry.
@@ -44,40 +42,40 @@ public class TrailEntry {
      */
     public boolean enterTrailFoodSearch(Clearing c,Ant ant) {
         assert trail  != null ;
-        TrailLock.lock();
+        this.TrailLock.lock();
         try{
-            while (!trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
-                isSpaceLeft.await();
-                c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
+            while (!this.trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
+                this.isSpaceLeft.await();
+                c.getClearingEntry().getClearingLock().lock(); // take the lock of the Clearing to send Signal
             try {
                 if ( !ant.getWorld().isFoodLeft() || Thread.currentThread().isInterrupted()) {
                     c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                        c.getClearingEntry().isSpaceLeft.signalAll();
+                        c.getClearingEntry().getIsSpaceLeft().signalAll();
                     }
                    return false;
                 } else{
-                    trail.enter();
+                    this.trail.enter();
                     c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                        c.getClearingEntry().isSpaceLeft.signalAll();
+                        c.getClearingEntry().getIsSpaceLeft().signalAll();
                     }
-                    ant.TrailSequence.add(trail); // the TrailsPath with FoodSearch Entering
-                    ant.alreadyEnteredTrails.put(trail.id(),trail);
+                    ant.getTrailSequence().add(this.trail); // the TrailsPath with FoodSearch Entering
+                    ant.getAlreadyEnteredTrails().put(this.trail.id(),this.trail);
                 }
             } finally {
-                c.getClearingEntry().clearingLock.unlock();
+                c.getClearingEntry().getClearingLock().unlock();
             }
-            com.pseuco.np21.shared.Trail.Pheromone p = trail.getOrUpdateFoodPheromone(false,null,false);
+             this.trail.getOrUpdateFoodPheromone(false,null,false);
         }
         catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
             if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                c.getClearingEntry().isSpaceLeft.signalAll();
+                c.getClearingEntry().getIsSpaceLeft().signalAll();
             } return false;
         }
         finally {
-            TrailLock.unlock();
+            this.TrailLock.unlock();
         }
         return true;
     }
@@ -91,48 +89,48 @@ public class TrailEntry {
      */
     public boolean immediateReturnToTrail(Clearing c,Ant ant) {
         assert trail  != null ;
-        TrailLock.lock();
+        this.TrailLock.lock();
         try{
-            while (!trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
-                isSpaceLeft.await();
+            while (! this.trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
+                this.isSpaceLeft.await();
 
-            c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
+            c.getClearingEntry().getClearingLock().lock(); // take the lock of the Clearing to send Signal
             try {
                 if ( !ant.getWorld().isFoodLeft()  || Thread.currentThread().isInterrupted()) {
                     c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                        c.getClearingEntry().isSpaceLeft.signalAll();
+                        c.getClearingEntry().getIsSpaceLeft().signalAll();
                     }
                     return false;
                 } else{
-                    trail.enter();
+                    this.trail.enter();
                     c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                        c.getClearingEntry().isSpaceLeft.signalAll();
+                        c.getClearingEntry().getIsSpaceLeft().signalAll();
                     }
                 }
             } finally {
-                c.getClearingEntry().clearingLock.unlock();
+                c.getClearingEntry().getClearingLock().unlock();
             }
             // remove this wrong Clearing from the sequence.
             int sizeClearingSequence = ant.getClearingSequence().size();
             Clearing removedClearing = ant.getClearingSequence().remove(sizeClearingSequence-1);
             assert ant.getClearingSequence().size()< sizeClearingSequence;
 
-            int sizeTrailSequence = ant.TrailSequence.size();
-            Trail removedTrail = ant.TrailSequence.remove(sizeTrailSequence-1);
-            assert ant.TrailSequence.size()<sizeTrailSequence;
+            int sizeTrailSequence = ant.getTrailSequence().size();
+            ant.getTrailSequence().remove(sizeTrailSequence-1);
+            assert ant.getTrailSequence().size()<sizeTrailSequence;
 
-            ant.alreadyEnteredTrails.put(trail.id(),trail);
+            ant.getAlreadyEnteredTrails().put(this.trail.id(),this.trail);
         } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
             if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                c.getClearingEntry().isSpaceLeft.signalAll();
+                c.getClearingEntry().getIsSpaceLeft().signalAll();
             }
             return  false;
         }
         finally {
-            TrailLock.unlock();
+            this.TrailLock.unlock();
         }
         return true;
     }
@@ -145,47 +143,47 @@ public class TrailEntry {
      * @return      true if the Ant has entered the Trail successfully
      */
     public boolean noFoodReturnToTrail(Clearing c,Ant ant){
-        assert trail  != null ;
-        TrailLock.lock();
-        try{
-            while (!trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
-                isSpaceLeft.await();
 
-            c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
+        this.TrailLock.lock();
+        try{
+            while (! this.trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
+                this.isSpaceLeft.await();
+
+            c.getClearingEntry().getClearingLock().lock(); // take the lock of the Clearing to send Signal
             try {
                 if ( !ant.getWorld().isFoodLeft()  || Thread.currentThread().isInterrupted() ) {
                     c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                        c.getClearingEntry().isSpaceLeft.signalAll();
+                        c.getClearingEntry().getIsSpaceLeft().signalAll();
                     }
                     return false;
                 } else{
-                    trail.enter();;
+                    this.trail.enter();;
                     c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                        c.getClearingEntry().isSpaceLeft.signalAll();
+                        c.getClearingEntry().getIsSpaceLeft().signalAll();
                     }
                     int sizeClearingSequence = ant.getClearingSequence().size();
                     Clearing removedClearing = ant.getClearingSequence().remove(sizeClearingSequence-1);
                     assert ant.getClearingSequence().size()< sizeClearingSequence;
 
-                    int sizeTrailSequence = ant.TrailSequence.size();
-                    Trail removedTrail = ant.TrailSequence.remove(sizeTrailSequence-1);
-                    assert ant.TrailSequence.size()<sizeTrailSequence;
+                    int sizeTrailSequence = ant.getTrailSequence().size();
+                    ant.getTrailSequence().remove(sizeTrailSequence-1);
+                    assert ant.getTrailSequence().size()<sizeTrailSequence;
 
-                    ant.alreadyEnteredTrails.put(trail.id(),trail);
+                    ant.getAlreadyEnteredTrails().put(this.trail.id(),this.trail);
                 }
             } finally {
-                c.getClearingEntry().clearingLock.unlock();
+                c.getClearingEntry().getClearingLock().unlock();
             }
          } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
             if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                c.getClearingEntry().isSpaceLeft.signalAll();
+                c.getClearingEntry().getIsSpaceLeft().signalAll();
             } return false;
         }
         finally {
-            TrailLock.unlock();
+            this.TrailLock.unlock();
         }
         return true;
     }
@@ -202,36 +200,36 @@ public class TrailEntry {
 
     public  boolean homewardEnterTrail(Clearing c, Ant ant) {
         assert trail  != null ;
-        TrailLock.lock();
+        this.TrailLock.lock();
         try{
-            while (!trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
-                isSpaceLeft.await();
+            while (!this.trail.isSpaceLeft())// if the Trail is not available , the Ant should wait.
+                this.isSpaceLeft.await();
 
-            c.getClearingEntry().clearingLock.lock(); // take the lock of the Clearing to send Signal
+            c.getClearingEntry().getClearingLock().lock(); // take the lock of the Clearing to send Signal
             try {
                 if ( !ant.getWorld().isFoodLeft()  || Thread.currentThread().isInterrupted()) {
                     c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                        c.getClearingEntry().isSpaceLeft.signalAll();
+                        c.getClearingEntry().getIsSpaceLeft().signalAll();
                     }
                     return false;
                 } else{
-                   trail.enter();
+                   this.trail.enter();
                     c.leave();
                     if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                        c.getClearingEntry().isSpaceLeft.signalAll();
+                        c.getClearingEntry().getIsSpaceLeft().signalAll();
                     }
                 }
             } finally {
-                c.getClearingEntry().clearingLock.unlock();
+                c.getClearingEntry().getClearingLock().unlock();
             }
         } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
             if (c.id() != ant.getWorld().anthill().id()) { // if the left Clearing was not the hill->signalAll.
-                c.getClearingEntry().isSpaceLeft.signalAll();
+                c.getClearingEntry().getIsSpaceLeft().signalAll();
             } return false;
         }  finally {
-            TrailLock.unlock();
+            this.TrailLock.unlock();
         }
         return true;
 

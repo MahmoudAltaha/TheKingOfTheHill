@@ -2,27 +2,14 @@ package com.pseuco.np21;
 
 import java.util.*;
 
+/**
+ * this class handle the check by searching for a valid Trail to Take by(FoodSearch/noFoodReturn/Immediate return)
+ */
 public class SearchFoodTrailHandler {
-
-
-    /**   !!!ignore this methode for now.!!!
-     * this methode is used to check whether the chosen Trail still the right one .
-     *
-     * @param  currentClearing the current Clearing
-     * @param  targetTrail  the TargetTrail
-     * @return true if the targetTrail still valid.
-     */
-    public boolean checkTrail(Clearing currentClearing , Trail targetTrail,Ant ant){
-        List<Trail> trailList = currentClearing.connectsTo();
-        Trail t = getTargetTrail(trailList,ant);
-        return t.id() == targetTrail.id();
-    }
-
-
 
     /**
      * this methode used to remove the Trails which lead to the Clearing that i just visited and found that i
-     * have visited it in tha past.
+     * have visited it in tha past.  (we use this methode just in this class in "getTargetTrail")
      *
      * @param trailsList the Trails which are connected to the Current Clearing
      * @param ant the Ant
@@ -38,6 +25,7 @@ public class SearchFoodTrailHandler {
 
     /**
      * this methode remove all Trails with Map-Pheromone from the given list.
+     * (we use this methode just in this class in "getTargetTrail")
      * @param trailList trailsList
      * @param ant ant
      */
@@ -60,7 +48,7 @@ public class SearchFoodTrailHandler {
 
     /**
      *  this methode checks if all the Trails in the list has Nap-Pheromones.
-     *
+     * (we use this methode just in this class in "getTargetTrail")
      * @param trailList trailList
      * @return true if all the Trails in the list has Nap-Pheromones.
      */
@@ -76,8 +64,8 @@ public class SearchFoodTrailHandler {
     }
 
     /**
-     * this methode separate one list into two Lists, one of them has all Nap_trails and the other one
-     * has all Non-NapTrails.
+     * this methode separate one list into two Lists, one of them has all Nap_trails and the other one.
+     * has all Non-NapTrails.  (we use this methode just in this class in "getTargetTrail")
      * @param trailList trailList
      * @param napTrails NapList
      * @param nonNapTrails NON-Nap List
@@ -96,7 +84,7 @@ public class SearchFoodTrailHandler {
     }
 
     /**
-     * this methode used to add the Trails with min-Food Value to a min List.
+     * this methode used to add the Trails with min-Food Value to a min List. (we use this methode just in this class in "getTargetTrail")
      *
      * @param minTrailsList  List with min-Food Trails.
      * @param trailsListNonNap  the Trails which has all Trails that have nonNap Food-Pheromone value.

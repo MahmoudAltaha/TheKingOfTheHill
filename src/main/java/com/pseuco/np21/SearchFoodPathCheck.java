@@ -1,12 +1,10 @@
 package com.pseuco.np21;
 
-import com.pseuco.np21.shared.Recorder;
 
-import java.lang.annotation.Target;
 import java.util.List;
 
 /**
- * this class will be used to find the correct Trail which the ant should take when she search food.
+ * this class will be used to find the correct Trail which the ant should take by food search.
  */
 public class SearchFoodPathCheck {
 
@@ -25,7 +23,7 @@ public class SearchFoodPathCheck {
      * @param  currentClearing the currentClearing
      * @return the targetTrail.
      */
-     public Trail getTargetTrail(Clearing currentClearing) throws InterruptedException {
+     public Trail getTargetTrail(Clearing currentClearing) {
          assert checkTrail(currentClearing);
         List<Trail> trailList = currentClearing.connectsTo();
         return searchFoodTrailHandler.getTargetTrail(trailList,ant);
@@ -38,7 +36,7 @@ public class SearchFoodPathCheck {
      * @param c  Current Clearing.
      * @return   return true if you found a Trail.
      */
-     public boolean checkTrail(Clearing c) throws InterruptedException {
+     public boolean checkTrail(Clearing c) {
         List<Trail> connectedTrails = c.connectsTo();
         return searchFoodTrailHandler.checkTrail(c,connectedTrails,ant);
     }

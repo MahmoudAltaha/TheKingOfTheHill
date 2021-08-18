@@ -11,14 +11,14 @@ public class ClearingEntryHandler {
             com.pseuco.np21.shared.Trail.Pheromone hillPheromone = t.reverse().getOrUpdateHillPheromone(false, null);
             com.pseuco.np21.shared.Trail.Pheromone newPheromone;
             // if the  Clearing was not twice in the sequence then update Hill-Pheromone. (no special cases)
-            if (!ant.TrailsToVisitedClearings.containsKey(t.id())) {
+            if (!ant.TrailsToVisitedClearings.containsKey(t.id())) { // if this Trail took the Ant to an Already visited Trail , don't update
                 // get the new Hill_Pheromone value
                 if (hillPheromone.isAPheromone()) {
                     int w = ant.getClearingSequence().size() - 1;
                     int value = Math.min(hillPheromone.value(), w);
                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(value);
                     t.reverse().getOrUpdateHillPheromone(true, newPheromone); // update the HIll-Pheromone.
-                    t.setShouldBeUpdated(true);
+                    t.setShouldBeUpdated(true); // flag to the Recorder to know if we are updating or not
                 } else {
                     int w = ant.getClearingSequence().size() - 1;
                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(w);
@@ -68,7 +68,7 @@ public class ClearingEntryHandler {
                  SO size()=6 - (CurrIndex= 2) = 4 the right result is 3  so we do (-1)
                 */
                 int r = (ant.getClearingSequence().size() - 1) - currentClearingNumberFromTheSequence;
-                //new added
+
                 if (!ant.isAdventurer()) {
                     newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(r);
                 } else {
@@ -79,7 +79,7 @@ public class ClearingEntryHandler {
                         newPheromone = com.pseuco.np21.shared.Trail.Pheromone.get(r);
                     }
                 }
-                t.reverse().getOrUpdateFoodPheromone(true, newPheromone, ant.isAdventurer()); // update the HIll-Pheromone.
+                t.reverse().getOrUpdateFoodPheromone(true, newPheromone, ant.isAdventurer()); // update the Food-Pheromone.
     }
 
 

@@ -2,6 +2,9 @@ package com.pseuco.np21;
 
 import java.util.*;
 
+/**
+ * this class used to get the Target Trail by heading back home. we use it in the (AntRunHandler class)
+ */
 public class HomeWardPathCheck {
 
     private final Ant ant;
@@ -37,12 +40,11 @@ public class HomeWardPathCheck {
                     break;
                 }
             }
-            //{AntHill, currentClearing, .. ...}
             //now return the Trail which leads to the Clearing which is Ordered in the sequence -->
             for (Trail target : connectedTrails) {    //--> exactly one index behind the CurrentClearing
                 if (target.to().id() == sequence.get(currentClearingNumberFromTheSequence - 1).id()) {
                     candidates.add(target);
-                    ant.setCandidatesList(candidates);
+                    ant.setCandidatesList(candidates);// this is the list we give the recorder signal by selecting the Trail
                     return target;
                 }
             }
@@ -71,7 +73,7 @@ public class HomeWardPathCheck {
 
 
     /**
-     * this methode used to add the Trails with min-Hill Value to a min List.
+     * this methode used to add the Trails with min-Hill Value to a min List. (we use this methode just in this class in "getTargetTrail")
      * @param minTrailsList  List with min-Hill Trails.
      * @param connectedTrails   the Trails which has all Trails .
      */
@@ -110,7 +112,7 @@ public class HomeWardPathCheck {
         }
 
     /**
-     * this methode remove all Trails with Map-Pheromone from the given list.
+     * this methode remove all Trails with Map-Pheromone from the given list. (we use this methode just in this class in "getTargetTrail")
      * @param trailList trailsList
      * @param ant ant
      */
@@ -132,11 +134,12 @@ public class HomeWardPathCheck {
     }
     /**
      * this methode used to check if the given Trail leads to a Clearing which index in sequence bigger than the current Clearing
+     *  (we use this methode just in this class in "getTargetTrail")
       * @param current Current Clearing
      * @param trailToBeChecked  the Trail to be checked
      * @return  true if the Trail Leads to a Clearing that is ordered after the Current Clearing in the Sequence
      */
-        public boolean trailToClearingAfterCurrentInSequence(Clearing current , Trail trailToBeChecked){
+        private boolean trailToClearingAfterCurrentInSequence(Clearing current , Trail trailToBeChecked){
             int currentClearingNumberFromTheSequence = 0; // get the index of the currentClearing from sequence.
             List<Clearing> sequence = ant.getClearingSequence();
             for (Clearing clearing : sequence) {     // by looping the sequence

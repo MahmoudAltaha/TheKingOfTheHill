@@ -73,25 +73,16 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
     this.candidatesList = new LinkedList<>();
   }
 
+
+  public HashMap<Integer, Trail> getTrailsToVisitedClearings() { return TrailsToVisitedClearings; }
+  public List<Trail> getTrailSequence() { return TrailSequence; }
+  public HashMap<Integer, Trail> getAlreadyEnteredTrails() { return alreadyEnteredTrails; }
   public boolean isDied() { return died; }
-
   public void setDied(boolean died) { this.died = died; }
-
-  public void setCandidatesList(List<Trail> candidatesList) {
-    this.candidatesList = candidatesList;
-  }
-
-  public List<Trail> getCandidatesList() {
-    return candidatesList;
-  }
-
-  public Recorder getRecorder() {
-    return recorder;
-  }
-
-  public World<Clearing, Trail> getWorld() {
-    return world;
-  }
+  public void setCandidatesList(List<Trail> candidatesList) { this.candidatesList = candidatesList; }
+  public List<Trail> getCandidatesList() { return candidatesList; }
+  public Recorder getRecorder() { return recorder; }
+  public World<Clearing, Trail> getWorld() { return world; }
 
   /**
    * check if the Ant holds food.
