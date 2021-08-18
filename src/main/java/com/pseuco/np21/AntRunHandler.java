@@ -115,9 +115,7 @@ public class AntRunHandler {
             } else {
                 recorderStuffTerminateNowOnLastTrail(ourTrail);
             }
-
             throw new InterruptedException();
-
         }
         position = ourNextClearing; // update the Ant Position(current Clearing);
         return position;
@@ -191,10 +189,10 @@ public class AntRunHandler {
                 ant.getRecorder().select(ant, target, ant.getCandidatesList(), Recorder.SelectionReason.RETURN_FOOD);
             }
             Clearing ourNextClearing = target.to();
-            boolean success = target.enterTrail(position, ant, EntryReason.HEADING_BACK_HOME_WITH_UPDATING);// enter the Trail
-            EnterTrailRecorderStuff(position,target,success); // do the recorder stuff
-            Trail ourLastTrail = target;
             if (update){  // update == true --> we update pheromones because there still some food on the Clearing.
+                boolean success = target.enterTrail(position, ant, EntryReason.HEADING_BACK_HOME_WITH_UPDATING);// enter the Trail
+                EnterTrailRecorderStuff(position,target,success); // do the recorder stuff
+                Trail ourLastTrail = target;
                 boolean enterSuccess = ourNextClearing.enterClearing(target, ant, EntryReason.HEADING_BACK_HOME_WITH_UPDATING);
                 if (enterSuccess) {
                     recorderStuffEnterClearingLeaveTrail(ourNextClearing,target);
@@ -209,6 +207,9 @@ public class AntRunHandler {
                     throw new InterruptedException();
                 }
             }else {  // Update == False --> no Food any more on that Clearing so don't update.
+                boolean success = target.enterTrail(position, ant, EntryReason.HEADING_BACK_HOME_WITHOUT_UPDATING);// enter the Trail
+                EnterTrailRecorderStuff(position,target,success); // do the recorder stuff
+                Trail ourLastTrail = target;
                 boolean enterSuccess =ourNextClearing.enterClearing(target, ant, EntryReason.HEADING_BACK_HOME_WITHOUT_UPDATING);
                 if (enterSuccess) {
                     recorderStuffEnterClearingLeaveTrail(ourNextClearing,target);
