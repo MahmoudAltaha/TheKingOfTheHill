@@ -60,13 +60,14 @@ public class Simulator {
                 for (int i = 0; i < ants.size(); i++) {
                     try {
                         all[i].join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } catch (InterruptedException ignored) {
+
                     }
+
                 }
             }finally {
                 for (Ant ant : ants){
-                    if(ant.despawnd== false){
+                    if(!ant.despawnd){
                         recorder.despawn(ant, Recorder.DespawnReason.TERMINATED);
                         ant.setDespawndTrue();
                     }
