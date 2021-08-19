@@ -44,10 +44,6 @@ public class Simulator {
         final var ants = world.ants().stream()
                 .map(a -> new Ant(a, world, recorder))
                 .collect(Collectors.toList());
- /*for(Ant a: ants){
-            a.run();
-        }*/
-
 
             Thread[] all = new Thread[ants.size()];
 
@@ -65,7 +61,7 @@ public class Simulator {
                 try {
                     all[i].join();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    recorder.despawn(ants.get(i), Recorder.DespawnReason.TERMINATED);
                 }
             }
         recorder.stop();

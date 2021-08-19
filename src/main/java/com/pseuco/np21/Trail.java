@@ -13,40 +13,19 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
     private Pheromone anthill;
     private Pheromone food;
-    private int ants;   
-
-    /**
-     * helps by the selection for the Recorder
-     * 1 --> FOOD_SEARCH,
-     * 2---> EXPLORATION,
-     * 3---> IMMEDIATE_RETURN,
-     * 4---> NO_FOOD_RETURN,
-     * 5---> RETURN_FOOD,
-     * 6---> RETURN_IN_SEQUENCE,
-     */
-    private  int selectionReason ;
-    private final TrailEntry trailEntry = new TrailEntry(this);;    // to handle the entering to this Trail in a concurrent way.
-    public Lock lock =  new ReentrantLock();
-
-    public boolean isShouldBeUpdated() {
-        return shouldBeUpdated;
-    }
-
-    public void setShouldBeUpdated(boolean shouldBeUpdated) {
-        this.shouldBeUpdated = shouldBeUpdated;
-    }
-
+    private int ants;
     private boolean shouldBeUpdated;
+    private final TrailEntry trailEntry = new TrailEntry(this);;    // to handle the entering to this Trail in a concurrent way.
+    private Lock lock =  new ReentrantLock();
+
+
 
     private Trail(final Trail reverse) {
         super(reverse);
-        this.selectionReason = 0;
         this.anthill = Pheromone.NOT_A_PHEROMONE;
         this.food = Pheromone.NOT_A_PHEROMONE;
         this.ants = 0;
         this.shouldBeUpdated = false;
-
-
     }
 
     /**
@@ -63,14 +42,17 @@ public class Trail extends com.pseuco.np21.shared.Trail<Clearing, Trail> {
         this.ants = 0;
     }
 
-    /**
-     * getter
-     *
-     * @return selectionReason.(int)
-     */
-    public int getSelectionReason() {
-        return selectionReason;
+
+
+    public boolean isShouldBeUpdated() {
+        return shouldBeUpdated;
     }
+
+    public void setShouldBeUpdated(boolean shouldBeUpdated) {
+        this.shouldBeUpdated = shouldBeUpdated;
+    }
+
+
 
     public TrailEntry getTrailEntry(){
         return this.trailEntry;

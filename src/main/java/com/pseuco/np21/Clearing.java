@@ -14,7 +14,7 @@ public class Clearing extends com.pseuco.np21.shared.Clearing<Clearing, Trail> {
     private int ants;
     private int food;
     private final ClearingEntry clearingEntry;
-    public Lock lock;
+    private Lock lock;
 
     /**
      * Constructs a new clearing.
