@@ -221,7 +221,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
             Thread.currentThread().interrupt();
             throw new InterruptedException();
           }
-
           else{// the Clearing has no food  so continue try to get new Trail and search for Food (do the same above --> recursion)
             forwardMoving(position);
           }

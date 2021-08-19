@@ -60,22 +60,27 @@ public class Simulator {
                 for (int i = 0; i < ants.size(); i++) {
                     try {
                         all[i].join();
-                    } catch (InterruptedException ignored) {
-
+                    } catch (InterruptedException e) {
+                        for (Ant ant : ants) {
+                            if (!ant.despawnd) {
+                                recorder.despawn(ant, Recorder.DespawnReason.TERMINATED);
+                                ant.setDespawndTrue();
+                                break;
+                            }
+                        }
                     }
 
                 }
             }finally {
-                for (Ant ant : ants){
+               /* for (Ant ant : ants){
                     if(!ant.despawnd){
                         recorder.despawn(ant, Recorder.DespawnReason.TERMINATED);
                         ant.setDespawndTrue();
                     }
-                }
+                }*/
                 recorder.stop();
                 Thread.currentThread().interrupt();
             }
-
 
     }
 
