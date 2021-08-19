@@ -80,6 +80,7 @@ public class ClearingEntry {
         }
         catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             t.leave();
+            Thread.currentThread().interrupt();
             return false;
         }
         finally{
@@ -124,6 +125,7 @@ public class ClearingEntry {
         }
         catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             t.leave();
+            Thread.currentThread().interrupt();
             return false;
         }
         finally{
@@ -170,6 +172,7 @@ public class ClearingEntry {
         }
         catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             t.leave();
+            Thread.currentThread().interrupt();
             return false;
         }
         finally{
@@ -237,6 +240,7 @@ public class ClearingEntry {
             }
         } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             t.leave();
+            Thread.currentThread().interrupt();
             return false;
         }
         finally {
