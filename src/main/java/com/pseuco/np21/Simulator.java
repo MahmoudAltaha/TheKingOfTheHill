@@ -65,9 +65,9 @@ public class Simulator {
                             if (!ant.despawnd) {
                                 recorder.despawn(ant, Recorder.DespawnReason.TERMINATED);
                                 ant.setDespawndTrue();
-                                break;
                             }
                         }
+                        break;
                     }
 
                 }
