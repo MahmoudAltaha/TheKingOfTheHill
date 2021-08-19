@@ -34,6 +34,7 @@ public class AntRunHandler {
         ant.getRecorder().attractAttention(ant);
         ant.getRecorder().leave(ant, ourLastTrail);
         ant.getRecorder().despawn(ant, Recorder.DespawnReason.DISCOVERED_AND_EATEN);
+        ant.setDespawndTrue();
     }
 
     /**
@@ -42,10 +43,14 @@ public class AntRunHandler {
      */
     private void recorderStuffTerminateNowOnLastTrail(Trail trail){
         ant.getRecorder().leave(ant, trail);
-        if(! ant.getWorld().isFoodLeft()) {
-            ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
-        } else if(Thread.currentThread().isInterrupted()) {
+
+         if(Thread.currentThread().isInterrupted()) {
             ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+             ant.setDespawndTrue();
+        }
+        else if(! ant.getWorld().isFoodLeft()) {
+            ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
+             ant.setDespawndTrue();
         }
     }
 
@@ -61,14 +66,19 @@ public class AntRunHandler {
         if(success){
             ant.getRecorder().enter(ant,target);
             ant.getRecorder().leave(ant,currentClearing);
+
         }else {
             ant.getRecorder().leave(ant,currentClearing);
-            if(! ant.getWorld().isFoodLeft()) {
-                ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
-            } else if(Thread.currentThread().isInterrupted()) {
+
+            if(Thread.currentThread().isInterrupted()) {
                 ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+                ant.setDespawndTrue();
             }
-            Thread.currentThread().interrupt();
+            else if(! ant.getWorld().isFoodLeft()) {
+                ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
+                ant.setDespawndTrue();
+            }
+
             throw new InterruptedException();
         }
     }
@@ -94,7 +104,6 @@ public class AntRunHandler {
             } else {
                 recorderStuffTerminateNowOnLastTrail(ourLastTrail);
             }
-            Thread.currentThread().interrupt();
             throw new InterruptedException();
         }
     }
@@ -125,7 +134,7 @@ public class AntRunHandler {
             } else {
                 recorderStuffTerminateNowOnLastTrail(ourTrail);
             }
-            Thread.currentThread().interrupt();
+
             throw new InterruptedException();
         }
         position = ourNextClearing; // update the Ant Position(current Clearing);
@@ -160,7 +169,7 @@ public class AntRunHandler {
             } else {
                 recorderStuffTerminateNowOnLastTrail(ourTrail);
             }
-            Thread.currentThread().interrupt();
+
             throw new InterruptedException();
         }
         position = ourNextClearing;
@@ -178,10 +187,12 @@ public class AntRunHandler {
         ant.getRecorder().leave(ant, position);
         if(! ant.getWorld().isFoodLeft()) {
             ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
+            ant.setDespawndTrue();
         } else {
             ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+            ant.setDespawndTrue();
         }
-        Thread.currentThread().interrupt();
+
         throw new InterruptedException();
     }
 
@@ -221,7 +232,7 @@ public class AntRunHandler {
                     } else {
                         recorderStuffTerminateNowOnLastTrail(ourLastTrail);
                     }
-                    Thread.currentThread().interrupt();
+
                     throw new InterruptedException();
                 }
             }else {  // Update == False --> no Food any more on that Clearing so don't update.
@@ -237,7 +248,7 @@ public class AntRunHandler {
                     } else {
                         recorderStuffTerminateNowOnLastTrail(ourLastTrail);
                     }
-                    Thread.currentThread().interrupt();
+
                     throw new InterruptedException();
                 }
             }
@@ -246,12 +257,14 @@ public class AntRunHandler {
         boolean droppedSuccess =position.dropFood(position, ant); // try to drop the food in the Hill
         if (!droppedSuccess){
             ant.getRecorder().leave(ant,position);
-            if(! ant.getWorld().isFoodLeft()) {
-                ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
-            } else {
+             if(Thread.currentThread().isInterrupted()) {
                 ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
+                 ant.setDespawndTrue();
+            } else if(! ant.getWorld().isFoodLeft()) {
+                ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
+                 ant.setDespawndTrue();
             }
-            Thread.currentThread().interrupt();
+
             throw new InterruptedException();
         }
         // clear all information

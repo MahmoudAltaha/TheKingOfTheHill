@@ -8,6 +8,7 @@ import com.pseuco.np21.shared.World;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -45,27 +46,35 @@ public class Simulator {
                 .map(a -> new Ant(a, world, recorder))
                 .collect(Collectors.toList());
 
-            Thread[] all = new Thread[ants.size()];
+        this.recorder.start();
 
+            Thread[] all = new Thread[ants.size()];
             for (int i = 0; i < ants.size(); i++) {
-                all[i] = new Thread(ants.get(i));
+                all[i] = new Thread(ants.get(i),ants.get(i).name());
             }
-                this.recorder.start();
 
             for (int i = 0; i < ants.size(); i++) {
                 all[i].start();
             }
-
-            for (int i = 0; i < ants.size(); i++) {
-
-                try {
-                    all[i].join();
-                } catch (InterruptedException e) {
-                    recorder.despawn(ants.get(i), Recorder.DespawnReason.TERMINATED);
+            try {
+                for (int i = 0; i < ants.size(); i++) {
+                    try {
+                        all[i].join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+            }finally {
+                for (Ant ant : ants){
+                    if(ant.despawnd== false){
+                        recorder.despawn(ant, Recorder.DespawnReason.TERMINATED);
+                        ant.setDespawndTrue();
+                    }
+                }
+                recorder.stop();
+                Thread.currentThread().interrupt();
             }
-        recorder.stop();
-        Thread.currentThread().interrupt();
+
 
     }
 

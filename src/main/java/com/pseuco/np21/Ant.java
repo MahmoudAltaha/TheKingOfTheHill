@@ -49,6 +49,11 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   public final SearchFoodPathCheck searchFood;
   public final AntRunHandler handler;
   private List<Trail> candidatesList;
+  public boolean despawnd = false;
+
+  public void setDespawndTrue(){
+    despawnd = true;
+  }
 
   /**
    * Constructs an ant given a basic ant, the world and a recorder.
@@ -205,15 +210,20 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
               handler.homewardMoving(false, position, getClearingSequence()); // start homeward and update Food pheromone.
               return;
             }
-          }else{// the Clearing has no food  so continue try to get new Trail and search for Food (do the same above --> recursion)
-            if(! world.isFoodLeft()) {
-              recorder.despawn(this, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
-              throw new InterruptedException();
-            } if(Thread.currentThread().isInterrupted()) {
-              recorder.despawn(this, Recorder.DespawnReason.TERMINATED);
-              Thread.currentThread().interrupt();
-              throw new InterruptedException();
-            }
+          } if(Thread.currentThread().isInterrupted()){
+            recorder.despawn(this, DespawnReason.TERMINATED);
+            this.setDespawndTrue();
+            throw new InterruptedException();
+          }
+          if (! world.isFoodLeft()){
+            recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
+            this.setDespawndTrue();
+            Thread.currentThread().interrupt();
+            throw new InterruptedException();
+          }
+
+
+          else{// the Clearing has no food  so continue try to get new Trail and search for Food (do the same above --> recursion)
             forwardMoving(position);
           }
         }
@@ -266,6 +276,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
 
       recorder.leave(this, position);
       recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
+      this.setDespawndTrue();
       Thread.currentThread().interrupt();/////////////////////////////
 
     } catch (InterruptedException e) {
