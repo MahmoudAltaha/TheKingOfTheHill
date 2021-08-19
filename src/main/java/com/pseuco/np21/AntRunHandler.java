@@ -51,6 +51,7 @@ public class AntRunHandler {
         else if(! ant.getWorld().isFoodLeft()) {
             ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
              ant.setDespawndTrue();
+             Thread.currentThread().interrupt();
         }
     }
 
@@ -77,6 +78,7 @@ public class AntRunHandler {
             else if(! ant.getWorld().isFoodLeft()) {
                 ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
                 ant.setDespawndTrue();
+                Thread.currentThread().interrupt();
             }
 
             throw new InterruptedException();
@@ -188,9 +190,11 @@ public class AntRunHandler {
         if(! ant.getWorld().isFoodLeft()) {
             ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
             ant.setDespawndTrue();
+            Thread.currentThread().interrupt();
         } else {
             ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
             ant.setDespawndTrue();
+            Thread.currentThread().interrupt();
         }
 
         throw new InterruptedException();
@@ -260,9 +264,11 @@ public class AntRunHandler {
              if(Thread.currentThread().isInterrupted()) {
                 ant.getRecorder().despawn(ant, Recorder.DespawnReason.TERMINATED);
                  ant.setDespawndTrue();
+
             } else if(! ant.getWorld().isFoodLeft()) {
                 ant.getRecorder().despawn(ant, Recorder.DespawnReason.ENOUGH_FOOD_COLLECTED);
                  ant.setDespawndTrue();
+                 Thread.currentThread().interrupt();
             }
 
             throw new InterruptedException();

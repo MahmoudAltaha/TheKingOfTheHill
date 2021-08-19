@@ -70,6 +70,7 @@ public class TrailEntry {
         }
         catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
+            Thread.currentThread().interrupt();
              return false;
         }
         finally {
@@ -122,6 +123,7 @@ public class TrailEntry {
             ant.getAlreadyEnteredTrails().put(this.trail.id(),this.trail);
         } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
+            Thread.currentThread().interrupt();
             return  false;
         }
         finally {
@@ -173,6 +175,7 @@ public class TrailEntry {
             }
          } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
+            Thread.currentThread().interrupt();
              return false;
         }
         finally {
@@ -218,6 +221,7 @@ public class TrailEntry {
             }
         } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
+            Thread.currentThread().interrupt();
              return false;
         }
         finally {
