@@ -15,7 +15,6 @@ public class ClearingEntry {
 
     public final Lock clearingLock = new ReentrantLock();
 
-    public boolean died = false;
     public Condition isSpaceLeft= clearingLock.newCondition();
     private final ClearingEntryHandler handler;
 
