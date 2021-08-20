@@ -72,6 +72,7 @@ public class Simulator {
                     }
                 }
 
+
                 recorder.stop();
                 Thread.currentThread().interrupt();
             }
