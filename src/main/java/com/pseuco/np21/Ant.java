@@ -260,7 +260,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
   public void run() {
     try {
       position = world.anthill();
-
+      position.enter();
       recorder.spawn(this);
 
       recorder.enter(this, position);
@@ -272,6 +272,7 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
         forwardMoving(position);
       }
 
+      position.leave();
       recorder.leave(this, position);
       recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
       this.setDespawndTrue();
