@@ -65,12 +65,12 @@ public class Simulator {
 
             }
             finally {
-              /*  for (Ant ant : ants){
+               for (Ant ant : ants){
                     if(!ant.despawnd){
                         recorder.despawn(ant, Recorder.DespawnReason.TERMINATED);
                         ant.setDespawndTrue();
                     }
-                }*/
+                }
                 recorder.stop();
                 Thread.currentThread().interrupt();
             }
