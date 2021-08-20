@@ -277,8 +277,6 @@ public class Ant extends com.pseuco.np21.shared.Ant implements Runnable {
       recorder.despawn(this, DespawnReason.ENOUGH_FOOD_COLLECTED);
       this.setDespawndTrue();
 
-      // empty4
-
       Thread.currentThread().interrupt();/////////////////////////////
 
     } catch (InterruptedException e) {
