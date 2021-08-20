@@ -69,7 +69,7 @@ public class InterruptionTests {
     Simulation gets interrupted. All ants should end their work before timeout.
     */
     void interruptManyAnts() throws InterruptedException {
-        interruptAnts(100);
+        interruptAnts(300);
     }
 
     @Test

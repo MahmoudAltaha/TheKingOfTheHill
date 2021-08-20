@@ -70,6 +70,9 @@ public class TrailEntry {
         }
         catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
+            c.getClearingEntry().getClearingLock().lock();
+           try{ c.getClearingEntry().getIsSpaceLeft().signalAll();}
+           finally{ c.getClearingEntry().getClearingLock().unlock();}
             Thread.currentThread().interrupt();
              return false;
         }
@@ -123,6 +126,9 @@ public class TrailEntry {
             ant.getAlreadyEnteredTrails().put(this.trail.id(),this.trail);
         } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
+            c.getClearingEntry().getClearingLock().lock();
+            try{ c.getClearingEntry().getIsSpaceLeft().signalAll();}
+            finally{ c.getClearingEntry().getClearingLock().unlock();}
             Thread.currentThread().interrupt();
             return  false;
         }
@@ -175,6 +181,9 @@ public class TrailEntry {
             }
          } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
+            c.getClearingEntry().getClearingLock().lock();
+            try{ c.getClearingEntry().getIsSpaceLeft().signalAll();}
+            finally{ c.getClearingEntry().getClearingLock().unlock();}
             Thread.currentThread().interrupt();
              return false;
         }
@@ -221,6 +230,9 @@ public class TrailEntry {
             }
         } catch (InterruptedException e){ // Thread interrupted while he is in wait mode.
             c.leave();
+            c.getClearingEntry().getClearingLock().lock();
+            try{ c.getClearingEntry().getIsSpaceLeft().signalAll();}
+            finally{ c.getClearingEntry().getClearingLock().unlock();}
             Thread.currentThread().interrupt();
              return false;
         }
