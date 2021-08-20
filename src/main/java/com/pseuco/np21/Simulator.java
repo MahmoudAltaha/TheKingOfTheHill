@@ -71,6 +71,7 @@ public class Simulator {
                         ant.setDespawndTrue();
                     }
                 }
+
                 recorder.stop();
                 Thread.currentThread().interrupt();
             }
